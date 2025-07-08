@@ -1,0 +1,124 @@
+/* App.css */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+/* Ensure proper stacking and no overflow issues */
+body,
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Loading spinner utility */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-light);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Global button styles */
+.submit-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Focus styles for accessibility */
+.btn:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Ensure navbar is always on top */
+.nav-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 90%;
+  max-width: 1200px;
+}
+
+/* Fix any z-index issues with other components */
+.hero {
+  position: relative;
+  z-index: 1;
+}
+
+.modal-overlay {
+  z-index: 2000;
+}
+
+/* Prevent content from going behind fixed navbar */
+.home,
+.contact-page,
+.listings-page {
+  position: relative;
+  z-index: 1;
+}
+
+/* Print styles */
+@media print {
+
+  .nav-container,
+  .footer,
+  .btn {
+    display: none !important;
+  }
+}

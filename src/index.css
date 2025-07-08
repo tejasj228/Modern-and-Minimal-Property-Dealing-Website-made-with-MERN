@@ -1,0 +1,235 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* CSS Variables for theming */
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #34495e;
+  --accent-color: #B8860B;
+  /* Darker mustard/dark gold */
+  --button-color: #1a1a1a;
+  /* Black for buttons */
+  --success-color: #27ae60;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --text-white: #ffffff;
+  --bg-light: #f5f5f5;
+  /* Lighter background */
+  --bg-white: #ffffff;
+  --bg-card: #ebebeb;
+  /* Lighter cards */
+  --bg-subcard: #dddddd;
+  /* Lighter subcards */
+  --border-light: #ccc;
+  /* Lighter borders */
+  --shadow-light: rgba(44, 62, 80, 0.1);
+  --shadow-medium: rgba(44, 62, 80, 0.15);
+  --shadow-dark: rgba(44, 62, 80, 0.25);
+}
+
+/* Dark mode variables */
+.dark-mode {
+  --primary-color: #e8e8e8;
+  --secondary-color: #cccccc;
+  --accent-color: #B8860B;
+  /* Keep mustard accent */
+  --text-dark: #e8e8e8;
+  --text-light: #b0b0b0;
+  --text-white: #ffffff;
+  --bg-light: #1a1a1a;
+  /* Very dark background */
+  --bg-white: #2a2a2a;
+  /* Dark grey for cards */
+  --bg-card: #2a2a2a;
+  /* Dark grey cards */
+  --bg-subcard: #1f1f1f;
+  /* Darker subcards */
+  --border-light: #404040;
+  /* Dark grey borders */
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.4);
+  --shadow-dark: rgba(0, 0, 0, 0.6);
+}
+
+/* Global styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background: var(--bg-light);
+  overflow-x: hidden;
+  transition: all 0.5s ease;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9b7209;
+}
+
+/* Dark mode scrollbar */
+.dark-mode ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #d4a915;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background: var(--button-color);
+  color: var(--text-white);
+  box-shadow: 0 4px 15px rgba(26, 26, 26, 0.3);
+}
+
+.btn-primary:hover {
+  background: #333333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26, 26, 26, 0.4);
+}
+
+/* Dark mode button adjustments */
+.dark-mode .btn-primary {
+  background: var(--accent-color);
+  color: #1a1a1a;
+  box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.dark-mode .btn-primary:hover {
+  background: #d4a915;
+  color: #1a1a1a;
+  box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-white);
+  border: 2px solid var(--text-white);
+}
+
+.btn-secondary:hover {
+  background: var(--text-white);
+  color: var(--accent-color);
+  border-color: var(--text-white);
+  transform: translateY(-2px);
+}
+
+/* Dark mode secondary button */
+.dark-mode .btn-secondary:hover {
+  background: var(--text-white);
+  color: var(--accent-color);
+}
+
+/* Scroll reveal animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stagger-1 {
+  transition-delay: 0.1s;
+}
+
+.stagger-2 {
+  transition-delay: 0.2s;
+}
+
+.stagger-3 {
+  transition-delay: 0.3s;
+}
