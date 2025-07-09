@@ -177,7 +177,9 @@ const Home = () => {
                       className="sub-area-card"
                       onClick={(event) => handleSubAreaClick(key, subArea, event)}
                     >
-                      <div className="sub-area-image"></div>
+                      <div className="sub-area-image">
+                      <img src="/assets/map.webp" alt="Map View" />
+                      </div>
                       <div className="sub-area-content">
                         <h4>{subArea.title}</h4>
                         <p>{subArea.description}</p>

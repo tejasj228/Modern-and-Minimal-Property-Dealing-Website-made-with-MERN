@@ -186,6 +186,15 @@ body.modal-open {
     /* Let JavaScript handle all positioning */
 }
 
+/* Hide mobile header when modal is open */
+body.modal-open .mobile-header {
+    display: none !important;
+}
+
+body.modal-open .mobile-sidebar {
+    display: none !important;
+}
+
 /* Dark mode adjustments */
 .dark-mode .modal-content {
     background: var(--bg-card);
