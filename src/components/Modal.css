@@ -4,7 +4,7 @@
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: 100vh !important;
+    height: 100dvh !important; /* was 100vh */
     background: rgba(0, 0, 0, 0.8) !important;
     backdrop-filter: blur(10px);
     display: flex !important;
@@ -22,7 +22,7 @@
     width: 100%;
     max-width: 1400px;
     /* Increased from 1200px */
-    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px); /* was 100vh */
     height: auto;
     min-height: 500px;
     position: relative;
@@ -246,8 +246,8 @@ body.modal-open .mobile-sidebar {
     .modal-content {
         max-width: 95%;
         height: auto;
-        min-height: 80vh;
-        max-height: calc(100vh - 40px);
+        min-height: 80dvh; /* was 80vh */
+        max-height: calc(100dvh - 40px); /* was 100vh */
     }
 
     .modal-left {
@@ -267,8 +267,8 @@ body.modal-open .mobile-sidebar {
     .modal-content {
         max-width: 95%;
         height: auto;
-        min-height: 80vh;
-        max-height: calc(100vh - 40px);
+        min-height: 80dvh; /* was 80vh */
+        max-height: calc(100dvh - 40px); /* was 100vh */
     }
 
     .modal-left {
@@ -292,8 +292,8 @@ body.modal-open .mobile-sidebar {
     .modal-content {
         flex-direction: column;
         height: auto;
-        min-height: calc(100vh - 30px);
-        max-height: calc(100vh - 30px);
+        min-height: calc(100dvh - 30px); /* was 100vh */
+        max-height: calc(100dvh - 30px); /* was 100vh */
     }
 
     .modal-left {
@@ -337,8 +337,8 @@ body.modal-open .mobile-sidebar {
         width: 100%;
         max-width: none;
         height: auto;
-        min-height: calc(100vh - 20px);
-        max-height: calc(100vh - 20px);
+        min-height: calc(100dvh - 20px); /* was 100vh */
+        max-height: calc(100dvh - 20px); /* was 100vh */
         margin-top: 0;
     }
 
@@ -384,8 +384,8 @@ body.modal-open .mobile-sidebar {
 
     .modal-content {
         border-radius: 8px;
-        min-height: calc(100vh - 10px);
-        max-height: calc(100vh - 10px);
+        min-height: calc(100dvh - 10px); /* was 100vh */
+        max-height: calc(100dvh - 10px); /* was 100vh */
     }
 
     .modal-left {
@@ -422,8 +422,8 @@ body.modal-open .mobile-sidebar {
 
 @media (max-width: 360px) {
     .modal-content {
-        min-height: calc(100vh - 10px);
-        max-height: calc(100vh - 10px);
+        min-height: calc(100dvh - 10px); /* was 100vh */
+        max-height: calc(100dvh - 10px); /* was 100vh */
     }
 
     .modal-left {
