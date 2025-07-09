@@ -45,12 +45,23 @@ const Home = () => {
 
   const handleSubAreaClick = (areaKey, subArea) => {
     const areaData = areas[areaKey];
-    setSelectedSubArea({
+    const subAreaData = {
       ...subArea,
       parentArea: areaData,
       areaKey: areaKey
-    });
+    };
+    
+    // Set both states immediately to avoid delays
+    setSelectedSubArea(subAreaData);
     setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    // Clear selected subarea after modal closes
+    setTimeout(() => {
+      setSelectedSubArea(null);
+    }, 300);
   };
 
   const handleViewListings = (areaKey) => {
@@ -168,10 +179,10 @@ const Home = () => {
       {/* Modal */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCloseModal}
         subArea={selectedSubArea}
         onViewProperties={(areaKey) => {
-          setIsModalOpen(false);
+          handleCloseModal();
           handleViewListings(areaKey);
         }}
       />

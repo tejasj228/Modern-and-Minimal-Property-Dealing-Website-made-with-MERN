@@ -10,25 +10,24 @@
   --primary-color: #2c3e50;
   --secondary-color: #34495e;
   --accent-color: #B8860B;
-  /* Darker mustard/dark gold */
   --button-color: #1a1a1a;
-  /* Black for buttons */
   --success-color: #27ae60;
   --text-dark: #2c3e50;
   --text-light: #7f8c8d;
   --text-white: #ffffff;
   --bg-light: #f5f5f5;
-  /* Lighter background */
   --bg-white: #ffffff;
   --bg-card: #ebebeb;
-  /* Lighter cards */
   --bg-subcard: #dddddd;
-  /* Lighter subcards */
   --border-light: #ccc;
-  /* Lighter borders */
   --shadow-light: rgba(44, 62, 80, 0.1);
   --shadow-medium: rgba(44, 62, 80, 0.15);
   --shadow-dark: rgba(44, 62, 80, 0.25);
+
+  /* Transition variables */
+  --theme-transition: all 0.3s ease;
+  --hover-transition: all 0.3s ease;
+  --transform-transition: transform 0.3s ease;
 }
 
 /* Dark mode variables */
@@ -36,20 +35,14 @@
   --primary-color: #e8e8e8;
   --secondary-color: #cccccc;
   --accent-color: #B8860B;
-  /* Keep mustard accent */
   --text-dark: #e8e8e8;
   --text-light: #b0b0b0;
   --text-white: #ffffff;
   --bg-light: #1a1a1a;
-  /* Very dark background */
   --bg-white: #2a2a2a;
-  /* Dark grey for cards */
   --bg-card: #2a2a2a;
-  /* Dark grey cards */
   --bg-subcard: #1f1f1f;
-  /* Darker subcards */
   --border-light: #404040;
-  /* Dark grey borders */
   --shadow-light: rgba(0, 0, 0, 0.3);
   --shadow-medium: rgba(0, 0, 0, 0.4);
   --shadow-dark: rgba(0, 0, 0, 0.6);
@@ -62,7 +55,14 @@ body {
   color: var(--text-dark);
   background: var(--bg-light);
   overflow-x: hidden;
-  transition: all 0.5s ease;
+  transition: var(--theme-transition);
+}
+
+/* Smooth transitions for all elements */
+*,
+*::before,
+*::after {
+  transition: var(--theme-transition);
 }
 
 /* Custom scrollbar */
@@ -96,7 +96,7 @@ body {
   background: #d4a915;
 }
 
-/* Animation keyframes */
+/* Page transition animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -145,6 +145,71 @@ body {
   }
 }
 
+@keyframes slideInCenter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Page transition styles */
+.page-transition {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+.page-transition.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /* Utility classes */
 .container {
   max-width: 1200px;
@@ -159,7 +224,7 @@ body {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--hover-transition);
   text-decoration: none;
   display: inline-block;
   position: relative;
@@ -232,4 +297,91 @@ body {
 
 .stagger-3 {
   transition-delay: 0.3s;
+}
+
+/* Property card animations */
+.property-card {
+  animation: fadeInUp 0.6s ease-in-out;
+  animation-fill-mode: both;
+}
+
+/* Focus styles for accessibility */
+.btn:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Smooth hover effects */
+.hover-lift {
+  transition: var(--transform-transition);
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+}
+
+/* Theme transition effect */
+.theme-transitioning {
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+/* Ensure proper z-index hierarchy */
+.nav-container {
+  z-index: 100;
+}
+
+.modal-overlay {
+  z-index: 2000;
+}
+
+.loading-overlay {
+  z-index: 9999;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border-light: #000000;
+    --shadow-light: rgba(0, 0, 0, 0.3);
+  }
+
+  .dark-mode {
+    --border-light: #ffffff;
+    --shadow-light: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .page-transition {
+    animation: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+  }
 }

@@ -13,33 +13,39 @@ const Modal = ({ isOpen, onClose, subArea, onViewProperties }) => {
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
-      
-      // Hide navbar completely when modal is open
+      // Hide desktop navbar
       const navbar = document.querySelector('.nav-container');
-      if (navbar) {
-        navbar.style.display = 'none';
-      }
+      if (navbar) navbar.style.display = 'none';
+      // Hide mobile header and sidebar
+      const mobileHeader = document.querySelector('.mobile-header');
+      if (mobileHeader) mobileHeader.style.display = 'none';
+      const mobileSidebar = document.querySelector('.mobile-sidebar');
+      if (mobileSidebar) mobileSidebar.style.display = 'none';
     } else {
       document.body.style.overflow = 'unset';
       document.body.classList.remove('modal-open');
-      
-      // Show navbar when modal is closed
+      // Show desktop navbar
       const navbar = document.querySelector('.nav-container');
-      if (navbar) {
-        navbar.style.display = 'block';
-      }
+      if (navbar) navbar.style.display = 'block';
+      // Show mobile header and sidebar
+      const mobileHeader = document.querySelector('.mobile-header');
+      if (mobileHeader) mobileHeader.style.display = '';
+      const mobileSidebar = document.querySelector('.mobile-sidebar');
+      if (mobileSidebar) mobileSidebar.style.display = '';
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
       document.body.classList.remove('modal-open');
-      
-      // Ensure navbar is shown when component unmounts
+      // Show desktop navbar
       const navbar = document.querySelector('.nav-container');
-      if (navbar) {
-        navbar.style.display = 'block';
-      }
+      if (navbar) navbar.style.display = 'block';
+      // Show mobile header and sidebar
+      const mobileHeader = document.querySelector('.mobile-header');
+      if (mobileHeader) mobileHeader.style.display = '';
+      const mobileSidebar = document.querySelector('.mobile-sidebar');
+      if (mobileSidebar) mobileSidebar.style.display = '';
     };
   }, [isOpen, onClose]);
 
@@ -57,23 +63,13 @@ const Modal = ({ isOpen, onClose, subArea, onViewProperties }) => {
 
   return (
     <div 
-      className="modal-overlay" 
+      className="modal-overlay"
       onClick={handleBackdropClick}
-      style={{ 
-        zIndex: 2147483647,
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100vh',
-        background: 'rgba(0, 0, 0, 0.8)'
-      }}
     >
-      <div className="modal-content" style={{ zIndex: 2147483647 }}>
+      <div className="modal-content">
         <button 
           className="modal-close" 
           onClick={onClose}
-          style={{ zIndex: 2147483647 }}
         >
           <i className="fas fa-times"></i>
         </button>

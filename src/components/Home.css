@@ -508,6 +508,13 @@ body:not(.dark-mode) .sub-area-card {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .hero {
+        height: calc(100vh - 60px);
+        /* Account for mobile header */
+        margin-top: 60px;
+        /* Push down by mobile header height */
+    }
+
     .hero h1 {
         font-size: 2.5rem;
     }
@@ -545,6 +552,11 @@ body:not(.dark-mode) .sub-area-card {
 }
 
 @media (max-width: 480px) {
+    .hero {
+        height: calc(100vh - 60px);
+        margin-top: 60px;
+    }
+
     .hero h1 {
         font-size: 2rem;
     }
@@ -569,5 +581,101 @@ body:not(.dark-mode) .sub-area-card {
     /* FIXED: Disable transform on very small screens */
     .sub-area-card:hover {
         transform: none;
+    }
+}
+/* Mobile responsive design - Fixed gap issue */
+@media (max-width: 768px) {
+    .hero {
+        height: 100vh;
+        /* Full viewport height */
+        margin-top: 0;
+        /* Remove margin-top */
+        padding-top: 0;
+        /* Remove padding-top */
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    .section-title h2 {
+        font-size: 2rem;
+    }
+
+    .features-grid,
+    .sub-areas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .main-area-card {
+        padding: 25px;
+    }
+
+    .main-area-header h3 {
+        font-size: 1.6rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* FIXED: Better mobile hover for sub-area cards */
+    .sub-area-card:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Adjust other page sections to account for mobile header */
+    .why-choose-us,
+    .areas-section {
+        padding-top: 100px;
+        /* Keep padding for other sections */
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        height: 100vh;
+        /* Full viewport height */
+        margin-top: 0;
+        /* Remove margin-top */
+        padding-top: 0;
+        /* Remove padding-top */
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .section-title h2 {
+        font-size: 1.8rem;
+    }
+
+    .main-area-header h3 {
+        font-size: 1.4rem;
+    }
+
+    .sub-areas-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* FIXED: Disable transform on very small screens */
+    .sub-area-card:hover {
+        transform: none;
+    }
+
+    /* Adjust other page sections */
+    .why-choose-us,
+    .areas-section {
+        padding-top: 80px;
     }
 }

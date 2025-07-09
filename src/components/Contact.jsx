@@ -63,15 +63,19 @@ const Contact = () => {
         <div className="contact-grid">
           <div className="contact-info">
             <h3>Get In Touch</h3>
-            {contactItems.map((item, index) => (
-              <div key={index} className="contact-item">
-                <i className={item.icon}></i>
-                <div>
-                  <h4>{item.title}</h4>
-                  <p>{item.content}</p>
+            <div className="contact-items-wrapper">
+              {contactItems.map((item, index) => (
+                <div key={index} className="contact-item">
+                  <div className="contact-item-icon">
+                    <i className={item.icon}></i>
+                  </div>
+                  <div className="contact-item-content">
+                    <h4>{item.title}</h4>
+                    <p>{item.content}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           <div className="contact-form">

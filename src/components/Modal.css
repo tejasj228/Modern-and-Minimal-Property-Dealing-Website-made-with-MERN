@@ -11,7 +11,6 @@
     align-items: center !important;
     justify-content: center !important;
     z-index: 2147483647 !important;
-    /* Maximum possible z-index */
     animation: fadeIn 0.3s ease;
     padding: 20px;
     box-sizing: border-box;
@@ -156,6 +155,11 @@
     justify-content: center;
 }
 
+/* Prevent body scroll when modal is open - Simple overflow hidden */
+body.modal-open {
+    overflow: hidden !important;
+}
+
 /* Dark mode adjustments */
 .dark-mode .modal-content {
     background: var(--bg-card);
@@ -202,8 +206,6 @@
 @media (max-width: 900px) {
     .modal-overlay {
         padding: 15px;
-        padding-top: 15px;
-        /* No need for navbar gap since it's hidden */
     }
 
     .modal-content {
@@ -248,8 +250,6 @@
     .modal-overlay {
         padding: 10px;
         align-items: center;
-        /* Center the modal */
-        padding-top: 10px;
     }
 
     .modal-content {
@@ -299,7 +299,6 @@
 @media (max-width: 480px) {
     .modal-overlay {
         padding: 5px;
-        padding-top: 5px;
     }
 
     .modal-content {
@@ -341,10 +340,6 @@
 }
 
 @media (max-width: 360px) {
-    .modal-overlay {
-        padding-top: 5px;
-    }
-
     .modal-content {
         min-height: calc(100vh - 10px);
         max-height: calc(100vh - 10px);

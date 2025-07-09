@@ -6,6 +6,7 @@ import Home from './components/Home';
 import Contact from './components/Contact';
 import Listings from './components/Listings';
 import Properties from './components/Properties';
+import PageTransition from './components/PageTransition';
 import './App.css';
 
 function App() {
@@ -15,10 +16,22 @@ function App() {
         <Header />
         <main>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/contact" element={<Contact />} />
+            <Route path="/" element={
+              <PageTransition>
+                <Home />
+              </PageTransition>
+            } />
+            <Route path="/contact" element={
+              <PageTransition>
+                <Contact />
+              </PageTransition>
+            } />
             <Route path="/properties" element={<Properties />} />
-            <Route path="/listings/:area" element={<Listings />} />
+            <Route path="/listings/:area" element={
+              <PageTransition>
+                <Listings />
+              </PageTransition>
+            } />
           </Routes>
         </main>
         <Footer />

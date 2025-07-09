@@ -12,6 +12,13 @@
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 40px;
     margin-bottom: 40px;
+    text-align: left;
+}
+
+.footer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .footer-section h3 {
@@ -20,6 +27,7 @@
     font-weight: 600;
     font-size: 1.2rem;
     position: relative;
+    align-self: flex-start;
 }
 
 .footer-section h3::after {
@@ -37,6 +45,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    width: 100%;
 }
 
 .footer-contact-item {
@@ -132,8 +141,6 @@
     color: #E6B77A;
 }
 
-/* Removed footer logo styles since logo was removed */
-
 /* Footer Bottom */
 .footer-bottom {
     display: flex;
@@ -148,6 +155,7 @@
 .footer-bottom p {
     color: rgba(255, 255, 255, 0.6);
     margin: 0;
+    text-align: center;
 }
 
 .footer-social {
@@ -188,9 +196,40 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .footer {
+        padding: 40px 0 20px;
+    }
+
     .footer-content {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 30px;
+        text-align: center;
+    }
+
+    .footer-section {
+        align-items: center;
+    }
+
+    .footer-section h3 {
+        align-self: center;
+    }
+
+    .footer-section h3::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .footer-contact-list {
+        align-items: center;
+    }
+
+    .footer-contact-item {
+        justify-content: center;
+    }
+
+    .footer-section a {
+        text-align: center;
+        align-self: center;
     }
 
     .footer-bottom {
@@ -205,10 +244,6 @@
 }
 
 @media (max-width: 480px) {
-    .footer {
-        padding: 40px 0 20px;
-    }
-
     .footer-content {
         grid-template-columns: 1fr;
         gap: 25px;
@@ -216,6 +251,11 @@
 
     .footer-section {
         text-align: center;
+        align-items: center;
+    }
+
+    .footer-section h3 {
+        align-self: center;
     }
 
     .footer-section h3::after {
@@ -223,7 +263,12 @@
         transform: translateX(-50%);
     }
 
-    .contact-item {
+    .footer-contact-list {
+        align-items: center;
+        width: 100%;
+    }
+
+    .footer-contact-item {
         justify-content: center;
     }
 
@@ -231,4 +276,5 @@
         width: 40px;
         height: 40px;
         font-size: 1rem;
-    } }
+    }
+}
