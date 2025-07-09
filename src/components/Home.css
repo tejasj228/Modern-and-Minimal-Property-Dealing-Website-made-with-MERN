@@ -1,4 +1,4 @@
-/* Home.css - Fixed hover animations */
+/* Home.css - Complete file with enhanced animations */
 
 /* Hero Section with Slideshow */
 .hero {
@@ -28,11 +28,13 @@
     background-size: cover;
     background-position: center;
     opacity: 0;
-    transition: opacity 1.5s ease-in-out;
+    transform: scale(1.1);
+    transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .slide.active {
     opacity: 1;
+    transform: scale(1);
 }
 
 .slide::after {
@@ -46,13 +48,15 @@
     z-index: 1;
 }
 
+/* Enhanced Hero Section Animations */
 .hero-content {
     position: relative;
     z-index: 10;
     max-width: 800px;
     text-align: center;
     color: var(--text-white);
-    animation: fadeInUp 1s ease;
+    opacity: 0;
+    animation: heroContentReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
 }
 
 .hero h1 {
@@ -61,7 +65,9 @@
     color: var(--text-white);
     font-weight: 700;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    animation: slideInLeft 1s ease 0.3s both;
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+    animation: titleReveal 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s forwards;
 }
 
 .hero p {
@@ -69,16 +75,59 @@
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 30px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    animation: slideInRight 1s ease 0.6s both;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: subtitleReveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s forwards;
 }
 
 .cta-buttons {
     display: flex;
     gap: 20px;
     justify-content: center;
-    animation: fadeIn 1s ease 0.9s both;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: buttonsReveal 1s cubic-bezier(0.34, 1.56, 0.64, 1) 1.3s forwards;
 }
 
+.cta-buttons .btn {
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+    animation: buttonPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cta-buttons .btn:first-child {
+    animation-delay: 1.5s;
+}
+
+.cta-buttons .btn:last-child {
+    animation-delay: 1.7s;
+}
+
+/* Enhanced Button Hover Effects */
+.cta-buttons .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cta-buttons .btn:hover::before {
+    left: 100%;
+}
+
+.cta-buttons .btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Slide Indicators Enhanced Animation */
 .slide-indicators {
     position: absolute;
     bottom: 30px;
@@ -87,6 +136,8 @@
     display: flex;
     gap: 15px;
     z-index: 20;
+    opacity: 0;
+    animation: indicatorsReveal 0.8s ease 2s forwards;
 }
 
 .indicator {
@@ -95,12 +146,38 @@
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    opacity: 0;
+    transform: scale(0.5);
+    animation: indicatorPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.indicator:nth-child(1) {
+    animation-delay: 2.1s;
+}
+
+.indicator:nth-child(2) {
+    animation-delay: 2.2s;
+}
+
+.indicator:nth-child(3) {
+    animation-delay: 2.3s;
+}
+
+.indicator:nth-child(4) {
+    animation-delay: 2.4s;
 }
 
 .indicator.active {
     background: var(--text-white);
+    transform: scale(1.3);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.indicator:hover {
     transform: scale(1.2);
+    background: rgba(255, 255, 255, 0.8);
 }
 
 /* Why Choose Us Section */
@@ -336,7 +413,6 @@ body.dark-mode .main-area-card:hover {
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
-    /* FIXED: Ensure proper positioning for transform */
     transform-origin: center;
 }
 
@@ -347,7 +423,6 @@ body:not(.dark-mode) .sub-area-card {
 }
 
 .sub-area-card:hover {
-    /* FIXED: Centered hover transform */
     transform: translateY(-5px);
     box-shadow: 0 10px 25px var(--shadow-light);
     border-color: var(--accent-color);
@@ -435,7 +510,109 @@ body:not(.dark-mode) .sub-area-card {
     box-shadow: 0 6px 20px rgba(26, 26, 26, 0.4);
 }
 
-/* Animation classes */
+/* Keyframe Animations */
+@keyframes heroContentReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes titleReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+        filter: blur(10px);
+    }
+
+    60% {
+        transform: translateY(-5px) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0px);
+    }
+}
+
+@keyframes subtitleReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(5px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0px);
+    }
+}
+
+@keyframes buttonsReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes buttonPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+
+    70% {
+        transform: scale(1.05) translateY(-3px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes indicatorsReveal {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes indicatorPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    70% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Removed floating animation and glow effect for better performance */
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -509,18 +686,19 @@ body:not(.dark-mode) .sub-area-card {
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero {
-        height: calc(100vh - 60px);
-        /* Account for mobile header */
-        margin-top: 60px;
-        /* Push down by mobile header height */
+        height: 100vh;
+        margin-top: 0;
+        padding-top: 0;
     }
 
     .hero h1 {
         font-size: 2.5rem;
+        animation-duration: 0.8s;
     }
 
     .hero p {
         font-size: 1.1rem;
+        animation-duration: 0.6s;
     }
 
     .section-title h2 {
@@ -543,88 +721,13 @@ body:not(.dark-mode) .sub-area-card {
     .cta-buttons {
         flex-direction: column;
         align-items: center;
-    }
-
-    /* FIXED: Better mobile hover for sub-area cards */
-    .sub-area-card:hover {
-        transform: translateY(-2px);
-    }
-}
-
-@media (max-width: 480px) {
-    .hero {
-        height: calc(100vh - 60px);
-        margin-top: 60px;
-    }
-
-    .hero h1 {
-        font-size: 2rem;
-    }
-
-    .hero p {
-        font-size: 1rem;
-    }
-
-    .section-title h2 {
-        font-size: 1.8rem;
-    }
-
-    .main-area-header h3 {
-        font-size: 1.4rem;
-    }
-
-    .sub-areas-grid {
-        grid-template-columns: 1fr;
         gap: 15px;
     }
 
-    /* FIXED: Disable transform on very small screens */
-    .sub-area-card:hover {
-        transform: none;
-    }
-}
-/* Mobile responsive design - Fixed gap issue */
-@media (max-width: 768px) {
-    .hero {
-        height: 100vh;
-        /* Full viewport height */
-        margin-top: 0;
-        /* Remove margin-top */
-        padding-top: 0;
-        /* Remove padding-top */
+    .cta-buttons .btn:hover {
+        transform: translateY(-2px) scale(1.02);
     }
 
-    .hero h1 {
-        font-size: 2.5rem;
-    }
-
-    .hero p {
-        font-size: 1.1rem;
-    }
-
-    .section-title h2 {
-        font-size: 2rem;
-    }
-
-    .features-grid,
-    .sub-areas-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .main-area-card {
-        padding: 25px;
-    }
-
-    .main-area-header h3 {
-        font-size: 1.6rem;
-    }
-
-    .cta-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* FIXED: Better mobile hover for sub-area cards */
     .sub-area-card:hover {
         transform: translateY(-2px);
     }
@@ -633,18 +736,14 @@ body:not(.dark-mode) .sub-area-card {
     .why-choose-us,
     .areas-section {
         padding-top: 100px;
-        /* Keep padding for other sections */
     }
 }
 
 @media (max-width: 480px) {
     .hero {
         height: 100vh;
-        /* Full viewport height */
         margin-top: 0;
-        /* Remove margin-top */
         padding-top: 0;
-        /* Remove padding-top */
     }
 
     .hero h1 {
@@ -653,6 +752,10 @@ body:not(.dark-mode) .sub-area-card {
 
     .hero p {
         font-size: 1rem;
+    }
+
+    .hero-content {
+        animation-duration: 1s;
     }
 
     .section-title h2 {
@@ -668,7 +771,10 @@ body:not(.dark-mode) .sub-area-card {
         gap: 15px;
     }
 
-    /* FIXED: Disable transform on very small screens */
+    .cta-buttons .btn:hover {
+        transform: none;
+    }
+
     .sub-area-card:hover {
         transform: none;
     }

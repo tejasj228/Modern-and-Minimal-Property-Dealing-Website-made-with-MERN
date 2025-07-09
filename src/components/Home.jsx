@@ -8,6 +8,7 @@ const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSubArea, setSelectedSubArea] = useState(null);
+  const [cardPosition, setCardPosition] = useState(null);
   const navigate = useNavigate();
 
   // Slideshow auto-advance
@@ -43,7 +44,24 @@ const Home = () => {
     setCurrentSlide(index);
   };
 
-  const handleSubAreaClick = (areaKey, subArea) => {
+  const handleSubAreaClick = (areaKey, subArea, event) => {
+    console.log('🎯 Card clicked - capturing position');
+    
+    // Get the clicked card element
+    const cardElement = event.currentTarget;
+    const rect = cardElement.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // Calculate the absolute position of the card
+    const cardAbsolutePosition = {
+      y: rect.top + scrollTop - 100, // Offset a bit above the card for better view
+      x: rect.left,
+      element: cardElement
+    };
+    
+    console.log('📍 Card position captured:', cardAbsolutePosition);
+    setCardPosition(cardAbsolutePosition);
+    
     const areaData = areas[areaKey];
     const subAreaData = {
       ...subArea,
@@ -57,10 +75,15 @@ const Home = () => {
   };
 
   const handleCloseModal = () => {
+    console.log('🔒 Closing modal - position will be restored');
     setIsModalOpen(false);
     // Clear selected subarea after modal closes
     setTimeout(() => {
       setSelectedSubArea(null);
+      // Clear card position after a delay to ensure modal is fully closed
+      setTimeout(() => {
+        setCardPosition(null);
+      }, 1000);
     }, 300);
   };
 
@@ -152,7 +175,7 @@ const Home = () => {
                     <div
                       key={subArea.id}
                       className="sub-area-card"
-                      onClick={() => handleSubAreaClick(key, subArea)}
+                      onClick={(event) => handleSubAreaClick(key, subArea, event)}
                     >
                       <div className="sub-area-image"></div>
                       <div className="sub-area-content">
@@ -181,6 +204,7 @@ const Home = () => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         subArea={selectedSubArea}
+        cardPosition={cardPosition}
         onViewProperties={(areaKey) => {
           handleCloseModal();
           handleViewListings(areaKey);

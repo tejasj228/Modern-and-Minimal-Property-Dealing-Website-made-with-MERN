@@ -7,6 +7,7 @@ import Contact from './components/Contact';
 import Listings from './components/Listings';
 import Properties from './components/Properties';
 import PageTransition from './components/PageTransition';
+import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           </Routes>
         </main>
         <Footer />
+        <ScrollToTop />
       </div>
     </Router>
   );

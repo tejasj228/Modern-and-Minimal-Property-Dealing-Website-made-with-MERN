@@ -328,8 +328,13 @@
     border-color: var(--accent-color);
 }
 
-/* Responsive Design */
+/* Responsive Design - Fixed mobile header spacing */
 @media (max-width: 768px) {
+    .properties-page {
+        padding: 140px 0 60px;
+        /* Increased top padding from 120px to 140px */
+    }
+
     .properties-grid {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -337,6 +342,8 @@
 
     .filter-section {
         padding: 20px;
+        margin: 20px 0;
+        /* Added margin for more spacing */
     }
 
     .area-filters {
@@ -369,15 +376,36 @@
     .btn-small {
         padding: 10px 15px;
     }
+
+    /* Additional spacing for section title */
+    .section-title {
+        margin-top: 20px;
+        /* Added extra margin at top */
+        margin-bottom: 40px;
+        /* Increased bottom margin */
+    }
+
+    .section-title h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        /* Increased margin */
+    }
+
+    .section-title p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
 }
 
 @media (max-width: 480px) {
     .properties-page {
-        padding: 100px 0 60px;
+        padding: 120px 0 60px;
+        /* Increased top padding from 100px to 120px */
     }
 
     .filter-section {
-        margin: 20px 0;
+        margin: 25px 0;
+        /* Increased margin */
         padding: 15px;
     }
 
@@ -426,5 +454,17 @@
 
     .no-properties-content h3 {
         font-size: 1.3rem;
+    }
+
+    /* Additional spacing for very small screens */
+    .section-title {
+        margin-top: 25px;
+        /* Even more spacing */
+        margin-bottom: 35px;
+    }
+
+    .section-title h2 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
     }
 }

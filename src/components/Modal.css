@@ -20,7 +20,8 @@
     background: var(--bg-white);
     border-radius: 12px;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
+    /* Increased from 1200px */
     max-height: calc(100vh - 40px);
     height: auto;
     min-height: 500px;
@@ -148,6 +149,9 @@
 
 .modal-button {
     margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .modal-button .btn {
@@ -155,9 +159,31 @@
     justify-content: center;
 }
 
-/* Prevent body scroll when modal is open - Simple overflow hidden */
+.modal-map-btn {
+    background: transparent !important;
+    color: var(--accent-color) !important;
+    border: 2px solid var(--accent-color) !important;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-map-btn:hover {
+    background: var(--accent-color) !important;
+    color: var(--text-white) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3);
+}
+
+/* Body modal styles - prevent any CSS conflicts */
 body.modal-open {
-    overflow: hidden !important;
+    /* Let JavaScript handle all positioning */
 }
 
 /* Dark mode adjustments */
@@ -181,7 +207,53 @@ body.modal-open {
     color: var(--accent-color);
 }
 
+/* Dark mode map button */
+.dark-mode .modal-map-btn {
+    color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    background: transparent !important;
+}
+
+.dark-mode .modal-map-btn:hover {
+    background: var(--accent-color) !important;
+    color: #1a1a1a !important;
+}
+
 /* Responsive Design */
+@media (min-width: 769px) {
+
+    /* Desktop: Side by side buttons */
+    .modal-button {
+        flex-direction: row;
+        gap: 15px;
+    }
+
+    .modal-button .btn {
+        flex: 1;
+    }
+}
+
+@media (max-width: 1440px) {
+    .modal-content {
+        max-width: 95%;
+        height: auto;
+        min-height: 80vh;
+        max-height: calc(100vh - 40px);
+    }
+
+    .modal-left {
+        flex: 0 0 60%;
+    }
+
+    .modal-right {
+        padding: 30px;
+    }
+
+    .modal-right h2 {
+        font-size: 1.8rem;
+    }
+}
+
 @media (max-width: 1024px) {
     .modal-content {
         max-width: 95%;
