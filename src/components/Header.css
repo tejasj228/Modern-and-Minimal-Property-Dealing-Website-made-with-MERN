@@ -588,3 +588,155 @@ body.modal-open .navbar {
     .properties-page {
         padding-top: 60px;
     } }
+
+        /* Responsive navbar improvements */
+        @media (max-width: 1200px) {
+            .nav-container {
+                width: 95%;
+                max-width: none;
+            }
+    
+            .navbar {
+                padding: 12px 25px;
+            }
+    
+            .nav-links {
+                gap: 25px;
+            }
+    
+            .search-box {
+                width: 250px;
+            }
+        }
+    
+        @media (max-width: 1024px) {
+            .nav-container {
+                width: 98%;
+            }
+    
+            .navbar {
+                padding: 10px 20px;
+            }
+    
+            .logo {
+                font-size: 1.3rem;
+            }
+    
+            .nav-links {
+                gap: 20px;
+            }
+    
+            .nav-links a {
+                font-size: 0.9rem;
+                padding: 8px 0;
+            }
+    
+            .search-box {
+                width: 200px;
+                padding: 10px 40px 10px 15px;
+                font-size: 13px;
+            }
+    
+            .theme-toggle {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    
+        @media (max-width: 900px) {
+            .nav-container {
+                display: none;
+                /* Hide desktop nav completely */
+            }
+    
+            .mobile-header {
+                display: flex !important;
+            }
+        }
+    
+        /* Mobile header improvements */
+        @media (max-width: 768px) {
+            .mobile-header {
+                height: 70px;
+                /* Increased height */
+                padding: 0 25px;
+                /* More padding */
+                box-shadow: 0 4px 15px var(--shadow-light);
+            }
+    
+            .mobile-hamburger {
+                font-size: 1.6rem;
+                padding: 10px;
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+            }
+    
+            .mobile-logo {
+                font-size: 1.4rem;
+                font-weight: 700;
+                flex: 1;
+                text-align: center;
+                margin: 0 15px;
+            }
+    
+            .mobile-theme-toggle {
+                width: 50px;
+                height: 50px;
+                border-radius: 12px;
+                font-size: 1.2rem;
+                border: 2px solid var(--border-light);
+            }
+        }
+    
+        @media (max-width: 480px) {
+            .mobile-header {
+                height: 65px;
+                padding: 0 20px;
+            }
+    
+            .mobile-hamburger {
+                font-size: 1.5rem;
+                width: 45px;
+                height: 45px;
+            }
+    
+            .mobile-logo {
+                font-size: 1.2rem;
+                margin: 0 10px;
+            }
+    
+            .mobile-theme-toggle {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+        }
+    
+        @media (max-width: 360px) {
+            .mobile-header {
+                height: 60px;
+                padding: 0 15px;
+            }
+    
+            .mobile-hamburger {
+                font-size: 1.4rem;
+                width: 40px;
+                height: 40px;
+            }
+    
+            .mobile-logo {
+                font-size: 1.1rem;
+                margin: 0 8px;
+            }
+    
+            .mobile-theme-toggle {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+        
