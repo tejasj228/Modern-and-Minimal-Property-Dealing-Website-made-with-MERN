@@ -33,17 +33,17 @@ const Contact = () => {
     {
       icon: 'fas fa-envelope',
       title: 'Email Us',
-      content: 'shivaassociates.com@gmail.com'
+      content: 'pawan127jitendra@gmail.com'
     },
     {
       icon: 'fas fa-phone',
       title: 'Call Us',
-      content: '+91-9999090047'
+      content: '+91-9811186086\n+91-9811186083'
     },
     {
       icon: 'fas fa-map-marker-alt',
       title: 'Visit Us',
-      content: 'Noida, Uttar Pradesh, India'
+      content: 'S-1 Skytech Matrott Market\nSector-76, Noida (U.P) 201307'
     },
     {
       icon: 'fas fa-clock',

@@ -25,6 +25,12 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
+    // Immediately reset transparency state based on current page
+    if (location.pathname !== '/') {
+      setIsTransparent(false);
+      return;
+    }
+
     let raf;
     let timeout;
     const handleScroll = () => {
@@ -101,7 +107,7 @@ const Header = () => {
             <i className="fas fa-bars"></i>
           </button>
           <Link to="/" className="mobile-logo">
-            Shiva Associates
+            Pawan Buildhome
           </Link>
           <button 
             className="mobile-theme-toggle" 
@@ -115,7 +121,7 @@ const Header = () => {
         {/* Mobile Sidebar */}
         <div className={`mobile-sidebar ${isMenuOpen ? 'open' : ''}`}>
           <div className="mobile-sidebar-header">
-            <h3>Shiva Associates</h3>
+            <h3>Pawan Buildhome</h3>
             <button className="sidebar-close" onClick={toggleMenu}>
               <i className="fas fa-times"></i>
             </button>
@@ -190,7 +196,7 @@ const Header = () => {
     <div className={`nav-container${isTransparent ? ' transparent' : ''}`}>
       <nav className={`navbar${isTransparent ? ' transparent navbar--over-hero' : ''}`}>
         <Link to="/" className="logo">
-          Shiva Associates
+          Pawan Buildhome
         </Link>
 
         <ul className="nav-links">
@@ -211,13 +217,13 @@ const Header = () => {
               Properties
             </a>
             <div className="dropdown">
-              <a href="#" onClick={() => handleAreaClick('central-noida')}>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleAreaClick('central-noida'); }}>
                 Central Noida Properties
               </a>
-              <a href="#" onClick={() => handleAreaClick('noida-expressway')}>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleAreaClick('noida-expressway'); }}>
                 Expressway Properties
               </a>
-              <a href="#" onClick={() => handleAreaClick('yamuna-expressway')}>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleAreaClick('yamuna-expressway'); }}>
                 Yamuna Expressway Properties
               </a>
             </div>

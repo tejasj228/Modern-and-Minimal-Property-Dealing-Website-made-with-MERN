@@ -154,6 +154,11 @@
     gap: 15px;
 }
 
+.modal-button .btn,
+.modal-map-btn {
+    font-weight: bold !important;
+}
+
 .modal-button .btn {
     width: 100%;
     justify-content: center;

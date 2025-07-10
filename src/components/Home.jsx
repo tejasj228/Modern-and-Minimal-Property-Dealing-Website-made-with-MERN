@@ -106,7 +106,7 @@ const Home = () => {
         />
         <div className="hero-content">
           <h1>Premium Real Estate Solutions</h1>
-          <p>Discover your dream property with Shiva Associates - Your trusted partner in real estate excellence</p>
+          <p>Discover your dream property with Pawan Buildhome - Your trusted partner in real estate excellence</p>
           <div className="cta-buttons">
             <button onClick={scrollToAreas} className="btn btn-primary">
               Explore Areas
@@ -122,7 +122,7 @@ const Home = () => {
       <section className="why-choose-us scroll-reveal">
         <div className="container">
           <div className="section-title">
-            <h2>Why Choose Shiva Associates?</h2>
+            <h2>Why Choose Pawan Buildhome?</h2>
             <p>Experience excellence in real estate with our premium services and expertise</p>
           </div>
           <div className="features-grid">

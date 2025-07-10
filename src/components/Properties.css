@@ -1,9 +1,13 @@
 /* Properties Page */
 .properties-page {
     padding: 120px 0 80px;
-    background: #1a1a1a; /* Changed to match Contact page */
+    background: var(--bg-light); /* Use variable for light mode */
     min-height: 100vh;
     transition: all 0.5s ease;
+}
+
+.dark-mode .properties-page {
+    background: #0d0d0d; /* Match contact page */
 }
 
 /* Filter Section */
@@ -278,10 +282,6 @@
 }
 
 /* Dark mode adjustments */
-.dark-mode .properties-page {
-    background: #0d0d0d; /* Match contact page */
-}
-
 .dark-mode .property-card {
     background: var(--bg-card);
     border: 1px solid #2a2a2a; /* Much darker border */

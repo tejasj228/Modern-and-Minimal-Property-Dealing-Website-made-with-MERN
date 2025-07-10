@@ -797,3 +797,55 @@ body:not(.dark-mode) .sub-area-card {
     z-index: 3;
     position: relative;
 }
+/* Home Page Button Color Fixes - Add this to Home.css */
+
+/* Hero Section Button Colors */
+.cta-buttons .btn:first-child {
+    background: var(--accent-color) !important;
+    color: #1a1a1a !important;
+    border: 2px solid var(--accent-color) !important;
+}
+
+.cta-buttons .btn:first-child:hover {
+    background: #d4a915 !important;
+    color: #1a1a1a !important;
+    border-color: #d4a915 !important;
+}
+
+.cta-buttons .btn:last-child {
+    background: transparent !important;
+    color: var(--text-white) !important;
+    border: 2px solid var(--text-white) !important;
+}
+
+.cta-buttons .btn:last-child:hover {
+    background: var(--text-white) !important;
+    color: var(--accent-color) !important;
+    border-color: var(--text-white) !important;
+}
+
+/* Property Area Button Colors */
+.view-all-properties-btn {
+    background: #d79e0c !important;
+    color: var(--text-black) !important;
+    border: 2px solid rgba(255, 196, 0, 0.863)important;
+}
+
+.view-all-properties-btn:hover {
+    background: #ffb700 !important;
+    color: var(--text-black) !important;
+    border-color: #B8860B !important;
+}
+
+/* Dark Mode Adjustments */
+.dark-mode .view-all-properties-btn {
+    background: #B8860B !important;
+    color: #1a1a1a !important;
+    border: 2px solid rgba(201, 155, 1, 0.863)important;
+}
+
+.dark-mode .view-all-properties-btn:hover {
+    background: rgb(212, 162, 0) !important;
+    color: #1a1a1a !important;
+    border-color: rgb(255, 196, 0) !important;
+}

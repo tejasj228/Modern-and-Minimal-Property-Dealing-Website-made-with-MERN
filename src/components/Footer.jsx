@@ -31,7 +31,7 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-section">
-            <h3>Shiva Associates</h3>
+            <h3>Pawan Buildhome</h3>
             <p>
               Your trusted partner in real estate excellence. We provide premium 
               property solutions across key locations in NCR.
@@ -43,15 +43,19 @@ const Footer = () => {
             <div className="footer-contact-list">
               <div className="footer-contact-item">
                 <i className="fas fa-envelope"></i>
-                <span>shivaassociates.com@gmail.com</span>
+                <span>pawan127jitendra@gmail.com</span>
               </div>
               <div className="footer-contact-item">
                 <i className="fas fa-phone"></i>
-                <span>+91-9999090047</span>
+                <span>+91-9811186086</span>
+              </div>
+              <div className="footer-contact-item">
+                <i className="fas fa-phone"></i>
+                <span>+91-9811186083</span>
               </div>
               <div className="footer-contact-item">
                 <i className="fas fa-map-marker-alt"></i>
-                <span>Noida, Uttar Pradesh</span>
+                <span>S-1 Skytech Matrott Market, Sector-76, Noida (U.P) 201307</span>
               </div>
             </div>
           </div>
@@ -83,20 +87,14 @@ const Footer = () => {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; 2025 Shiva Associates. All rights reserved.</p>
+          <p>&copy; 2025 Pawan Buildhome. All rights reserved.</p>
           <div className="footer-social">
             <span>Follow us:</span>
             <div className="social-icons">
               <a href="#" aria-label="Facebook">
                 <i className="fab fa-facebook-f"></i>
               </a>
-              <a href="#" aria-label="Twitter">
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a href="#" aria-label="LinkedIn">
-                <i className="fab fa-linkedin-in"></i>
-              </a>
-              <a href="#" aria-label="Instagram">
+              <a href="https://www.instagram.com/pawan.buildhome?igsh=MXNib2M3NmdlcDdlZQ%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <i className="fab fa-instagram"></i>
               </a>
             </div>
