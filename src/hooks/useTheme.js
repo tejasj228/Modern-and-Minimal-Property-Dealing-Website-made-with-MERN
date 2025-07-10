@@ -22,6 +22,7 @@ export const useTheme = () => {
       
       if (isDarkMode) {
         document.body.classList.add('dark-mode');
+        document.body.classList.add('theme-override'); // Add override class
         document.documentElement.style.setProperty('--theme-transition', 'all 0.3s ease');
         
         // Update navbar styles for dark mode
@@ -43,6 +44,7 @@ export const useTheme = () => {
         }
       } else {
         document.body.classList.remove('dark-mode');
+        document.body.classList.add('theme-override'); // Add override class
         
         // Update navbar styles for light mode
         if (navbar && !navbar.classList.contains('transparent')) {
@@ -66,11 +68,6 @@ export const useTheme = () => {
 
     updateTheme();
     
-    // Save theme preference (only when user manually changes it)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-    }
-
     // Add scroll listener for navbar
     const handleScroll = () => {
       updateTheme();
@@ -85,6 +82,8 @@ export const useTheme = () => {
       const savedTheme = localStorage.getItem('theme');
       if (!savedTheme) {
         setIsDarkMode(e.matches);
+        // Don't add theme-override class when following system
+        document.body.classList.remove('theme-override');
       }
     };
     
@@ -97,7 +96,13 @@ export const useTheme = () => {
   }, [isDarkMode]);
 
   const toggleTheme = () => {
-    setIsDarkMode(prev => !prev);
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    
+    // Save theme preference when user manually toggles
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    }
     
     // Add smooth transition effect
     document.body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
@@ -109,6 +114,7 @@ export const useTheme = () => {
   // Function to reset to system preference
   const resetToSystemTheme = () => {
     localStorage.removeItem('theme');
+    document.body.classList.remove('theme-override');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setIsDarkMode(systemPrefersDark);
   };
