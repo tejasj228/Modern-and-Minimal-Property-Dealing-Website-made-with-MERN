@@ -1,6 +1,6 @@
 /* Home.css - Complete file with enhanced animations */
 
-/* Hero Section with Slideshow */
+/* Hero Section */
 .hero {
     height: 100vh;
     position: relative;
@@ -8,44 +8,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.slideshow-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-}
-
-.slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    transform: scale(1.1);
-    transition: all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.slide.active {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.slide::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(26, 26, 26, 0.6);
-    z-index: 1;
 }
 
 /* Enhanced Hero Section Animations */
@@ -96,6 +58,7 @@
     transform: scale(0.8) translateY(20px);
     animation: buttonPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-weight: bold;
 }
 
 .cta-buttons .btn:first-child {

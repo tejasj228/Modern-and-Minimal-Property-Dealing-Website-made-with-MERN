@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { slides, features, areas } from '../data/data';
+import { features, areas } from '../data/data';
 import Modal from './Modal';
 import ImageSlider from './ImageSlider';
 import './Home.css';
 
 const Home = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSubArea, setSelectedSubArea] = useState(null);
   const [cardPosition, setCardPosition] = useState(null);
   const navigate = useNavigate();
-
-  // Slideshow auto-advance
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   // Scroll reveal animation
   useEffect(() => {
@@ -40,10 +30,6 @@ const Home = () => {
 
     return () => window.removeEventListener('scroll', revealElements);
   }, []);
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
 
   const handleSubAreaClick = (areaKey, subArea, event) => {
     console.log('🎯 Card clicked - capturing position');
@@ -101,7 +87,6 @@ const Home = () => {
       {/* Hero Section with Video */}
       <section className="hero">
       <div className="hero-video-overlay"></div>
-        {/* Replace slideshow with video */}
         <video
           className="hero-video"
           src="/assets/video.mp4"
@@ -131,7 +116,6 @@ const Home = () => {
             </button>
           </div>
         </div>
-        {/* Remove slide indicators if not needed */}
       </section>
 
       {/* Why Choose Us Section */}
