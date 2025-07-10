@@ -78,6 +78,15 @@
     z-index: 100;
 }
 
+/* Transparent navbar for hero section */
+.nav-container.transparent,
+.navbar.transparent {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    transition: background 0.3s, box-shadow 0.3s, border 0.3s;
+}
+
 /* Enhanced light mode styling for better contrast */
 body:not(.dark-mode) .navbar {
     background: rgba(245, 245, 245, 0.98);
@@ -739,4 +748,37 @@ body.modal-open .navbar {
                 font-size: 1rem;
             }
         }
-        
+
+        /* Make navbar text white when over hero/video */
+.navbar--over-hero,
+.navbar--over-hero .logo,
+.navbar--over-hero .nav-links a,
+.navbar--over-hero .nav-links a.active {
+    color: #fff !important;
+}
+
+.navbar--over-hero .nav-links a:hover,
+.navbar--over-hero .nav-links a.active {
+    color: var(--accent-color) !important;
+}
+
+.navbar--over-hero .theme-toggle,
+.navbar--over-hero .search-box {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border-color: rgba(255,255,255,0.3);
+}
+
+.navbar--over-hero .search-box::placeholder {
+    color: #eee;
+}
+
+/* Make dropdown links mustard when navbar is transparent */
+.navbar--over-hero .dropdown a {
+    color: var(--accent-color) !important;
+}
+
+.navbar--over-hero .dropdown a:hover {
+    color: #fff !important;
+    background: var(--accent-color) !important;
+}

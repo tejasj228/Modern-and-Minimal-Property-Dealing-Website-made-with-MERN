@@ -1,3 +1,12 @@
+/* Font Face Declaration */
+@font-face {
+  font-family: 'Gilmer Light';
+  src: url('./fonts/gilmer-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Reset and base styles */
 * {
   margin: 0;
@@ -24,6 +33,10 @@
   --shadow-medium: rgba(44, 62, 80, 0.15);
   --shadow-dark: rgba(44, 62, 80, 0.25);
 
+  /* Font variables */
+  --primary-font: 'Gilmer Light', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --secondary-font: 'Gilmer Light', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
   /* Transition variables */
   --theme-transition: all 0.3s ease;
   --hover-transition: all 0.3s ease;
@@ -31,31 +44,91 @@
 }
 
 /* Dark mode variables */
+/* Dark mode variables - All Greys Made Darker */
+/* Dark mode variables - All Greys Made Darker */
 .dark-mode {
   --primary-color: #e8e8e8;
   --secondary-color: #cccccc;
   --accent-color: #B8860B;
   --text-dark: #e8e8e8;
-  --text-light: #b0b0b0;
+  --text-light: #a0a0a0;
+  /* Made darker from #b0b0b0 */
   --text-white: #ffffff;
-  --bg-light: #1a1a1a;
-  --bg-white: #2a2a2a;
-  --bg-card: #2a2a2a;
-  --bg-subcard: #1f1f1f;
-  --border-light: #404040;
-  --shadow-light: rgba(0, 0, 0, 0.3);
-  --shadow-medium: rgba(0, 0, 0, 0.4);
-  --shadow-dark: rgba(0, 0, 0, 0.6);
+  --bg-light: #0f0f0f;
+  /* Made much darker from #1a1a1a */
+  --bg-white: #1a1a1a;
+  /* Made darker from #2a2a2a */
+  --bg-card: #1a1a1a;
+  /* Made darker from #2a2a2a */
+  --bg-subcard: #121212;
+  /* Made darker from #1f1f1f */
+  --border-light: #1f1f1f;
+  /* Made much darker from #404040 - subtle borders */
+  --shadow-light: rgba(0, 0, 0, 0.4);
+  /* Made darker from 0.3 */
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+  /* Made darker from 0.4 */
+  --shadow-dark: rgba(0, 0, 0, 0.7);
+  /* Made darker from 0.6 */
 }
 
 /* Global styles */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font);
   line-height: 1.6;
   color: var(--text-dark);
   background: var(--bg-light);
   overflow-x: hidden;
   transition: var(--theme-transition);
+  font-weight: 300;
+}
+
+/* Apply font to all text elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--primary-font);
+  font-weight: 300;
+}
+
+p,
+span,
+div,
+a,
+button,
+input,
+textarea,
+select {
+  font-family: var(--primary-font);
+}
+
+/* Adjust font weights for better hierarchy */
+h1 {
+  font-weight: 600;
+}
+
+h2 {
+  font-weight: 500;
+}
+
+h3,
+h4 {
+  font-weight: 400;
+}
+
+/* Button font weight adjustment */
+.btn {
+  font-family: var(--primary-font);
+  font-weight: 400;
+}
+
+/* Navigation font weight */
+.nav-links a {
+  font-family: var(--primary-font);
+  font-weight: 400;
 }
 
 /* Smooth transitions for all elements */
@@ -222,13 +295,14 @@ body {
   border: none;
   border-radius: 8px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: var(--hover-transition);
   text-decoration: none;
   display: inline-block;
   position: relative;
   overflow: hidden;
+  font-family: var(--primary-font);
 }
 
 .btn-primary {
@@ -383,5 +457,21 @@ select:focus {
 
   .loading-spinner {
     animation: none;
+  }
+}
+
+/* Font loading optimization */
+.font-loading body {
+  visibility: hidden;
+}
+
+.font-loaded body {
+  visibility: visible;
+}
+
+/* Fallback for font loading */
+@media (prefers-reduced-data: reduce) {
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 }

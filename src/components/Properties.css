@@ -1,7 +1,7 @@
 /* Properties Page */
 .properties-page {
     padding: 120px 0 80px;
-    background: var(--bg-white);
+    background: #1a1a1a; /* Changed to match Contact page */
     min-height: 100vh;
     transition: all 0.5s ease;
 }
@@ -278,9 +278,13 @@
 }
 
 /* Dark mode adjustments */
+.dark-mode .properties-page {
+    background: #0d0d0d; /* Match contact page */
+}
+
 .dark-mode .property-card {
     background: var(--bg-card);
-    border-color: #404040;
+    border: 1px solid #2a2a2a; /* Much darker border */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
@@ -291,11 +295,11 @@
 
 .dark-mode .filter-section {
     background: var(--bg-card);
-    border-color: #404040;
+    border: 1px solid #2a2a2a; /* Much darker border */
 }
 
 .dark-mode .filter-btn {
-    border-color: #404040;
+    border: 1px solid #2a2a2a; /* Much darker border */
     background: var(--bg-white);
     color: var(--text-dark);
 }
@@ -319,7 +323,7 @@
 
 .dark-mode .no-properties-content {
     background: var(--bg-card);
-    border-color: #404040;
+    border: 1px solid #2a2a2a; /* Much darker border */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 

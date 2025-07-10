@@ -177,14 +177,14 @@
 /* Dark mode adjustments */
 .dark-mode .contact-info,
 .dark-mode .contact-form {
-    border-color: #576574;
+    border-color: #333333;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .dark-mode .form-group input,
 .dark-mode .form-group select,
 .dark-mode .form-group textarea {
-    border-color: #576574;
+    border-color: #333333;
     background: var(--bg-card);
 }
 

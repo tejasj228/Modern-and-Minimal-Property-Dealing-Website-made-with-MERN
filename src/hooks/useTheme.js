@@ -24,7 +24,8 @@ export const useTheme = () => {
         document.documentElement.style.setProperty('--theme-transition', 'all 0.3s ease');
         
         // Update navbar styles for dark mode
-        if (navbar) {
+        if (navbar && !navbar.classList.contains('transparent')) {
+          // Only set background if not transparent
           if (window.scrollY > 100) {
             navbar.style.background = 'rgba(26, 26, 26, 0.99)';
             navbar.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.5)';
@@ -43,7 +44,8 @@ export const useTheme = () => {
         document.body.classList.remove('dark-mode');
         
         // Update navbar styles for light mode
-        if (navbar) {
+        if (navbar && !navbar.classList.contains('transparent')) {
+          // Only set background if not transparent
           if (window.scrollY > 100) {
             navbar.style.background = 'rgba(235, 235, 235, 0.99)';
             navbar.style.boxShadow = '0 15px 35px rgba(44, 62, 80, 0.2)';

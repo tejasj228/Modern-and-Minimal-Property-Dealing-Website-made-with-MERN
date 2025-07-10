@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { slides, features, areas } from '../data/data';
 import Modal from './Modal';
+import ImageSlider from './ImageSlider';
 import './Home.css';
 
 const Home = () => {
@@ -97,20 +98,27 @@ const Home = () => {
 
   return (
     <div className="home">
-      {/* Hero Section with Slideshow */}
+      {/* Hero Section with Video */}
       <section className="hero">
-        <div className="slideshow-container">
-          {slides.map((slide, index) => (
-            <div
-              key={slide.id}
-              className={`slide ${index === currentSlide ? 'active' : ''}`}
-              style={{
-                backgroundImage: `linear-gradient(rgba(44, 62, 80, 0.6), rgba(44, 62, 80, 0.6)), url(${slide.image})`
-              }}
-            />
-          ))}
-        </div>
-
+      <div className="hero-video-overlay"></div>
+        {/* Replace slideshow with video */}
+        <video
+          className="hero-video"
+          src="/assets/video.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 1,
+          }}
+        />
         <div className="hero-content">
           <h1>Premium Real Estate Solutions</h1>
           <p>Discover your dream property with Shiva Associates - Your trusted partner in real estate excellence</p>
@@ -123,16 +131,7 @@ const Home = () => {
             </button>
           </div>
         </div>
-
-        <div className="slide-indicators">
-          {slides.map((_, index) => (
-            <div
-              key={index}
-              className={`indicator ${index === currentSlide ? 'active' : ''}`}
-              onClick={() => goToSlide(index)}
-            />
-          ))}
-        </div>
+        {/* Remove slide indicators if not needed */}
       </section>
 
       {/* Why Choose Us Section */}
@@ -153,6 +152,13 @@ const Home = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Image Slider Section */}
+      <section className="slider-section scroll-reveal">
+        <div className="container">
+          <ImageSlider />
         </div>
       </section>
 

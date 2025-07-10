@@ -1,0 +1,99 @@
+/* Continuous Scrolling Image Slider - Full Width */
+.scrolling-slider {
+  width: 100vw;
+  height: 400px;
+  overflow: hidden;
+  position: relative;
+  margin: 60px 0;
+  background: rgba(0, 0, 0, 0.02);
+  margin-left: calc(-50vw + 50%);
+  /* Push to full viewport width */
+}
+
+.scrolling-track {
+  display: flex;
+  width: calc(400% + 100vw);
+  /* Extra wide for seamless scroll */
+  height: 100%;
+  animation: scroll-left 30s linear infinite;
+}
+
+.scrolling-item {
+  flex: 0 0 18vw;
+  /* Each image takes 18% of viewport width */
+  height: 100%;
+  margin-right: 2vw;
+  /* Add 2% spacing between images */
+}
+
+.scrolling-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+  /* Add subtle rounded corners */
+}
+
+/* Continuous scrolling animation */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-25%);
+    /* Adjusted for spacing */
+  }
+}
+
+/* Pause on hover (optional) */
+/* .scrolling-slider:hover .scrolling-track {
+  animation-play-state: paused;
+} */
+
+/* Dark Mode */
+.dark-mode .scrolling-slider {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .scrolling-slider {
+    height: 350px;
+  }
+
+  .scrolling-item {
+    flex: 0 0 22vw;
+    /* 4 images + spacing on smaller screens */
+    margin-right: 2.5vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .scrolling-slider {
+    height: 350px;
+    /* Increased from 280px */
+    margin: 40px 0;
+  }
+
+  .scrolling-item {
+    flex: 0 0 45vw;
+    /* Much larger - 2 images + spacing on mobile */
+    margin-right: 5vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .scrolling-slider {
+    height: 300px;
+    /* Increased from 220px */
+    margin: 30px 0;
+  }
+
+  .scrolling-item {
+    flex: 0 0 70vw;
+    /* Even larger - almost full width per image */
+    margin-right: 8vw;
+  }
+}

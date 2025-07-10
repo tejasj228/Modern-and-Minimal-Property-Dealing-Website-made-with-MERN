@@ -7,6 +7,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobile, setIsMobile] = useState(false);
+  const [isTransparent, setIsTransparent] = useState(true);
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,6 +23,36 @@ const Header = () => {
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    let raf;
+    let timeout;
+    const handleScroll = () => {
+      const hero = document.querySelector('.hero');
+      const heroBottom = hero ? hero.offsetTop + hero.offsetHeight : 0;
+      setIsTransparent(window.scrollY < heroBottom - 80);
+    };
+
+    // Helper to wait for .hero to exist before running handleScroll
+    const runInitialCheck = () => {
+      const hero = document.querySelector('.hero');
+      if (hero) {
+        handleScroll();
+        window.addEventListener('scroll', handleScroll);
+      } else {
+        // Try again after a short delay if .hero not found
+        timeout = setTimeout(runInitialCheck, 50);
+      }
+    };
+
+    raf = requestAnimationFrame(runInitialCheck);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(raf);
+      clearTimeout(timeout);
+    };
+  }, [location.pathname]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -156,8 +187,8 @@ const Header = () => {
 
   // Desktop Navigation
   return (
-    <div className="nav-container">
-      <nav className="navbar">
+    <div className={`nav-container${isTransparent ? ' transparent' : ''}`}>
+      <nav className={`navbar${isTransparent ? ' transparent navbar--over-hero' : ''}`}>
         <Link to="/" className="logo">
           Shiva Associates
         </Link>
