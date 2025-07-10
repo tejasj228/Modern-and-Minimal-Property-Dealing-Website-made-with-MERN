@@ -6,9 +6,10 @@ export const useTheme = () => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme) {
+        // If user has manually set a preference, use that
         return savedTheme === 'dark';
       }
-      // Check system preference if no saved theme
+      // If no saved preference, automatically detect system theme
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
     return false;
@@ -65,7 +66,7 @@ export const useTheme = () => {
 
     updateTheme();
     
-    // Save theme preference
+    // Save theme preference (only when user manually changes it)
     if (typeof window !== 'undefined') {
       localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     }
@@ -77,10 +78,12 @@ export const useTheme = () => {
 
     window.addEventListener('scroll', handleScroll);
     
-    // Listen for system theme changes
+    // Listen for system theme changes and auto-update if user hasn't set a manual preference
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleSystemThemeChange = (e) => {
-      if (!localStorage.getItem('theme')) {
+      // Only auto-update if user hasn't manually set a preference
+      const savedTheme = localStorage.getItem('theme');
+      if (!savedTheme) {
         setIsDarkMode(e.matches);
       }
     };
@@ -103,5 +106,16 @@ export const useTheme = () => {
     }, 300);
   };
 
-  return { isDarkMode, toggleTheme };
+  // Function to reset to system preference
+  const resetToSystemTheme = () => {
+    localStorage.removeItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setIsDarkMode(systemPrefersDark);
+  };
+
+  return { 
+    isDarkMode, 
+    toggleTheme,
+    resetToSystemTheme // Optional: expose this if you want a "reset to system" button
+  };
 };

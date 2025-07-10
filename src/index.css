@@ -475,3 +475,80 @@ select:focus {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 }
+/* System Theme Detection Support - Add this to the TOP of index.css, right after the :root variables */
+
+/* Automatic system theme detection using CSS media queries */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Auto-apply dark theme if system is dark and no manual preference is set */
+    --primary-color: #e8e8e8;
+    --secondary-color: #cccccc;
+    --text-dark: #e8e8e8;
+    --text-light: #a0a0a0;
+    --bg-light: #0f0f0f;
+    --bg-white: #1a1a1a;
+    --bg-card: #1a1a1a;
+    --bg-subcard: #121212;
+    --border-light: #1f1f1f;
+    --shadow-light: rgba(0, 0, 0, 0.4);
+    --shadow-medium: rgba(0, 0, 0, 0.5);
+    --shadow-dark: rgba(0, 0, 0, 0.7);
+  }
+
+  /* Auto-apply dark theme to body */
+  body:not(.theme-override) {
+    background: var(--bg-light);
+    color: var(--text-dark);
+  }
+}
+
+/* Light theme (default) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+    --bg-light: #f5f5f5;
+    --bg-white: #ffffff;
+    --bg-card: #ebebeb;
+    --bg-subcard: #dddddd;
+    --border-light: #ccc;
+    --shadow-light: rgba(44, 62, 80, 0.1);
+    --shadow-medium: rgba(44, 62, 80, 0.15);
+    --shadow-dark: rgba(44, 62, 80, 0.25);
+  }
+}
+
+/* Manual theme overrides (when user clicks the toggle) */
+body.theme-override.dark-mode {
+  /* This will override the system preference */
+  --primary-color: #e8e8e8;
+  --secondary-color: #cccccc;
+  --text-dark: #e8e8e8;
+  --text-light: #a0a0a0;
+  --bg-light: #0f0f0f;
+  --bg-white: #1a1a1a;
+  --bg-card: #1a1a1a;
+  --bg-subcard: #121212;
+  --border-light: #1f1f1f;
+  --shadow-light: rgba(0, 0, 0, 0.4);
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+  --shadow-dark: rgba(0, 0, 0, 0.7);
+}
+
+body.theme-override:not(.dark-mode) {
+  /* Light mode override */
+  --primary-color: #2c3e50;
+  --secondary-color: #34495e;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --bg-light: #f5f5f5;
+  --bg-white: #ffffff;
+  --bg-card: #ebebeb;
+  --bg-subcard: #dddddd;
+  --border-light: #ccc;
+  --shadow-light: rgba(44, 62, 80, 0.1);
+  --shadow-medium: rgba(44, 62, 80, 0.15);
+  --shadow-dark: rgba(44, 62, 80, 0.25);
+}
