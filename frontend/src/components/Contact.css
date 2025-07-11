@@ -1,0 +1,692 @@
+/* Contact Page */
+.contact-page {
+    padding: 120px 0 80px;
+    background: var(--bg-light);
+    min-height: 100vh;
+    transition: all 0.5s ease;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 50px;
+    align-items: start;
+}
+
+.contact-info {
+    background: var(--bg-white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px var(--shadow-light);
+    border: 2px solid var(--border-light);
+    transition: all 0.5s ease;
+}
+
+.contact-info h3 {
+    margin-bottom: 30px;
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.contact-items-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    background: var(--bg-light);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.contact-item:hover {
+    transform: translateX(10px);
+    background: var(--accent-color);
+    color: var(--text-white);
+    border-color: var(--accent-color);
+}
+
+.contact-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    margin-right: 20px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.contact-item-icon i {
+    font-size: 1.2rem;
+    color: var(--text-white);
+}
+
+.contact-item:hover .contact-item-icon {
+    background: var(--text-white);
+}
+
+.contact-item:hover .contact-item-icon i {
+    color: var(--accent-color);
+}
+
+.contact-item-content {
+    flex: 1;
+}
+
+.contact-item h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.contact-item:hover h4 {
+    color: var(--text-white);
+}
+
+.contact-item p {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-line;
+    transition: color 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.contact-item:hover p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.contact-form {
+    background: var(--bg-white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px var(--shadow-light);
+    border: 2px solid var(--border-light);
+    transition: all 0.5s ease;
+}
+
+.contact-form h3 {
+    margin-bottom: 30px;
+    color: var(--accent-color);
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--border-light);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font-family: inherit;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    transform: translateY(-1px);
+}
+
+.submit-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Dark mode adjustments */
+.dark-mode .contact-info,
+.dark-mode .contact-form {
+    border-color: #333333;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .form-group input,
+.dark-mode .form-group select,
+.dark-mode .form-group textarea {
+    border-color: #333333;
+    background: var(--bg-card);
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+    .contact-page {
+        padding: 80px 0 60px;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .contact-info,
+    .contact-form {
+        padding: 25px;
+        margin: 0 10px;
+    }
+
+    .contact-info h3,
+    .contact-form h3 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+
+    .contact-items-wrapper {
+        gap: 15px;
+    }
+
+    .contact-item {
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .contact-item-icon {
+        width: 45px;
+        height: 45px;
+        margin-right: 15px;
+    }
+
+    .contact-item-icon i {
+        font-size: 1.1rem;
+    }
+
+    .contact-item h4 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+
+    .contact-item p {
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .contact-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 6px;
+    }
+
+    .submit-btn {
+        padding: 12px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-page {
+        padding: 70px 0 50px;
+    }
+
+    .contact-info,
+    .contact-form {
+        padding: 20px;
+        margin: 0 5px;
+        border-radius: 10px;
+    }
+
+    .contact-info h3,
+    .contact-form h3 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+
+    .contact-item {
+        padding: 12px;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+
+    .contact-item-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .contact-item-icon i {
+        font-size: 1rem;
+    }
+
+    .contact-item-content {
+        text-align: center;
+    }
+
+    .contact-item h4 {
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+    }
+
+    .contact-item p {
+        font-size: 0.85rem;
+    }
+
+    .contact-item:hover {
+        transform: translateY(-1px);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .form-group textarea {
+        min-height: 100px;
+    }
+
+    .submit-btn {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+
+    .contact-info,
+    .contact-form {
+        padding: 15px;
+        margin: 0;
+    }
+
+    .contact-info h3,
+    .contact-form h3 {
+        font-size: 1.1rem;
+    }
+
+    .contact-item {
+        padding: 10px;
+    }
+
+    .contact-item-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .contact-item-icon i {
+        font-size: 0.9rem;
+    }
+
+    .contact-item h4 {
+        font-size: 0.9rem;
+    }
+
+    .contact-item p {
+        font-size: 0.8rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+/* Add these styles to your existing Contact.css file */
+
+/* Form Messages */
+.form-message {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    animation: slideInDown 0.3s ease;
+}
+
+.form-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.form-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.form-message i {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.form-message p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Form Loading States */
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.submit-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(26, 26, 26, 0.3);
+}
+
+.submit-btn i {
+    margin-right: 8px;
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Form Field Enhancements */
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #f8f9fa;
+}
+
+/* Required Field Indicator */
+.form-group label {
+    position: relative;
+}
+
+/* Validation States */
+.form-group input:invalid,
+.form-group textarea:invalid {
+    border-color: #dc3545;
+}
+
+.form-group input:valid,
+.form-group textarea:valid {
+    border-color: #28a745;
+}
+
+/* Animation for form messages */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Dark Mode Form Messages */
+.dark-mode .form-message.success {
+    background: #1e3a2e;
+    color: #4ade80;
+    border-color: #2d5a3d;
+}
+
+.dark-mode .form-message.error {
+    background: #3a1e1e;
+    color: #f87171;
+    border-color: #5a2d2d;
+}
+
+.dark-mode .form-group input:disabled,
+.dark-mode .form-group select:disabled,
+.dark-mode .form-group textarea:disabled {
+    background-color: var(--bg-white);
+    color: var(--text-light);
+}
+
+/* Mobile Form Message Adjustments */
+@media (max-width: 768px) {
+    .form-message {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .form-message i {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-message {
+        padding: 10px;
+        font-size: 0.85rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+}
+/* Replace the validation styles section in your Contact.css with this */
+
+/* Form Field Enhancements - FIXED COLORS */
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #f8f9fa;
+}
+
+/* Required Field Indicator */
+.form-group label {
+    position: relative;
+}
+
+/* FIXED - Remove red/green validation colors, keep original gold focus */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-color) !important;
+    /* Gold color */
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1) !important;
+    /* Gold shadow */
+    transform: translateY(-1px);
+}
+
+/* Remove browser validation styling */
+.form-group input:invalid,
+.form-group textarea:invalid,
+.form-group input:valid,
+.form-group textarea:valid {
+    border-color: var(--border-light);
+    /* Keep default border */
+    box-shadow: none;
+}
+
+/* Ensure focus state always wins */
+.form-group input:focus:invalid,
+.form-group input:focus:valid,
+.form-group textarea:focus:invalid,
+.form-group textarea:focus:valid {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1) !important;
+}
+
+/* Animation for form messages */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Form Messages - Keep these as they are good */
+.form-message {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    animation: slideInDown 0.3s ease;
+}
+
+.form-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.form-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.form-message i {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.form-message p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Form Loading States */
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.submit-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: 0 4px 15px rgba(26, 26, 26, 0.3);
+}
+
+.submit-btn i {
+    margin-right: 8px;
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* Dark Mode Form Messages */
+.dark-mode .form-message.success {
+    background: #1e3a2e;
+    color: #4ade80;
+    border-color: #2d5a3d;
+}
+
+.dark-mode .form-message.error {
+    background: #3a1e1e;
+    color: #f87171;
+    border-color: #5a2d2d;
+}
+
+.dark-mode .form-group input:disabled,
+.dark-mode .form-group select:disabled,
+.dark-mode .form-group textarea:disabled {
+    background-color: var(--bg-white);
+    color: var(--text-light);
+}
+
+/* Mobile Form Message Adjustments */
+@media (max-width: 768px) {
+    .form-message {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .form-message i {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-message {
+        padding: 10px;
+        font-size: 0.85rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+}
