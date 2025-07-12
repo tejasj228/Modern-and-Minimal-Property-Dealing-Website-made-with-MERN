@@ -262,7 +262,10 @@ const SortableSubArea = ({ subArea, areaKey, onEdit, onDelete }) => {
 };
 
 // Sortable Area Component
+// 🆕 Fixed SortableAreaCard component - Replace in your Areas.js
+
 const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onEditSubArea, onDeleteSubArea, onAddSubArea, onSubAreaReorder }) => {
+  // 🆕 FIX: Use the actual areaKey as the sortable ID
   const {
     attributes,
     listeners,
@@ -270,7 +273,7 @@ const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onE
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: `area-${areaKey}` });
+  } = useSortable({ id: `area-${areaKey}` }); // Use areaKey directly
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -278,6 +281,9 @@ const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onE
     opacity: isDragging ? 0.9 : 1,
     zIndex: isDragging ? 999 : 1,
   };
+
+  // Debug logging
+  console.log('🏗️ Rendering SortableAreaCard:', areaKey, 'ID:', `area-${areaKey}`);
 
   // Set up sensors for sub-area drag and drop
   const subAreaSensors = useSensors(
@@ -335,6 +341,10 @@ const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onE
               <Typography variant="body2" color="textSecondary">
                 {area.subAreas?.length || 0} sub-areas • {propertyCounts[areaKey] || 0} properties
               </Typography>
+              {/* 🆕 Debug info - remove this after testing */}
+              <Typography variant="caption" color="primary" sx={{ display: 'block' }}>
+                Key: {areaKey} | ID: area-{areaKey}
+              </Typography>
             </Box>
           </Box>
           <Box onClick={(e) => e.stopPropagation()}>
@@ -370,6 +380,7 @@ const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onE
         </Box>
       </AccordionSummary>
       <AccordionDetails>
+        {/* ... rest of the component remains the same ... */}
         <Box width="100%">
           <Typography variant="body1" paragraph>
             {area.description}
@@ -505,47 +516,62 @@ function Areas() {
   };
 
   // 🆕 Handle area drag and drop reordering - UPDATED WITH PERSISTENCE
-  const handleAreaDragEnd = async (result) => {
-    const { active, over } = result;
+// 🆕 Fixed handleAreaDragEnd function - Add this to your Areas.js
 
-    if (over && active.id !== over.id) {
-      setSavingOrder(true); // Show saving indicator
-      
-      const areaKeys = Object.keys(areas);
-      const activeAreaKey = active.id.replace('area-', '');
-      const overAreaKey = over.id.replace('area-', '');
-      
-      const oldIndex = areaKeys.indexOf(activeAreaKey);
-      const newIndex = areaKeys.indexOf(overAreaKey);
+const handleAreaDragEnd = async (result) => {
+  const { active, over } = result;
 
-      const reorderedKeys = arrayMove(areaKeys, oldIndex, newIndex);
-      
-      // Update local state immediately for responsive UI
-      const reorderedAreas = {};
-      reorderedKeys.forEach(key => {
-        reorderedAreas[key] = areas[key];
-      });
-      setAreas(reorderedAreas);
-
-      console.log('🔄 Reordered areas locally:', reorderedKeys);
-      
-      try {
-        // 🆕 Persist order to backend
-        await areaAPI.reorder(reorderedKeys);
-        console.log('✅ Areas order saved to backend');
-        setError(null); // Clear any previous errors
-      } catch (error) {
-        console.error('❌ Error saving areas order:', error);
-        setError('Failed to save areas order');
-        // Reload data to revert changes on error
-        loadData();
-      } finally {
-        setSavingOrder(false);
-      }
+  if (over && active.id !== over.id) {
+    setSavingOrder(true);
+    
+    // 🆕 FIX: Extract actual area keys properly
+    const activeAreaKey = active.id.replace('area-', '');
+    const overAreaKey = over.id.replace('area-', '');
+    
+    console.log('🔄 Drag end - Active:', activeAreaKey, 'Over:', overAreaKey);
+    
+    // Get current area keys in order
+    const currentAreaKeys = Object.keys(areas);
+    console.log('📊 Current area keys:', currentAreaKeys);
+    
+    const oldIndex = currentAreaKeys.indexOf(activeAreaKey);
+    const newIndex = currentAreaKeys.indexOf(overAreaKey);
+    
+    console.log('📊 Old index:', oldIndex, 'New index:', newIndex);
+    
+    if (oldIndex === -1 || newIndex === -1) {
+      console.error('❌ Invalid area keys for reordering');
+      setSavingOrder(false);
+      return;
     }
 
-    setActiveId(null);
-  };
+    const reorderedKeys = arrayMove(currentAreaKeys, oldIndex, newIndex);
+    console.log('🔄 Final reordered keys:', reorderedKeys);
+    
+    // Update local state immediately for responsive UI
+    const reorderedAreas = {};
+    reorderedKeys.forEach(key => {
+      reorderedAreas[key] = areas[key];
+    });
+    setAreas(reorderedAreas);
+
+    try {
+      // 🆕 Send correct area keys to backend
+      await areaAPI.reorder(reorderedKeys);
+      console.log('✅ Areas order saved to backend');
+      setError(null);
+    } catch (error) {
+      console.error('❌ Error saving areas order:', error);
+      setError('Failed to save areas order');
+      // Reload data to revert changes on error
+      loadData();
+    } finally {
+      setSavingOrder(false);
+    }
+  }
+
+  setActiveId(null);
+};
 
   // 🆕 Handle sub-area drag and drop reordering - UPDATED WITH PERSISTENCE
   const handleSubAreaReorder = async (areaKey, result) => {
@@ -845,55 +871,58 @@ function Areas() {
       )}
 
       {/* Areas List with Drag & Drop */}
-      {Object.keys(areas).length > 0 ? (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleAreaDragEnd}
+{Object.keys(areas).length > 0 ? (
+  <DndContext
+    sensors={sensors}
+    collisionDetection={closestCenter}
+    onDragStart={handleDragStart}
+    onDragEnd={handleAreaDragEnd}
+  >
+    <SortableContext
+      items={Object.keys(areas).map(key => `area-${key}`)} // 🆕 FIX: Use actual area keys
+      strategy={verticalListSortingStrategy}
+    >
+      <Box>
+        {Object.entries(areas).map(([areaKey, area]) => {
+          console.log('🎯 Rendering area:', areaKey, 'with ID:', `area-${areaKey}`); // Debug log
+          return (
+            <SortableAreaCard
+              key={areaKey} // Use areaKey as React key
+              areaKey={areaKey}
+              area={area}
+              propertyCounts={propertyCounts}
+              onEdit={handleOpenAreaDialog}
+              onDelete={handleDeleteArea}
+              onEditSubArea={handleOpenSubAreaDialog}
+              onDeleteSubArea={handleDeleteSubArea}
+              onAddSubArea={handleOpenSubAreaDialog}
+              onSubAreaReorder={handleSubAreaReorder}
+            />
+          );
+        })}
+      </Box>
+    </SortableContext>
+    <DragOverlay>
+      {activeId ? (
+        <Box
+          sx={{
+            backgroundColor: 'rgba(184, 134, 11, 0.1)',
+            border: '2px dashed #B8860B',
+            borderRadius: 2,
+            p: 2,
+            minHeight: 60,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          <SortableContext
-            items={Object.keys(areas).map(key => `area-${key}`)}
-            strategy={verticalListSortingStrategy}
-          >
-            <Box>
-              {Object.entries(areas).map(([areaKey, area]) => (
-                <SortableAreaCard
-                  key={areaKey}
-                  areaKey={areaKey}
-                  area={area}
-                  propertyCounts={propertyCounts}
-                  onEdit={handleOpenAreaDialog}
-                  onDelete={handleDeleteArea}
-                  onEditSubArea={handleOpenSubAreaDialog}
-                  onDeleteSubArea={handleDeleteSubArea}
-                  onAddSubArea={handleOpenSubAreaDialog}
-                  onSubAreaReorder={handleSubAreaReorder}
-                />
-              ))}
-            </Box>
-          </SortableContext>
-          <DragOverlay>
-            {activeId ? (
-              <Box
-                sx={{
-                  backgroundColor: 'rgba(184, 134, 11, 0.1)',
-                  border: '2px dashed #B8860B',
-                  borderRadius: 2,
-                  p: 2,
-                  minHeight: 60,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Typography variant="h6" color="primary">
-                  {activeId.includes('area-') ? 'Moving Area...' : 'Moving Sub-Area...'}
-                </Typography>
-              </Box>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
+          <Typography variant="h6" color="primary">
+            {activeId.includes('area-') ? 'Moving Area...' : 'Moving Sub-Area...'}
+          </Typography>
+        </Box>
+      ) : null}
+    </DragOverlay>
+  </DndContext>
       ) : (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <MapIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />

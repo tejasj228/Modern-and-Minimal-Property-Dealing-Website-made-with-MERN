@@ -3,13 +3,16 @@ const router = express.Router();
 const Contact = require('../models/Contact');
 
 // 🔓 PUBLIC ROUTE: POST /api/contacts - Create new contact (from frontend form)
-// This route should be called directly from server.js BEFORE authentication middleware
+// This route is called directly from the frontend and should NOT require authentication
 router.post('/', async (req, res) => {
   try {
     const { name, email, phone, interest, message } = req.body;
     
+    console.log('📧 Received contact form submission:', { name, email, phone, interest: interest || 'Not specified' });
+    
     // Validate required fields
     if (!name || !email || !phone || !message) {
+      console.log('❌ Validation failed: Missing required fields');
       return res.status(400).json({
         success: false,
         message: 'Name, email, phone, and message are required'
@@ -28,10 +31,10 @@ router.post('/', async (req, res) => {
     
     await contact.save();
     
-    console.log('✅ New contact inquiry received:', {
+    console.log('✅ New contact inquiry saved:', {
+      id: contact._id,
       name: contact.name,
-      email: contact.email,
-      id: contact._id
+      email: contact.email
     });
     
     res.status(201).json({
@@ -45,11 +48,11 @@ router.post('/', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error creating contact:', error);
-    res.status(400).json({
+    console.error('❌ Error creating contact:', error);
+    res.status(500).json({
       success: false,
-      message: 'Error submitting contact form',
-      error: error.message
+      message: 'Error submitting contact form. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 });
@@ -67,6 +70,8 @@ router.get('/', async (req, res) => {
       isRead,
       search 
     } = req.query;
+
+    console.log('📊 Loading contacts with filters:', { page, limit, status, priority, isRead, search });
 
     // Build filter object
     let filter = {};
@@ -104,6 +109,8 @@ router.get('/', async (req, res) => {
     
     const unreadCount = await Contact.countDocuments({ isRead: false });
     
+    console.log('✅ Contacts loaded:', { total: totalContacts, returned: contacts.length });
+    
     res.json({
       success: true,
       data: contacts,
@@ -123,7 +130,7 @@ router.get('/', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching contacts:', error);
+    console.error('❌ Error fetching contacts:', error);
     res.status(500).json({
       success: false,
       message: 'Error fetching contacts',
@@ -135,6 +142,8 @@ router.get('/', async (req, res) => {
 // GET /api/contacts/stats - Get contact statistics
 router.get('/stats', async (req, res) => {
   try {
+    console.log('📊 Loading contact statistics...');
+    
     const totalContacts = await Contact.countDocuments();
     const unreadCount = await Contact.countDocuments({ isRead: false });
     const newCount = await Contact.countDocuments({ status: 'new' });
@@ -154,6 +163,8 @@ router.get('/stats', async (req, res) => {
       { $group: { _id: '$priority', count: { $sum: 1 } } }
     ]);
     
+    console.log('✅ Contact statistics loaded');
+    
     res.json({
       success: true,
       data: {
@@ -172,7 +183,7 @@ router.get('/stats', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching contact stats:', error);
+    console.error('❌ Error fetching contact stats:', error);
     res.status(500).json({
       success: false,
       message: 'Error fetching contact statistics',
@@ -198,7 +209,7 @@ router.get('/:id', async (req, res) => {
       data: contact
     });
   } catch (error) {
-    console.error('Error fetching contact:', error);
+    console.error('❌ Error fetching contact:', error);
     res.status(500).json({
       success: false,
       message: 'Error fetching contact',
@@ -231,13 +242,15 @@ router.put('/:id', async (req, res) => {
       });
     }
     
+    console.log('✅ Contact updated:', contact._id);
+    
     res.json({
       success: true,
       message: 'Contact updated successfully',
       data: contact
     });
   } catch (error) {
-    console.error('Error updating contact:', error);
+    console.error('❌ Error updating contact:', error);
     res.status(400).json({
       success: false,
       message: 'Error updating contact',
@@ -262,13 +275,15 @@ router.put('/:id/mark-read', async (req, res) => {
       });
     }
     
+    console.log('✅ Contact marked as read:', contact._id);
+    
     res.json({
       success: true,
       message: 'Contact marked as read',
       data: contact
     });
   } catch (error) {
-    console.error('Error marking contact as read:', error);
+    console.error('❌ Error marking contact as read:', error);
     res.status(500).json({
       success: false,
       message: 'Error marking contact as read',
@@ -289,12 +304,14 @@ router.delete('/:id', async (req, res) => {
       });
     }
     
+    console.log('✅ Contact deleted:', contact._id);
+    
     res.json({
       success: true,
       message: 'Contact deleted successfully'
     });
   } catch (error) {
-    console.error('Error deleting contact:', error);
+    console.error('❌ Error deleting contact:', error);
     res.status(500).json({
       success: false,
       message: 'Error deleting contact',

@@ -4,7 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 const fs = require('fs');
-const { authenticateToken, requireAdmin } = require('./middleware/auth'); // 🆕 Import auth middleware
+const { authenticateToken, requireAdmin } = require('./middleware/auth');
 require('dotenv').config();
 
 const app = express();
@@ -13,10 +13,14 @@ const app = express();
 app.use(morgan('combined'));
 app.use(cors({
   origin: [
+    'http://localhost:3000',  // Frontend website
+    'http://localhost:3001',  // Admin panel
     process.env.FRONTEND_URL || 'http://localhost:3000',
     process.env.ADMIN_URL || 'http://localhost:3001'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json({ limit: '10mb' }));
@@ -42,7 +46,7 @@ mongoose.connect(process.env.MONGODB_URI)
     process.exit(1);
   });
 
-// 🆕 PUBLIC ROUTES (No authentication required)
+// 🔓 PUBLIC ROUTES (No authentication required)
 // Authentication routes
 app.use('/api/auth', require('./routes/auth'));
 
@@ -55,36 +59,151 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Public contact form submission (frontend users can submit)
-app.post('/api/contacts', require('./routes/contacts'));
+// 🔓 PUBLIC: Contact form submission (from frontend)
+const Contact = require('./models/Contact');
+app.post('/api/contacts', async (req, res) => {
+  try {
+    const { name, email, phone, interest, message } = req.body;
+    
+    console.log('📧 PUBLIC: Contact form submission received:', { name, email, phone });
+    
+    // Validate required fields
+    if (!name || !email || !phone || !message) {
+      console.log('❌ Validation failed: Missing required fields');
+      return res.status(400).json({
+        success: false,
+        message: 'Name, email, phone, and message are required'
+      });
+    }
+    
+    // Create new contact
+    const contact = new Contact({
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim(),
+      interest: interest?.trim() || '',
+      message: message.trim(),
+      source: 'website'
+    });
+    
+    await contact.save();
+    
+    console.log('✅ Contact inquiry saved successfully:', {
+      id: contact._id,
+      name: contact.name,
+      email: contact.email
+    });
+    
+    res.status(201).json({
+      success: true,
+      message: 'Thank you for your inquiry! We will get back to you soon.',
+      data: {
+        id: contact._id,
+        name: contact.name,
+        email: contact.email,
+        createdAt: contact.createdAt
+      }
+    });
+  } catch (error) {
+    console.error('❌ Error saving contact:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error submitting contact form. Please try again.',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+});
 
-// 🆕 PROTECTED ADMIN ROUTES (Authentication required)
-// Apply authentication middleware to all admin routes
-app.use('/api/properties', authenticateToken, requireAdmin, require('./routes/properties'));
-app.use('/api/areas', authenticateToken, requireAdmin, require('./routes/areas'));
-app.use('/api/uploads', authenticateToken, requireAdmin, require('./routes/uploads'));
+// 🆕 MIXED ROUTES: READ operations public, WRITE operations protected
 
-// Protect contact management routes (except POST for public form)
+// Properties routes - GET public, POST/PUT/DELETE protected
+app.use('/api/properties', (req, res, next) => {
+  if (req.method === 'GET') {
+    console.log('🌐 PUBLIC: Properties GET request');
+    next(); // Allow GET requests without authentication
+  } else {
+    console.log('🔐 ADMIN: Properties non-GET request - checking auth');
+    authenticateToken(req, res, (err) => {
+      if (err) return next(err);
+      requireAdmin(req, res, next);
+    });
+  }
+}, require('./routes/properties'));
+
+// Areas routes - GET public, POST/PUT/DELETE protected
+app.use('/api/areas', (req, res, next) => {
+  if (req.method === 'GET') {
+    console.log('🌐 PUBLIC: Areas GET request');
+    next(); // Allow GET requests without authentication
+  } else {
+    console.log('🔐 ADMIN: Areas non-GET request - checking auth');
+    authenticateToken(req, res, (err) => {
+      if (err) return next(err);
+      requireAdmin(req, res, next);
+    });
+  }
+}, require('./routes/areas'));
+
+// Uploads routes - GET public, POST/DELETE protected
+app.use('/api/uploads', (req, res, next) => {
+  if (req.method === 'GET') {
+    console.log('🌐 PUBLIC: Uploads GET request');
+    next(); // Allow GET requests without authentication
+  } else {
+    console.log('🔐 ADMIN: Uploads non-GET request - checking auth');
+    authenticateToken(req, res, (err) => {
+      if (err) return next(err);
+      requireAdmin(req, res, next);
+    });
+  }
+}, require('./routes/uploads'));
+
+// 🔒 PROTECTED: Contact management routes (admin only)
 const contactRoutes = require('./routes/contacts');
-app.use('/api/contacts', authenticateToken, requireAdmin, contactRoutes);
+
+// Apply auth middleware to contact management routes (excluding POST)
+app.use('/api/contacts', (req, res, next) => {
+  // Skip authentication for POST requests (already handled above)
+  if (req.method === 'POST') {
+    return next('route'); // Skip to next route handler
+  }
+  
+  console.log(`🔐 ADMIN: Contact ${req.method} ${req.path} - Checking authentication`);
+  
+  // Apply authentication for all other methods
+  authenticateToken(req, res, (err) => {
+    if (err) return next(err);
+    
+    requireAdmin(req, res, (err) => {
+      if (err) return next(err);
+      
+      console.log(`✅ ADMIN: Authentication successful for ${req.method} ${req.path}`);
+      next();
+    });
+  });
+}, contactRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Pawan Buildhome API Server',
     version: '1.0.0',
-    security: 'Protected with JWT Authentication',
+    security: 'Mixed Authentication (GET public, POST/PUT/DELETE protected)',
     endpoints: {
       public: [
         '/api/health',
         '/api/auth/login',
+        'GET /api/areas',
+        'GET /api/properties', 
+        'GET /api/properties/area/:areaKey',
+        'GET /api/uploads/slider',
         'POST /api/contacts'
       ],
       protected: [
-        '/api/properties',
-        '/api/areas', 
-        '/api/uploads',
-        'GET /api/contacts (and other methods)'
+        'POST/PUT/DELETE /api/properties',
+        'POST/PUT/DELETE /api/areas', 
+        'POST/DELETE /api/uploads',
+        'GET/PUT/DELETE /api/contacts'
       ]
     }
   });
@@ -117,15 +236,19 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use('*', (req, res) => {
+  console.log(`❌ 404: ${req.method} ${req.originalUrl} not found`);
   res.status(404).json({ 
     message: 'Route not found',
+    path: req.originalUrl,
+    method: req.method,
     availableEndpoints: [
       '/api/health',
       '/api/auth/login',
-      '/api/properties (protected)',
-      '/api/areas (protected)',
-      '/api/uploads (protected)',
-      '/api/contacts'
+      'GET /api/areas (public)',
+      'GET /api/properties (public)',
+      'GET /api/uploads/slider (public)',
+      'POST /api/contacts (public)',
+      'Other methods require authentication'
     ]
   });
 });
@@ -135,6 +258,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 Server URL: http://localhost:${PORT}`);
   console.log(`📋 API Health: http://localhost:${PORT}/api/health`);
-  console.log(`🔐 Security: JWT Authentication enabled`);
+  console.log(`🔓 Public READ: GET /api/areas, /api/properties, /api/uploads`);
+  console.log(`🔐 Protected WRITE: POST/PUT/DELETE operations require admin auth`);
   console.log(`👤 Admin login: http://localhost:${PORT}/api/auth/login`);
 });

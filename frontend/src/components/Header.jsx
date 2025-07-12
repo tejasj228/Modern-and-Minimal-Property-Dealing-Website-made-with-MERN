@@ -164,11 +164,11 @@ const Header = () => {
                   <button onClick={() => handleAreaClick('central-noida')}>
                     Central Noida
                   </button>
-                  <button onClick={() => handleAreaClick('noida-expressway')}>
-                    Noida Expressway
-                  </button>
                   <button onClick={() => handleAreaClick('yamuna-expressway')}>
                     Yamuna Expressway
+                  </button>
+                  <button onClick={() => handleAreaClick('noida-expressway')}>
+                    Noida Greater Noida Expressway
                   </button>
                 </div>
               </div>
@@ -218,13 +218,13 @@ const Header = () => {
             </a>
             <div className="dropdown">
               <a href="#" onClick={(e) => { e.preventDefault(); handleAreaClick('central-noida'); }}>
-                Central Noida Properties
-              </a>
-              <a href="#" onClick={(e) => { e.preventDefault(); handleAreaClick('noida-expressway'); }}>
-                Expressway Properties
+                Central Noida
               </a>
               <a href="#" onClick={(e) => { e.preventDefault(); handleAreaClick('yamuna-expressway'); }}>
-                Yamuna Expressway Properties
+                Yamuna Expressway
+              </a>
+              <a href="#" onClick={(e) => { e.preventDefault(); handleAreaClick('noida-expressway'); }}>
+                Noida Greater Noida Expressway
               </a>
             </div>
           </li>

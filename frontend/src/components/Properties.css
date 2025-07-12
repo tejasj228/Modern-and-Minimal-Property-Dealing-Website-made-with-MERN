@@ -603,3 +603,117 @@
         margin-bottom: 15px;
     }
 }
+/* Add these styles to your existing Properties.css file */
+
+/* 🆕 Updated Property Buttons - Single Button */
+.property-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* 🆕 View Property Button Styling */
+.view-property-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--accent-color) !important;
+    color: #1a1a1a !important;
+    border: 2px solid var(--accent-color) !important;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.view-property-btn:hover {
+    background: #d4a915 !important;
+    color: #1a1a1a !important;
+    border-color: #d4a915 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+}
+
+.view-property-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.view-property-btn i {
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.view-property-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Dark Mode View Property Button */
+.dark-mode .view-property-btn {
+    background: var(--accent-color) !important;
+    color: #1a1a1a !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.4);
+}
+
+.dark-mode .view-property-btn:hover {
+    background: #d4a915 !important;
+    color: #1a1a1a !important;
+    border-color: #d4a915 !important;
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.5);
+}
+
+/* Remove old button styles if they exist */
+.btn-small,
+.btn-outline {
+    display: none;
+    /* Hide old styles if they exist */
+}
+
+/* Mobile optimizations for single button */
+@media (max-width: 768px) {
+    .view-property-btn {
+        padding: 14px 20px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .view-property-btn {
+        padding: 12px 18px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Property card hover effects for single button */
+.property-card:hover .view-property-btn {
+    background: #d4a915 !important;
+    color: #1a1a1a !important;
+    transform: translateY(-1px);
+}
+
+/* Pulse animation for new button */
+@keyframes pulse-gold {
+    0% {
+        box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 4px 15px rgba(184, 134, 11, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+    }
+}
+
+.view-property-btn:focus {
+    animation: pulse-gold 1s ease-in-out;
+    outline: none;
+}

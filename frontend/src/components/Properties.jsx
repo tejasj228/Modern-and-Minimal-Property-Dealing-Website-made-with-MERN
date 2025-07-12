@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { fetchAreas, fetchProperties, fetchPropertiesByArea } from '../services/api';
 import PageTransition from './PageTransition';
 import './Properties.css';
@@ -104,6 +104,7 @@ const Properties = () => {
   const [areas, setAreas] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadInitialData();
@@ -225,6 +226,14 @@ const Properties = () => {
     }
   };
 
+  // 🆕 Navigate to property detail page
+  const handleViewProperty = (property) => {
+    console.log('🏠 Navigating to property details:', property.title);
+    navigate(`/property/${property._id || property.id}`, { 
+      state: { property, areaName: property.areaName } 
+    });
+  };
+
   const getPageTitle = () => {
     if (selectedArea === 'all') {
       return 'All Properties';
@@ -261,11 +270,6 @@ const Properties = () => {
           <div className="section-title">
             <h2>{getPageTitle()}</h2>
             <p>{getPageDescription()}</p>
-            {process.env.NODE_ENV === 'development' && (
-              <p style={{ fontSize: '14px', color: '#666', marginTop: '10px' }}>
-               
-              </p>
-            )}
           </div>
 
           {error && (
@@ -321,7 +325,7 @@ const Properties = () => {
                     animationDelay: `${index * 0.1}s`
                   }}
                 >
-                  {/* Updated Property Image with Carousel */}
+                  {/* Property Image with Carousel */}
                   <PropertyImageCarousel 
                     images={property.images} 
                     title={property.title}
@@ -352,23 +356,16 @@ const Properties = () => {
                         {property.area}
                       </div>
                     </div>
+                    
+                    {/* 🆕 Single View Property Button */}
                     <div className="property-buttons">
-                      <a 
-                        href={property.links?.acres99 || "https://99acres.com"} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="btn btn-small btn-primary"
+                      <button
+                        className="btn btn-primary view-property-btn"
+                        onClick={() => handleViewProperty(property)}
                       >
-                        99acres
-                      </a>
-                      <a 
-                        href={property.links?.magicbricks || "https://magicbricks.com"} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="btn btn-small btn-outline"
-                      >
-                        MagicBricks
-                      </a>
+                        <i className="fas fa-eye"></i>
+                        View Property
+                      </button>
                     </div>
                   </div>
                 </div>
