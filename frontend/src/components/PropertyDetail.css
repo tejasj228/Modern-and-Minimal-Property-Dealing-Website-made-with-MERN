@@ -364,9 +364,7 @@
 .contact-btn:hover {
   background: #d4a915 !important;
   border-color: #d4a915 !important;
-  color: var(--bg-card) !important;
-  /* Remove transform */
-  transform: none;
+  transform: translateY(-2px);
 }
 
 .contact-info {
@@ -382,13 +380,6 @@
   gap: 10px;
   color: var(--text-light);
   font-size: 0.95rem;
-  padding: 0 40px; /* Increased horizontal padding */
-  min-height: 48px;
-  border-radius: 10px;
-  transition: background 0.3s, color 0.3s;
-  cursor: pointer;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .contact-item i {
@@ -526,34 +517,6 @@
 
 .dark-mode .contact-btn:hover {
   background: #d4a915 !important;
-}
-
-/* Make contact-item look like a button on hover in dark mode, but don't move */
-.dark-mode .contact-item {
-  transition: background 0.3s, color 0.3s;
-  border-radius: 10px;
-  padding: 15px 1; /* Normal padding */
-  cursor: pointer;
-}
-
-.dark-mode .contact-item:hover {
-  background: #d4a915;
-  color: var(--bg-card) !important;
-  transform: none;
-}
-
-.dark-mode .contact-item i {
-  color: var(--accent-color);
-  transition: color 0.3s;
-}
-
-.dark-mode .contact-item:hover i {
-  color: var(--bg-card) !important;
-}
-
-/* Also apply to span inside contact-item */
-.dark-mode .contact-item:hover span {
-  color: var(--bg-card) !important;
 }
 
 /* Responsive Design */
