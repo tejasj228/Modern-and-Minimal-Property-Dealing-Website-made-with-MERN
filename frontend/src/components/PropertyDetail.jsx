@@ -26,6 +26,17 @@ const PropertyDetail = () => {
     }
   }, [id, location.state, navigate]);
 
+  // 🆕 AUTO-CYCLING SLIDESHOW - Added useEffect for auto image cycling
+  useEffect(() => {
+    if (property?.images?.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % property.images.length);
+      }, 4000); // Change image every 4 seconds
+
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [property?.images?.length]);
+
   const nextImage = () => {
     if (property?.images?.length > 1) {
       setCurrentImageIndex((prev) => (prev + 1) % property.images.length);
@@ -40,6 +51,15 @@ const PropertyDetail = () => {
 
   const goToImage = (index) => {
     setCurrentImageIndex(index);
+  };
+
+  // 🆕 FUNCTIONAL CONTACT METHODS
+  const handlePhoneCall = (phoneNumber) => {
+    window.open(`tel:${phoneNumber}`, '_self');
+  };
+
+  const handleEmail = (email) => {
+    window.open(`mailto:${email}`, '_blank');
   };
 
   if (loading) {
@@ -239,22 +259,22 @@ const PropertyDetail = () => {
                   </button>
                   
                   <div className="contact-info">
-                    <a
-                      href="tel:+919811186086"
-                      className="contact-item"
-                      style={{ textDecoration: "none" }}
+                    {/* 🆕 FUNCTIONAL PHONE BUTTON */}
+                    <button
+                      onClick={() => handlePhoneCall('+919811186086')}
+                      className="contact-item contact-item-button"
                     >
                       <i className="fas fa-phone"></i>
                       <span>+91-9811186086</span>
-                    </a>
-                    <a
-                      href="mailto:pawan127jitendra@gmail.com"
-                      className="contact-item"
-                      style={{ textDecoration: "none" }}
+                    </button>
+                    {/* 🆕 FUNCTIONAL EMAIL BUTTON */}
+                    <button
+                      onClick={() => handleEmail('pawan127jitendra@gmail.com')}
+                      className="contact-item contact-item-button"
                     >
                       <i className="fas fa-envelope"></i>
                       <span>pawan127jitendra@gmail.com</span>
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>

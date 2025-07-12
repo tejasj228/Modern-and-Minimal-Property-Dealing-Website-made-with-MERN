@@ -37,6 +37,7 @@
     gap: 20px;
 }
 
+/* 🆕 FIXED CONTACT ITEM STYLES - Made text and icons always visible */
 .contact-item {
     display: flex;
     align-items: flex-start;
@@ -44,7 +45,8 @@
     background: var(--bg-light);
     border-radius: 8px;
     transition: all 0.3s ease;
-    border: 1px solid transparent;
+    border: 1px solid var(--border-light);
+    cursor: pointer;
 }
 
 .contact-item:hover {
@@ -67,46 +69,79 @@
     transition: all 0.3s ease;
 }
 
+/* 🆕 FIXED ICON VISIBILITY - Made icons always white for contrast */
 .contact-item-icon i {
     font-size: 1.2rem;
-    color: var(--text-white);
+    color: #ffffff !important;
+    /* Force white color for visibility */
+    text-shadow: none !important;
+    /* Remove any text shadow */
+    opacity: 1 !important;
+    /* Ensure full opacity */
+}
+
+/* 🆕 ADDITIONAL ICON VISIBILITY FIXES - More specific selectors */
+.contact-item .contact-item-icon i,
+.contact-item-icon .fas,
+.contact-item-icon .fa {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
+}
+
+/* 🆕 OVERRIDE ANY FONTAWESOME DEFAULTS */
+.contact-item-icon [class^="fa-"],
+.contact-item-icon [class*=" fa-"] {
+    color: #ffffff !important;
+    opacity: 1 !important;
 }
 
 .contact-item:hover .contact-item-icon {
-    background: var(--text-white);
+    background: var(--accent-color);
+    /* Keep gold background */
+    transform: none;
+    /* Remove any transform */
 }
 
 .contact-item:hover .contact-item-icon i {
-    color: var(--accent-color);
+    color: #ffffff !important;
+    /* Keep white icon */
 }
 
 .contact-item-content {
     flex: 1;
 }
 
+/* 🆕 FIXED TEXT VISIBILITY - Made text always visible */
 .contact-item h4 {
     font-size: 1.1rem;
     font-weight: 600;
     margin-bottom: 8px;
-    color: var(--primary-color);
+    color: var(--primary-color) !important;
+    /* Always visible */
     transition: color 0.3s ease;
 }
 
 .contact-item:hover h4 {
-    color: var(--text-white);
+    color: var(--text-white) !important;
 }
 
+/* 🆕 FIXED PARAGRAPH TEXT VISIBILITY */
 .contact-item p {
-    color: var(--text-light);
+    color: var(--text-dark) !important;
+    /* Changed from text-light to text-dark for visibility */
     line-height: 1.6;
     margin: 0;
     white-space: pre-line;
     transition: color 0.3s ease;
     font-size: 0.95rem;
+    font-weight: 500;
+    /* Added weight for better visibility */
 }
 
 .contact-item:hover p {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .contact-form {
@@ -161,8 +196,8 @@
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1) !important;
     transform: translateY(-1px);
 }
 
@@ -177,21 +212,76 @@
 /* Dark mode adjustments */
 .dark-mode .contact-info,
 .dark-mode .contact-form {
-    border-color: #333333;
+    background: var(--bg-card);
+    border-color: #2a2a2a;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* 🆕 DARK MODE ICON FIXES - Ensure icons stay visible in dark mode */
+.dark-mode .contact-item-icon i,
+.dark-mode .contact-item-icon .fas,
+.dark-mode .contact-item-icon .fa,
+.dark-mode .contact-item-icon [class^="fa-"],
+.dark-mode .contact-item-icon [class*=" fa-"] {
+    color: #ffffff !important;
+    /* Keep white in dark mode too */
+    text-shadow: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.dark-mode .contact-item:hover .contact-item-icon {
+    background: var(--accent-color);
+    /* Keep gold background in dark mode */
+}
+
+.dark-mode .contact-item:hover .contact-item-icon i {
+    color: #ffffff !important;
+    /* Keep white icon in dark mode */
+}
+
+/* 🆕 DARK MODE TEXT VISIBILITY FIXES */
+.dark-mode .contact-item h4 {
+    color: var(--text-dark) !important;
+    /* Will be light in dark mode */
+}
+
+.dark-mode .contact-item p {
+    color: var(--text-dark) !important;
+    /* Will be light in dark mode */
+}
+
+.dark-mode .contact-item {
+    background: var(--bg-white);
+    /* Darker background in dark mode */
+    border-color: #404040;
+}
+
+.dark-mode .contact-item:hover {
+    background: var(--accent-color);
+    color: var(--text-white);
 }
 
 .dark-mode .form-group input,
 .dark-mode .form-group select,
 .dark-mode .form-group textarea {
-    border-color: #333333;
-    background: var(--bg-card);
+    border-color: #404040;
+    background: var(--bg-white);
+    color: var(--text-dark);
+}
+
+.dark-mode .form-group input:focus,
+.dark-mode .form-group select:focus,
+.dark-mode .form-group textarea:focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1) !important;
 }
 
 /* Mobile Responsive Design */
 @media (max-width: 768px) {
     .contact-page {
-        padding: 80px 0 60px;
+        padding: 140px 0 60px;
+        /* Increased top padding */
     }
 
     .contact-grid {
@@ -270,7 +360,8 @@
 
 @media (max-width: 480px) {
     .contact-page {
-        padding: 70px 0 50px;
+        padding: 120px 0 50px;
+        /* Increased top padding */
     }
 
     .contact-info,
@@ -380,7 +471,6 @@
         padding: 8px;
     }
 }
-/* Add these styles to your existing Contact.css file */
 
 /* Form Messages */
 .form-message {
@@ -450,17 +540,6 @@
     position: relative;
 }
 
-/* Validation States */
-.form-group input:invalid,
-.form-group textarea:invalid {
-    border-color: #dc3545;
-}
-
-.form-group input:valid,
-.form-group textarea:valid {
-    border-color: #28a745;
-}
-
 /* Animation for form messages */
 @keyframes slideInDown {
     from {
@@ -525,168 +604,26 @@
         gap: 8px;
     }
 }
-/* Replace the validation styles section in your Contact.css with this */
 
-/* Form Field Enhancements - FIXED COLORS */
-.form-group input:disabled,
-.form-group select:disabled,
-.form-group textarea:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    background-color: #f8f9fa;
+/* 🆕 ULTIMATE ICON VISIBILITY FIX - Most specific selectors possible */
+.contact-page .contact-info .contact-items-wrapper .contact-item .contact-item-icon i,
+.contact-page .contact-info .contact-items-wrapper .contact-item .contact-item-icon .fas,
+.contact-page .contact-info .contact-items-wrapper .contact-item .contact-item-icon .fa,
+.contact-page .contact-info .contact-items-wrapper .contact-item .contact-item-icon [class^="fa-"],
+.contact-page .contact-info .contact-items-wrapper .contact-item .contact-item-icon [class*=" fa-"] {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
+    font-size: 1.2rem !important;
+    text-shadow: none !important;
+    background: transparent !important;
 }
 
-/* Required Field Indicator */
-.form-group label {
-    position: relative;
-}
-
-/* FIXED - Remove red/green validation colors, keep original gold focus */
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--accent-color) !important;
-    /* Gold color */
-    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1) !important;
-    /* Gold shadow */
-    transform: translateY(-1px);
-}
-
-/* Remove browser validation styling */
-.form-group input:invalid,
-.form-group textarea:invalid,
-.form-group input:valid,
-.form-group textarea:valid {
-    border-color: var(--border-light);
-    /* Keep default border */
-    box-shadow: none;
-}
-
-/* Ensure focus state always wins */
-.form-group input:focus:invalid,
-.form-group input:focus:valid,
-.form-group textarea:focus:invalid,
-.form-group textarea:focus:valid {
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1) !important;
-}
-
-/* Animation for form messages */
-@keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* Form Messages - Keep these as they are good */
-.form-message {
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 500;
-    animation: slideInDown 0.3s ease;
-}
-
-.form-message.success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.form-message.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.form-message i {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
-
-.form-message p {
-    margin: 0;
-    line-height: 1.4;
-}
-
-/* Form Loading States */
-.submit-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
-.submit-btn:disabled:hover {
-    transform: none !important;
-    box-shadow: 0 4px 15px rgba(26, 26, 26, 0.3);
-}
-
-.submit-btn i {
-    margin-right: 8px;
-}
-
-.fa-spinner {
-    animation: spin 1s linear infinite;
-}
-
-/* Dark Mode Form Messages */
-.dark-mode .form-message.success {
-    background: #1e3a2e;
-    color: #4ade80;
-    border-color: #2d5a3d;
-}
-
-.dark-mode .form-message.error {
-    background: #3a1e1e;
-    color: #f87171;
-    border-color: #5a2d2d;
-}
-
-.dark-mode .form-group input:disabled,
-.dark-mode .form-group select:disabled,
-.dark-mode .form-group textarea:disabled {
-    background-color: var(--bg-white);
-    color: var(--text-light);
-}
-
-/* Mobile Form Message Adjustments */
-@media (max-width: 768px) {
-    .form-message {
-        padding: 12px;
-        font-size: 0.9rem;
-    }
-
-    .form-message i {
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .form-message {
-        padding: 10px;
-        font-size: 0.85rem;
-        flex-direction: column;
-        text-align: center;
-        gap: 8px;
-    }
+/* 🆕 FORCE WHITE ICONS REGARDLESS OF THEME */
+body .contact-item-icon i,
+body .contact-item-icon .fas,
+body .contact-item-icon .fa {
+    color: #ffffff !important;
+    opacity: 1 !important;
 }

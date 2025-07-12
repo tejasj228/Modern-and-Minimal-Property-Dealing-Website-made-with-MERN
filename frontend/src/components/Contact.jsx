@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Contact.css';
-
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -90,26 +89,47 @@ const Contact = () => {
     }
   };
 
+  // 🆕 FUNCTIONAL CONTACT METHODS
+  const handleEmailClick = (email) => {
+    window.open(`mailto:${email}`, '_blank');
+  };
+
+  const handlePhoneClick = (phoneNumber) => {
+    window.open(`tel:${phoneNumber}`, '_self');
+  };
+
+  const handleLocationClick = () => {
+    // Open Google Maps with the address
+    const address = "S-1 Skytech Matrott Market, Sector-76, Noida (U.P) 201307";
+    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    window.open(mapsUrl, '_blank');
+  };
+
+  // 🆕 UPDATED CONTACT ITEMS with functional handlers
   const contactItems = [
     {
       icon: 'fas fa-envelope',
       title: 'Email Us',
-      content: 'pawan127jitendra@gmail.com'
+      content: 'pawan127jitendra@gmail.com',
+      onClick: () => handleEmailClick('pawan127jitendra@gmail.com')
     },
     {
       icon: 'fas fa-phone',
       title: 'Call Us',
-      content: '+91-9811186086\n+91-9811186083'
+      content: '+91-9811186086\n+91-9811186083',
+      onClick: () => handlePhoneClick('+91-9811186086') // Primary number
     },
     {
       icon: 'fas fa-map-marker-alt',
       title: 'Visit Us',
-      content: 'S-1 Skytech Matrott Market\nSector-76, Noida (U.P) 201307'
+      content: 'S-1 Skytech Matrott Market\nSector-76, Noida (U.P) 201307',
+      onClick: handleLocationClick
     },
     {
       icon: 'fas fa-clock',
       title: 'Working Hours',
-      content: 'Mon - Sat: 9:00 AM - 7:00 PM\nSunday: 10:00 AM - 5:00 PM'
+      content: 'Mon - Sat: 9:00 AM - 7:00 PM\nSunday: 10:00 AM - 5:00 PM',
+      onClick: null // No action for working hours
     }
   ];
 
@@ -126,7 +146,12 @@ const Contact = () => {
             <h3>Get In Touch</h3>
             <div className="contact-items-wrapper">
               {contactItems.map((item, index) => (
-                <div key={index} className="contact-item">
+                <div 
+                  key={index} 
+                  className={`contact-item ${item.onClick ? 'contact-item-clickable' : ''}`}
+                  onClick={item.onClick}
+                  style={item.onClick ? { cursor: 'pointer' } : { cursor: 'default' }}
+                >
                   <div className="contact-item-icon">
                     <i className={item.icon}></i>
                   </div>
@@ -158,7 +183,6 @@ const Contact = () => {
               </div>
             )}
             
-            {/* 🆕 FIXED: Removed HTML5 validation and noValidate added */}
             <form onSubmit={handleSubmit} noValidate>
               <div className="form-group">
                 <label htmlFor="name">Full Name *</label>
@@ -254,3 +278,4 @@ const Contact = () => {
 };
 
 export default Contact;
+

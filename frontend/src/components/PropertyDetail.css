@@ -373,18 +373,56 @@
   gap: 10px;
 }
 
+/* 🆕 FIXED CONTACT ITEM STYLES - Made text and icons visible */
 .contact-item {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: var(--text-light);
+  color: var(--text-dark) !important;
+  /* Changed to dark text */
   font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
 }
 
 .contact-item i {
-  color: var(--accent-color);
+  color: var(--accent-color) !important;
+  /* Made icon visible */
   width: 16px;
+  font-size: 1rem;
+}
+
+.contact-item span {
+  color: var(--text-dark) !important;
+  /* Made text visible */
+  font-weight: 500;
+}
+
+/* 🆕 FUNCTIONAL CONTACT BUTTON STYLES */
+.contact-item-button {
+  background: transparent !important;
+  border: 1px solid var(--border-light) !important;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem !important;
+  transition: all 0.3s ease;
+}
+
+.contact-item-button:hover {
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  transform: translateY(-1px);
+}
+
+.contact-item-button:hover i {
+  color: #1a1a1a !important;
+}
+
+.contact-item-button:hover span {
+  color: #1a1a1a !important;
 }
 
 /* External Links Card */
@@ -517,6 +555,35 @@
 
 .dark-mode .contact-btn:hover {
   background: #d4a915 !important;
+}
+
+/* 🆕 DARK MODE CONTACT ITEM FIXES */
+.dark-mode .contact-item {
+  color: var(--text-dark) !important;
+  /* Will be light in dark mode */
+}
+
+.dark-mode .contact-item i {
+  color: var(--accent-color) !important;
+}
+
+.dark-mode .contact-item span {
+  color: var(--text-dark) !important;
+  /* Will be light in dark mode */
+}
+
+.dark-mode .contact-item-button {
+  border-color: #404040 !important;
+}
+
+.dark-mode .contact-item-button:hover {
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+.dark-mode .contact-item-button:hover i,
+.dark-mode .contact-item-button:hover span {
+  color: #1a1a1a !important;
 }
 
 /* Responsive Design */
