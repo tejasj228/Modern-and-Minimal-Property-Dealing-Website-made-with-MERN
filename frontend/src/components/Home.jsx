@@ -165,7 +165,9 @@ const Home = () => {
             }}
           />
           <div className="hero-content">
-            <h1>Premium Real Estate Solutions</h1>
+            <h1>
+              Premium <span className="highlight-accent">Real Estate</span> Solutions
+            </h1>
             <p>Loading your premium property experience...</p>
             <div className="cta-buttons">
               <div className="loading-spinner" style={{ margin: '20px auto' }}></div>
@@ -217,7 +219,9 @@ const Home = () => {
           }}
         />
         <div className="hero-content">
-          <h1>Premium Real Estate Solutions</h1>
+          <h1>
+            Premium <span className="highlight-accent">Real Estate</span> Solutions
+          </h1>
           <p>Discover your dream property with Pawan Buildhome - Your trusted partner in real estate excellence</p>
           <div className="cta-buttons">
             <button onClick={scrollToAreas} className="btn btn-primary">

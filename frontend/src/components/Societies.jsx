@@ -1,9 +1,258 @@
-// frontend/src/components/Societies.jsx - Enhanced with image slider
+// frontend/src/components/Societies.jsx - Fixed modal navbar hiding and mobile visibility
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PageTransition from './PageTransition';
-import Modal from './Modal';
 import './Societies.css';
+
+// Enhanced Society Modal Component with Navbar Hiding and Mobile Fixes
+const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
+  const wasModalOpen = React.useRef(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  React.useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      console.log('📂 Society modal opening - hiding navbar and preventing scroll');
+      wasModalOpen.current = true;
+      setCurrentImageIndex(0); // Reset to first image
+      
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
+      
+      // 🆕 HIDE ALL NAVIGATION ELEMENTS
+      // Hide desktop navbar
+      const navbar = document.querySelector('.nav-container');
+      if (navbar) {
+        navbar.style.display = 'none';
+        console.log('✅ Desktop navbar hidden');
+      }
+      
+      // Hide mobile header
+      const mobileHeader = document.querySelector('.mobile-header');
+      if (mobileHeader) {
+        mobileHeader.style.display = 'none';
+        console.log('✅ Mobile header hidden');
+      }
+      
+      // Hide mobile sidebar
+      const mobileSidebar = document.querySelector('.mobile-sidebar');
+      if (mobileSidebar) {
+        mobileSidebar.style.display = 'none';
+        console.log('✅ Mobile sidebar hidden');
+      }
+      
+    } else if (wasModalOpen.current) {
+      console.log('📂 Society modal closing - restoring navbar and scroll');
+      
+      document.body.style.overflow = 'unset';
+      document.body.classList.remove('modal-open');
+      
+      // 🆕 RESTORE ALL NAVIGATION ELEMENTS
+      // Show desktop navbar
+      const navbar = document.querySelector('.nav-container');
+      if (navbar) {
+        navbar.style.display = 'block';
+        console.log('✅ Desktop navbar restored');
+      }
+      
+      // Show mobile header
+      const mobileHeader = document.querySelector('.mobile-header');
+      if (mobileHeader) {
+        mobileHeader.style.display = 'flex';
+        console.log('✅ Mobile header restored');
+      }
+      
+      // Show mobile sidebar
+      const mobileSidebar = document.querySelector('.mobile-sidebar');
+      if (mobileSidebar) {
+        mobileSidebar.style.display = '';
+        console.log('✅ Mobile sidebar restored');
+      }
+      
+      // Scroll back to the card position after a small delay
+      if (cardPosition && cardPosition.y !== undefined) {
+        setTimeout(() => {
+          console.log('🎯 Scrolling back to card position:', cardPosition.y);
+          window.scrollTo({
+            top: cardPosition.y,
+            left: 0,
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
+      
+      wasModalOpen.current = false;
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+      document.body.classList.remove('modal-open');
+      
+      // Ensure navbar is always restored on cleanup
+      const navbar = document.querySelector('.nav-container');
+      if (navbar) navbar.style.display = 'block';
+      
+      const mobileHeader = document.querySelector('.mobile-header');
+      if (mobileHeader) mobileHeader.style.display = 'flex';
+      
+      const mobileSidebar = document.querySelector('.mobile-sidebar');
+      if (mobileSidebar) mobileSidebar.style.display = '';
+    };
+  }, [isOpen, onClose, cardPosition]);
+
+  if (!isOpen || !society) return null;
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  // Get all available images (gallery + map)
+  const getAllImages = () => {
+    const images = [];
+    if (society.images && society.images.length > 0) {
+      society.images.forEach(img => {
+        images.push(`http://localhost:5000${img}`);
+      });
+    }
+    if (society.mapImage) {
+      images.push(`http://localhost:5000${society.mapImage}`);
+    }
+    if (images.length === 0) {
+      images.push('/assets/map.webp');
+    }
+    return images;
+  };
+
+  const allImages = getAllImages();
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  };
+
+  return (
+    <div className="modal-overlay society-modal-overlay" onClick={handleBackdropClick}>
+      <div className="modal-content society-modal">
+        <button className="modal-close" onClick={onClose}>
+          <i className="fas fa-times"></i>
+        </button>
+        
+        <div className="modal-left">
+          <div className="modal-gallery">
+            <img 
+              src={allImages[currentImageIndex]}
+              alt={`${society.name} - Image ${currentImageIndex + 1}`}
+              style={{
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover'
+              }}
+              onError={(e) => {
+                e.target.src = '/assets/map.webp';
+              }}
+            />
+            
+            {/* Gallery Navigation */}
+            {allImages.length > 1 && (
+              <>
+                <button className="gallery-nav gallery-prev" onClick={prevImage}>
+                  <i className="fas fa-chevron-left"></i>
+                </button>
+                <button className="gallery-nav gallery-next" onClick={nextImage}>
+                  <i className="fas fa-chevron-right"></i>
+                </button>
+                <div className="gallery-counter">
+                  {currentImageIndex + 1} / {allImages.length}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="modal-right">
+          <h2>{society.name}</h2>
+          <p className="modal-description">{society.description}</p>
+          
+          {/* Gallery Info */}
+          {society.images && society.images.length > 0 && (
+            <div className="modal-gallery-info">
+              <h4>Photo Gallery</h4>
+              <p>{society.images.length} images available</p>
+            </div>
+          )}
+          
+          {/* Amenities */}
+          {society.amenities && society.amenities.length > 0 && (
+            <div className="modal-amenities">
+              <h4>Amenities</h4>
+              <div className="amenities-grid">
+                {society.amenities.map((amenity, index) => (
+                  <div key={index} className="amenity-item">
+                    <i className="fas fa-check"></i>
+                    <span>{amenity}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Contact Information */}
+          {society.contact && (
+            <div className="modal-contact">
+              <h4>Contact Information</h4>
+              <div className="contact-info">
+                {society.contact.phone && (
+                  <div className="contact-item">
+                    <i className="fas fa-phone"></i>
+                    <span>{society.contact.phone}</span>
+                  </div>
+                )}
+                {society.contact.email && (
+                  <div className="contact-item">
+                    <i className="fas fa-envelope"></i>
+                    <span>{society.contact.email}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          <div className="modal-button">
+            <button 
+              className="btn btn-secondary modal-map-btn" 
+              onClick={() => {
+                const mapUrl = allImages[currentImageIndex];
+                window.open(mapUrl, '_blank');
+              }}
+            >
+              Open Image in New Tab
+            </button>
+            <button 
+              className="btn btn-primary" 
+              onClick={() => {
+                window.location.href = '/contact';
+              }}
+            >
+              Contact Us
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Enhanced Image Slider Component for Societies
 const SocietiesImageSlider = ({ societies = [] }) => {
@@ -316,9 +565,9 @@ const Societies = () => {
             <h2>{areaInfo.subAreaName} Societies</h2>
             <p>{areaInfo.subAreaDescription}</p>
             <div className="breadcrumb">
-              <span>{areaInfo.areaName}</span>
-              <i className="fas fa-chevron-right"></i>
-              <span>{areaInfo.subAreaName}</span>
+              {/* <span>{areaInfo.areaName}</span> */}
+              {/* <i className="fas fa-chevron-right"></i> */}
+              {/* <span>{areaInfo.subAreaName}</span> */}
             </div>
           </div>
 
@@ -427,195 +676,6 @@ const Societies = () => {
         />
       </div>
     </PageTransition>
-  );
-};
-
-// Enhanced Society Modal Component with Gallery Support
-const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
-  const wasModalOpen = React.useRef(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  React.useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      wasModalOpen.current = true;
-      setCurrentImageIndex(0); // Reset to first image
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-      document.body.classList.add('modal-open');
-    } else if (wasModalOpen.current) {
-      document.body.style.overflow = 'unset';
-      document.body.classList.remove('modal-open');
-      
-      if (cardPosition && cardPosition.y !== undefined) {
-        setTimeout(() => {
-          window.scrollTo({
-            top: cardPosition.y,
-            left: 0,
-            behavior: 'smooth'
-          });
-        }, 100);
-      }
-      
-      wasModalOpen.current = false;
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-      document.body.classList.remove('modal-open');
-    };
-  }, [isOpen, onClose, cardPosition]);
-
-  if (!isOpen || !society) return null;
-
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  // Get all available images (gallery + map)
-  const getAllImages = () => {
-    const images = [];
-    if (society.images && society.images.length > 0) {
-      society.images.forEach(img => {
-        images.push(`http://localhost:5000${img}`);
-      });
-    }
-    if (society.mapImage) {
-      images.push(`http://localhost:5000${society.mapImage}`);
-    }
-    if (images.length === 0) {
-      images.push('/assets/map.webp');
-    }
-    return images;
-  };
-
-  const allImages = getAllImages();
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
-  };
-
-  return (
-    <div className="modal-overlay" onClick={handleBackdropClick}>
-      <div className="modal-content society-modal">
-        <button className="modal-close" onClick={onClose}>
-          <i className="fas fa-times"></i>
-        </button>
-        
-        <div className="modal-left">
-          <div className="modal-gallery">
-            <img 
-              src={allImages[currentImageIndex]}
-              alt={`${society.name} - Image ${currentImageIndex + 1}`}
-              style={{
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'cover'
-              }}
-              onError={(e) => {
-                e.target.src = '/assets/map.webp';
-              }}
-            />
-            
-            {/* Gallery Navigation */}
-            {allImages.length > 1 && (
-              <>
-                <button className="gallery-nav gallery-prev" onClick={prevImage}>
-                  <i className="fas fa-chevron-left"></i>
-                </button>
-                <button className="gallery-nav gallery-next" onClick={nextImage}>
-                  <i className="fas fa-chevron-right"></i>
-                </button>
-                <div className="gallery-counter">
-                  {currentImageIndex + 1} / {allImages.length}
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="modal-right">
-          <h2>{society.name}</h2>
-          <p className="modal-description">{society.description}</p>
-          
-          {/* Gallery Info */}
-          {society.images && society.images.length > 0 && (
-            <div className="modal-gallery-info">
-              <h4>Photo Gallery</h4>
-              <p>{society.images.length} images available</p>
-            </div>
-          )}
-          
-          {/* Amenities */}
-          {society.amenities && society.amenities.length > 0 && (
-            <div className="modal-amenities">
-              <h4>Amenities</h4>
-              <div className="amenities-grid">
-                {society.amenities.map((amenity, index) => (
-                  <div key={index} className="amenity-item">
-                    <i className="fas fa-check"></i>
-                    <span>{amenity}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* Contact Information */}
-          {society.contact && (
-            <div className="modal-contact">
-              <h4>Contact Information</h4>
-              <div className="contact-info">
-                {society.contact.phone && (
-                  <div className="contact-item">
-                    <i className="fas fa-phone"></i>
-                    <span>{society.contact.phone}</span>
-                  </div>
-                )}
-                {society.contact.email && (
-                  <div className="contact-item">
-                    <i className="fas fa-envelope"></i>
-                    <span>{society.contact.email}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          
-          <div className="modal-button">
-            <button 
-              className="btn btn-secondary modal-map-btn" 
-              onClick={() => {
-                const mapUrl = allImages[currentImageIndex];
-                window.open(mapUrl, '_blank');
-              }}
-            >
-              Open Image in New Tab
-            </button>
-            <button 
-              className="btn btn-primary" 
-              onClick={() => {
-                window.location.href = '/contact';
-              }}
-            >
-              Contact Us
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 };
 
