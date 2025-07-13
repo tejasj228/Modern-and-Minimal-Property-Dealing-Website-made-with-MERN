@@ -49,18 +49,28 @@ const Contact = () => {
       
       console.log('📤 Submitting contact form:', formData);
       
-      // 🆕 UPDATED API URL for production
+      // 🆕 FIXED API URL - Use the correct production backend URL
       const API_URL = process.env.NODE_ENV === 'production' 
-        ? 'https://pawan-buildhome-backend-d8vm7thpr.vercel.app/api/contacts'
+        ? 'https://property-dealing-backend.onrender.com/api/contacts'
         : 'http://localhost:5000/api/contacts';
       
-      // Submit to backend API
+      console.log('🌐 Using API URL:', API_URL);
+      
+      // Submit to backend API with proper headers
       const response = await axios.post(API_URL, {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         interest: formData.interest.trim(),
         message: formData.message.trim()
+      }, {
+        // 🆕 ADDED PROPER HEADERS
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        // 🆕 ADDED TIMEOUT
+        timeout: 15000
       });
       
       console.log('✅ Contact form submitted successfully:', response.data);
@@ -85,11 +95,20 @@ const Contact = () => {
     } catch (error) {
       console.error('❌ Error submitting contact form:', error);
       
+      // 🆕 BETTER ERROR HANDLING
+      let errorMessage = 'Failed to send message. Please try again or contact us directly.';
+      
       if (error.response?.data?.message) {
-        setSubmitError(error.response.data.message);
-      } else {
-        setSubmitError('Failed to send message. Please try again or contact us directly.');
+        errorMessage = error.response.data.message;
+      } else if (error.code === 'ECONNREFUSED') {
+        errorMessage = 'Unable to connect to server. Please try again later.';
+      } else if (error.code === 'ERR_NETWORK') {
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (error.message.includes('timeout')) {
+        errorMessage = 'Request timed out. Please try again.';
       }
+      
+      setSubmitError(errorMessage);
     } finally {
       setSubmitting(false);
     }

@@ -1,24 +1,35 @@
-// frontend/src/services/api.js - Updated for production
+// frontend/src/services/api.js - Fixed API URLs
 import axios from 'axios';
 
-// 🆕 PRODUCTION API URL - Updated to use your deployed backend
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://pawan-buildhome-backend-d8vm7thpr.vercel.app/api'
-  : 'http://localhost:5000/api';
+// 🆕 FIXED API URL - Use the correct backend URL from env file
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
+console.log('🌐 Frontend API Base URL:', API_BASE_URL);
+console.log('🌐 Environment:', process.env.NODE_ENV);
 
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 15000, // Increased timeout to 15 seconds
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
+  // 🆕 ADDED CORS SUPPORT
+  withCredentials: false // Set to false for CORS
 });
 
 // Add request interceptor for debugging
 api.interceptors.request.use(
   (config) => {
     console.log(`🚀 Frontend API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+    console.log('📊 Request config:', {
+      method: config.method,
+      url: config.url,
+      baseURL: config.baseURL,
+      headers: config.headers,
+      timeout: config.timeout
+    });
     return config;
   },
   (error) => {
@@ -37,22 +48,50 @@ api.interceptors.response.use(
     console.error('❌ Frontend API Response Error:', {
       message: error.message,
       status: error.response?.status,
+      statusText: error.response?.statusText,
       data: error.response?.data,
-      url: error.config?.url
+      url: error.config?.url,
+      method: error.config?.method,
+      baseURL: error.config?.baseURL
     });
     
     // Provide more specific error messages
     if (error.code === 'ECONNREFUSED') {
-      console.error('🔌 Backend server is not running');
+      console.error('🔌 Backend server is not running or unreachable');
     } else if (error.code === 'ERR_NETWORK') {
-      console.error('🌐 Network error - check backend connection');
+      console.error('🌐 Network error - check backend connection and CORS');
     } else if (error.response?.status === 404) {
       console.error('🔍 API endpoint not found');
+    } else if (error.response?.status === 500) {
+      console.error('💥 Internal server error');
+    } else if (error.message.includes('timeout')) {
+      console.error('⏰ Request timeout - server took too long to respond');
     }
     
     return Promise.reject(error);
   }
 );
+
+// 🆕 DEDICATED CONTACT FORM SUBMISSION FUNCTION
+export const submitContactForm = async (formData) => {
+  try {
+    console.log('📧 Submitting contact form with data:', formData);
+    
+    const response = await api.post('/contacts', {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      interest: formData.interest?.trim() || '',
+      message: formData.message.trim()
+    });
+    
+    console.log('✅ Contact form submitted successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('❌ Contact form submission failed:', error);
+    throw error;
+  }
+};
 
 // Fetch all areas
 export const fetchAreas = async () => {
