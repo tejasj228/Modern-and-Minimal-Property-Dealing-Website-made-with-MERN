@@ -1,3 +1,4 @@
+// admin-panel/src/pages/Areas.js - Updated with society management
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -26,6 +27,7 @@ import {
   Divider,
   Fab,
   CardMedia,
+  Collapse,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -37,6 +39,8 @@ import {
   Business as BusinessIcon,
   DragIndicator as DragIcon,
   CloudUpload as UploadIcon,
+  Home as HomeIcon,
+  ExpandLess as ExpandLessIcon,
 } from '@mui/icons-material';
 
 // Modern drag & drop imports
@@ -62,7 +66,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { areaAPI, propertyAPI, uploadAPI } from '../services/api';
 
-// Map Upload Component
+// Map Upload Component (same as before)
 const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
@@ -71,16 +75,11 @@ const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    console.log('📁 Selected file:', file.name, file.type, file.size);
-
     try {
       setUploading(true);
       setError(null);
       
-      console.log('⬆️ Uploading map image...');
       const response = await uploadAPI.uploadImage(file);
-      console.log('✅ Upload response:', response);
-      
       onMapChange(response.data.imageUrl);
     } catch (error) {
       console.error('❌ Error uploading map:', error);
@@ -91,7 +90,6 @@ const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
   };
 
   const handleRemoveMap = () => {
-    console.log('🗑️ Removing map image');
     onMapChange(null);
   };
 
@@ -114,11 +112,10 @@ const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
               component="img"
               height="200"
               image={`http://localhost:5000${mapImage}`}
-              alt="Sub-area map"
+              alt="Map preview"
               sx={{ objectFit: 'cover' }}
               onError={(e) => {
-                console.error('❌ Failed to load map image:', mapImage);
-                e.target.src = '/assets/map.webp'; // Fallback
+                e.target.src = '/assets/map.webp';
               }}
             />
             <CardContent>
@@ -167,14 +164,14 @@ const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
       )}
 
       <Typography variant="caption" color="textSecondary">
-        Upload a map image for this sub-area (JPG, PNG, GIF, WebP)
+        Upload a map image (JPG, PNG, GIF, WebP)
       </Typography>
     </Box>
   );
 };
 
-// Sortable Sub-Area Component
-const SortableSubArea = ({ subArea, areaKey, onEdit, onDelete }) => {
+// 🆕 NEW: Sortable Society Component
+const SortableSociety = ({ society, areaKey, subAreaId, onEdit, onDelete }) => {
   const {
     attributes,
     listeners,
@@ -182,7 +179,7 @@ const SortableSubArea = ({ subArea, areaKey, onEdit, onDelete }) => {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: `subarea-${areaKey}-${subArea.id}` });
+  } = useSortable({ id: `society-${areaKey}-${subAreaId}-${society.id}` });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -217,12 +214,12 @@ const SortableSubArea = ({ subArea, areaKey, onEdit, onDelete }) => {
       >
         <DragIcon color="action" />
       </Box>
-      <LocationIcon sx={{ mr: 2, color: 'text.secondary' }} />
+      <HomeIcon sx={{ mr: 2, color: 'text.secondary' }} />
       <ListItemText
         primary={
           <Box display="flex" alignItems="center" gap={1}>
-            {subArea.title}
-            {subArea.mapImage && (
+            {society.name}
+            {society.mapImage && (
               <Chip 
                 icon={<MapIcon />} 
                 label="Has Map" 
@@ -231,27 +228,40 @@ const SortableSubArea = ({ subArea, areaKey, onEdit, onDelete }) => {
                 variant="outlined"
               />
             )}
+            {society.amenities && society.amenities.length > 0 && (
+              <Chip 
+                label={`${society.amenities.length} amenities`}
+                size="small" 
+                color="secondary" 
+                variant="outlined"
+              />
+            )}
           </Box>
         }
-        secondary={subArea.description}
+        secondary={
+          <Box>
+            <Typography variant="body2" color="textSecondary">
+              {society.description}
+            </Typography>
+            {society.contact && (
+              <Typography variant="caption" color="textSecondary">
+                Contact: {society.contact.phone || society.contact.email || 'Not provided'}
+              </Typography>
+            )}
+          </Box>
+        }
       />
       <ListItemSecondaryAction>
         <IconButton
           size="small"
-          onClick={() => {
-            console.log('✏️ Editing sub-area:', subArea);
-            onEdit(areaKey, subArea);
-          }}
+          onClick={() => onEdit(areaKey, subAreaId, society)}
           color="primary"
         >
           <EditIcon />
         </IconButton>
         <IconButton
           size="small"
-          onClick={() => {
-            console.log('🗑️ Deleting sub-area:', subArea.id);
-            onDelete(areaKey, subArea.id);
-          }}
+          onClick={() => onDelete(areaKey, subAreaId, society.id)}
           color="error"
         >
           <DeleteIcon />
@@ -261,11 +271,19 @@ const SortableSubArea = ({ subArea, areaKey, onEdit, onDelete }) => {
   );
 };
 
-// Sortable Area Component
-// 🆕 Fixed SortableAreaCard component - Replace in your Areas.js
-
-const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onEditSubArea, onDeleteSubArea, onAddSubArea, onSubAreaReorder }) => {
-  // 🆕 FIX: Use the actual areaKey as the sortable ID
+// 🆕 UPDATED: Sortable Sub-Area Component with societies
+const SortableSubArea = ({ 
+  subArea, 
+  areaKey, 
+  onEdit, 
+  onDelete, 
+  onEditSociety, 
+  onDeleteSociety, 
+  onAddSociety,
+  onSocietyReorder 
+}) => {
+  const [expanded, setExpanded] = useState(false);
+  
   const {
     attributes,
     listeners,
@@ -273,20 +291,16 @@ const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onE
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: `area-${areaKey}` }); // Use areaKey directly
+  } = useSortable({ id: `subarea-${areaKey}-${subArea.id}` });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.9 : 1,
-    zIndex: isDragging ? 999 : 1,
+    opacity: isDragging ? 0.8 : 1,
   };
 
-  // Debug logging
-  console.log('🏗️ Rendering SortableAreaCard:', areaKey, 'ID:', `area-${areaKey}`);
-
-  // Set up sensors for sub-area drag and drop
-  const subAreaSensors = useSensors(
+  // Set up sensors for society drag and drop
+  const societySensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
@@ -298,26 +312,18 @@ const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onE
   );
 
   return (
-    <Accordion
+    <Paper
       ref={setNodeRef}
       style={style}
       sx={{
         mb: 2,
         border: isDragging ? '2px dashed #B8860B' : '1px solid #e0e0e0',
-        boxShadow: isDragging ? '0 8px 20px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.1)',
         borderRadius: 2,
       }}
     >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        sx={{
-          backgroundColor: isDragging ? '#e3f2fd' : '#f8f9fa',
-          '&:hover': {
-            backgroundColor: '#e9ecef',
-          },
-        }}
-      >
-        <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+      <Box sx={{ p: 2 }}>
+        {/* Sub-area header */}
+        <Box display="flex" alignItems="center" justifyContent="space-between">
           <Box display="flex" alignItems="center" flex={1}>
             <Box
               {...attributes}
@@ -331,132 +337,140 @@ const SortableAreaCard = ({ areaKey, area, propertyCounts, onEdit, onDelete, onE
                   cursor: 'grabbing',
                 },
               }}
-              onClick={(e) => e.stopPropagation()}
             >
-              <DragIcon sx={{ color: 'primary.main' }} />
+              <DragIcon color="primary" />
             </Box>
-            <MapIcon sx={{ mr: 2, color: 'primary.main' }} />
+            <LocationIcon sx={{ mr: 2, color: 'primary.main' }} />
             <Box>
-              <Typography variant="h6">{area.name}</Typography>
+              <Typography variant="h6">{subArea.title}</Typography>
               <Typography variant="body2" color="textSecondary">
-                {area.subAreas?.length || 0} sub-areas • {propertyCounts[areaKey] || 0} properties
+                {subArea.description}
               </Typography>
-              {/* 🆕 Debug info - remove this after testing */}
-              <Typography variant="caption" color="primary" sx={{ display: 'block' }}>
-                Key: {areaKey} | ID: area-{areaKey}
-              </Typography>
+              <Box display="flex" gap={1} mt={1}>
+                {subArea.mapImage && (
+                  <Chip 
+                    icon={<MapIcon />} 
+                    label="Has Map" 
+                    size="small" 
+                    color="primary" 
+                    variant="outlined"
+                  />
+                )}
+                <Chip 
+                  label={`${subArea.societies?.length || 0} societies`} 
+                  size="small" 
+                  color="secondary"
+                />
+              </Box>
             </Box>
           </Box>
-          <Box onClick={(e) => e.stopPropagation()}>
-            <Chip
-              label={`${propertyCounts[areaKey] || 0} properties`}
-              color={propertyCounts[areaKey] > 0 ? 'primary' : 'default'}
-              size="small"
-              sx={{ mr: 1 }}
-            />
+          
+          <Box display="flex" alignItems="center" gap={1}>
             <IconButton
               size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log('✏️ Editing area:', area);
-                onEdit(area);
-              }}
+              onClick={() => onEdit(areaKey, subArea)}
               color="primary"
             >
               <EditIcon />
             </IconButton>
             <IconButton
               size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log('🗑️ Deleting area:', areaKey);
-                onDelete(areaKey);
-              }}
+              onClick={() => onDelete(areaKey, subArea.id)}
               color="error"
             >
               <DeleteIcon />
             </IconButton>
-          </Box>
-        </Box>
-      </AccordionSummary>
-      <AccordionDetails>
-        {/* ... rest of the component remains the same ... */}
-        <Box width="100%">
-          <Typography variant="body1" paragraph>
-            {area.description}
-          </Typography>
-          
-          <Divider sx={{ my: 2 }} />
-          
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <Typography variant="h6">Sub-Areas</Typography>
-            <Button
+            <IconButton
+              onClick={() => setExpanded(!expanded)}
               size="small"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                console.log('➕ Adding sub-area to:', areaKey);
-                onAddSubArea(areaKey);
-              }}
             >
-              Add Sub-Area
-            </Button>
+              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
           </Box>
-
-          {area.subAreas && area.subAreas.length > 0 ? (
-            <DndContext
-              sensors={subAreaSensors}
-              collisionDetection={closestCenter}
-              onDragEnd={(result) => onSubAreaReorder(areaKey, result)}
-            >
-              <SortableContext
-                items={area.subAreas.map(sa => `subarea-${areaKey}-${sa.id}`)}
-                strategy={verticalListSortingStrategy}
-              >
-                <List>
-                  {area.subAreas.map((subArea) => (
-                    <SortableSubArea
-                      key={subArea.id}
-                      subArea={subArea}
-                      areaKey={areaKey}
-                      onEdit={onEditSubArea}
-                      onDelete={onDeleteSubArea}
-                    />
-                  ))}
-                </List>
-              </SortableContext>
-            </DndContext>
-          ) : (
-            <Paper sx={{ p: 3, textAlign: 'center', backgroundColor: '#f8f9fa' }}>
-              <BusinessIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
-              <Typography variant="body2" color="textSecondary">
-                No sub-areas yet. Add some sub-areas to organize this area better.
-              </Typography>
-            </Paper>
-          )}
         </Box>
-      </AccordionDetails>
-    </Accordion>
+
+        {/* Societies section */}
+        <Collapse in={expanded}>
+          <Box mt={2}>
+            <Divider sx={{ mb: 2 }} />
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Typography variant="h6">Societies in {subArea.title}</Typography>
+              <Button
+                size="small"
+                startIcon={<AddIcon />}
+                onClick={() => onAddSociety(areaKey, subArea.id)}
+                variant="outlined"
+              >
+                Add Society
+              </Button>
+            </Box>
+
+            {subArea.societies && subArea.societies.length > 0 ? (
+              <DndContext
+                sensors={societySensors}
+                collisionDetection={closestCenter}
+                onDragEnd={(result) => onSocietyReorder(areaKey, subArea.id, result)}
+              >
+                <SortableContext
+                  items={subArea.societies.map(s => `society-${areaKey}-${subArea.id}-${s.id}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <List>
+                    {subArea.societies.map((society) => (
+                      <SortableSociety
+                        key={society.id}
+                        society={society}
+                        areaKey={areaKey}
+                        subAreaId={subArea.id}
+                        onEdit={onEditSociety}
+                        onDelete={onDeleteSociety}
+                      />
+                    ))}
+                  </List>
+                </SortableContext>
+              </DndContext>
+            ) : (
+              <Paper sx={{ p: 3, textAlign: 'center', backgroundColor: '#f8f9fa' }}>
+                <HomeIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
+                <Typography variant="body2" color="textSecondary">
+                  No societies yet. Add some societies to organize this sub-area better.
+                </Typography>
+              </Paper>
+            )}
+          </Box>
+        </Collapse>
+      </Box>
+    </Paper>
   );
 };
 
+// Main Areas component with updated dialogs and society management
 function Areas() {
   const [areas, setAreas] = useState({});
   const [propertyCounts, setPropertyCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [savingOrder, setSavingOrder] = useState(false); // 🆕 Added saving state
+  const [savingOrder, setSavingOrder] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState('area'); // 'area' or 'subarea'
+  const [dialogType, setDialogType] = useState('area'); // 'area', 'subarea', or 'society'
   const [editingArea, setEditingArea] = useState(null);
   const [editingSubArea, setEditingSubArea] = useState(null);
+  const [editingSociety, setSEditingSociety] = useState(null); // 🆕 NEW
   const [parentAreaKey, setParentAreaKey] = useState(null);
+  const [parentSubAreaId, setParentSubAreaId] = useState(null); // 🆕 NEW
   const [activeId, setActiveId] = useState(null);
+  
+  // 🆕 UPDATED: Form data now includes society fields
   const [formData, setFormData] = useState({
     key: '',
     name: '',
     description: '',
     title: '',
     mapImage: null,
+    // 🆕 Society fields
+    amenities: '',
+    contactPhone: '',
+    contactEmail: '',
   });
 
   // Set up sensors for area drag and drop
@@ -472,16 +486,13 @@ function Areas() {
   );
 
   useEffect(() => {
-    console.log('🔄 Areas component mounted, loading data...');
     loadData();
   }, []);
 
   const loadData = async () => {
     try {
       setLoading(true);
-      console.log('📊 Loading areas and properties...');
       
-      // Load areas and property counts in parallel
       const [areasResponse, propertiesResponse] = await Promise.all([
         areaAPI.getAll().catch(err => {
           console.error('❌ Error loading areas:', err);
@@ -493,9 +504,6 @@ function Areas() {
         })
       ]);
 
-      console.log('📊 Areas response:', areasResponse);
-      console.log('📊 Properties response:', propertiesResponse);
-
       setAreas(areasResponse.data || {});
 
       // Count properties by area
@@ -505,7 +513,6 @@ function Areas() {
           counts[property.areaKey] = (counts[property.areaKey] || 0) + 1;
         });
       }
-      console.log('📊 Property counts:', counts);
       setPropertyCounts(counts);
     } catch (error) {
       console.error('❌ Error loading data:', error);
@@ -515,102 +522,45 @@ function Areas() {
     }
   };
 
-  // 🆕 Handle area drag and drop reordering - UPDATED WITH PERSISTENCE
-// 🆕 Fixed handleAreaDragEnd function - Add this to your Areas.js
-
-const handleAreaDragEnd = async (result) => {
-  const { active, over } = result;
-
-  if (over && active.id !== over.id) {
-    setSavingOrder(true);
-    
-    // 🆕 FIX: Extract actual area keys properly
-    const activeAreaKey = active.id.replace('area-', '');
-    const overAreaKey = over.id.replace('area-', '');
-    
-    console.log('🔄 Drag end - Active:', activeAreaKey, 'Over:', overAreaKey);
-    
-    // Get current area keys in order
-    const currentAreaKeys = Object.keys(areas);
-    console.log('📊 Current area keys:', currentAreaKeys);
-    
-    const oldIndex = currentAreaKeys.indexOf(activeAreaKey);
-    const newIndex = currentAreaKeys.indexOf(overAreaKey);
-    
-    console.log('📊 Old index:', oldIndex, 'New index:', newIndex);
-    
-    if (oldIndex === -1 || newIndex === -1) {
-      console.error('❌ Invalid area keys for reordering');
-      setSavingOrder(false);
-      return;
-    }
-
-    const reorderedKeys = arrayMove(currentAreaKeys, oldIndex, newIndex);
-    console.log('🔄 Final reordered keys:', reorderedKeys);
-    
-    // Update local state immediately for responsive UI
-    const reorderedAreas = {};
-    reorderedKeys.forEach(key => {
-      reorderedAreas[key] = areas[key];
-    });
-    setAreas(reorderedAreas);
-
-    try {
-      // 🆕 Send correct area keys to backend
-      await areaAPI.reorder(reorderedKeys);
-      console.log('✅ Areas order saved to backend');
-      setError(null);
-    } catch (error) {
-      console.error('❌ Error saving areas order:', error);
-      setError('Failed to save areas order');
-      // Reload data to revert changes on error
-      loadData();
-    } finally {
-      setSavingOrder(false);
-    }
-  }
-
-  setActiveId(null);
-};
-
-  // 🆕 Handle sub-area drag and drop reordering - UPDATED WITH PERSISTENCE
-  const handleSubAreaReorder = async (areaKey, result) => {
+  // 🆕 NEW: Handle society reordering
+  const handleSocietyReorder = async (areaKey, subAreaId, result) => {
     const { active, over } = result;
 
     if (over && active.id !== over.id) {
-      setSavingOrder(true); // Show saving indicator
+      setSavingOrder(true);
       
       const area = areas[areaKey];
+      const subArea = area.subAreas.find(sa => sa.id === parseInt(subAreaId));
       
-      // Extract the actual sub-area IDs
-      const activeSubAreaId = parseInt(active.id.replace(`subarea-${areaKey}-`, ''));
-      const overSubAreaId = parseInt(over.id.replace(`subarea-${areaKey}-`, ''));
+      // Extract the actual society IDs
+      const activeSocietyId = parseInt(active.id.replace(`society-${areaKey}-${subAreaId}-`, ''));
+      const overSocietyId = parseInt(over.id.replace(`society-${areaKey}-${subAreaId}-`, ''));
       
-      const oldIndex = area.subAreas.findIndex(sa => sa.id === activeSubAreaId);
-      const newIndex = area.subAreas.findIndex(sa => sa.id === overSubAreaId);
+      const oldIndex = subArea.societies.findIndex(s => s.id === activeSocietyId);
+      const newIndex = subArea.societies.findIndex(s => s.id === overSocietyId);
 
-      const reorderedSubAreas = arrayMove(area.subAreas, oldIndex, newIndex);
+      const reorderedSocieties = arrayMove(subArea.societies, oldIndex, newIndex);
 
-      // Update local state immediately for responsive UI
+      // Update local state immediately
+      const updatedSubArea = { ...subArea, societies: reorderedSocieties };
+      const updatedArea = {
+        ...area,
+        subAreas: area.subAreas.map(sa => sa.id === parseInt(subAreaId) ? updatedSubArea : sa)
+      };
+
       setAreas(prev => ({
         ...prev,
-        [areaKey]: {
-          ...area,
-          subAreas: reorderedSubAreas
-        }
+        [areaKey]: updatedArea
       }));
 
-      console.log('🔄 Reordered sub-areas locally for', areaKey);
-
       try {
-        // 🆕 Persist sub-area order to backend
-        await areaAPI.reorderSubAreas(areaKey, reorderedSubAreas);
-        console.log('✅ Sub-area order saved to backend');
-        setError(null); // Clear any previous errors
+        // Persist to backend
+        await areaAPI.update(areaKey, updatedArea);
+        console.log('✅ Society order saved to backend');
+        setError(null);
       } catch (error) {
-        console.error('❌ Error updating sub-area order:', error);
-        setError('Failed to update sub-area order');
-        // Reload data to revert changes on error
+        console.error('❌ Error updating society order:', error);
+        setError('Failed to update society order');
         loadData();
       } finally {
         setSavingOrder(false);
@@ -618,23 +568,26 @@ const handleAreaDragEnd = async (result) => {
     }
   };
 
-  const handleOpenAreaDialog = (area = null) => {
-    console.log('🔧 Opening area dialog:', area);
-    setDialogType('area');
-    setEditingArea(area);
+  // 🆕 NEW: Society dialog handlers
+  const handleOpenSocietyDialog = (areaKey, subAreaId, society = null) => {
+    console.log('🏘️ Opening society dialog:', areaKey, subAreaId, society);
+    setDialogType('society');
+    setEditingArea(null);
     setEditingSubArea(null);
-    setParentAreaKey(null);
+    setSEditingSociety(society);
+    setParentAreaKey(areaKey);
+    setParentSubAreaId(subAreaId);
     
-    if (area) {
-      // Find the area data from the areas object
-      const areaKey = Object.keys(areas).find(key => areas[key].name === area.name);
-      console.log('🔧 Found area key:', areaKey);
+    if (society) {
       setFormData({
-        key: areaKey || '',
-        name: area.name || '',
-        description: area.description || '',
+        key: '',
+        name: society.name || '',
+        description: society.description || '',
         title: '',
-        mapImage: null,
+        mapImage: society.mapImage || null,
+        amenities: society.amenities ? society.amenities.join(', ') : '',
+        contactPhone: society.contact?.phone || '',
+        contactEmail: society.contact?.email || '',
       });
     } else {
       setFormData({
@@ -643,6 +596,206 @@ const handleAreaDragEnd = async (result) => {
         description: '',
         title: '',
         mapImage: null,
+        amenities: '',
+        contactPhone: '',
+        contactEmail: '',
+      });
+    }
+    setOpenDialog(true);
+  };
+
+  // 🆕 NEW: Save society
+  const handleSaveSociety = async () => {
+    try {
+      console.log('💾 Saving society:', formData);
+      const area = areas[parentAreaKey];
+      const subAreaIndex = area.subAreas.findIndex(sa => sa.id === parseInt(parentSubAreaId));
+      const subArea = area.subAreas[subAreaIndex];
+      
+      const societyData = {
+        id: editingSociety ? editingSociety.id : Date.now(),
+        name: formData.name,
+        description: formData.description,
+        mapImage: formData.mapImage,
+        amenities: formData.amenities 
+          ? formData.amenities.split(',').map(a => a.trim()).filter(a => a)
+          : [],
+        contact: {
+          phone: formData.contactPhone || '',
+          email: formData.contactEmail || ''
+        },
+        order: editingSociety ? editingSociety.order : (subArea.societies?.length || 0)
+      };
+
+      let updatedSocieties;
+      if (editingSociety) {
+        updatedSocieties = subArea.societies.map(s => 
+          s.id === editingSociety.id ? societyData : s
+        );
+      } else {
+        updatedSocieties = [...(subArea.societies || []), societyData];
+      }
+
+      const updatedSubArea = { ...subArea, societies: updatedSocieties };
+      const updatedArea = {
+        ...area,
+        subAreas: area.subAreas.map((sa, idx) => 
+          idx === subAreaIndex ? updatedSubArea : sa
+        )
+      };
+
+      console.log('💾 Updated area data:', updatedArea);
+      await areaAPI.update(parentAreaKey, updatedArea);
+
+      handleCloseDialog();
+      loadData();
+    } catch (error) {
+      console.error('❌ Error saving society:', error);
+      setError(`Failed to save society: ${error.message}`);
+    }
+  };
+
+  // 🆕 NEW: Delete society
+  const handleDeleteSociety = async (areaKey, subAreaId, societyId) => {
+    if (window.confirm('Are you sure you want to delete this society?')) {
+      try {
+        console.log('🗑️ Deleting society:', societyId, 'from sub-area:', subAreaId);
+        const area = areas[areaKey];
+        const subAreaIndex = area.subAreas.findIndex(sa => sa.id === parseInt(subAreaId));
+        const subArea = area.subAreas[subAreaIndex];
+        
+        const updatedSocieties = subArea.societies.filter(s => s.id !== societyId);
+        const updatedSubArea = { ...subArea, societies: updatedSocieties };
+        const updatedArea = {
+          ...area,
+          subAreas: area.subAreas.map((sa, idx) => 
+            idx === subAreaIndex ? updatedSubArea : sa
+          )
+        };
+
+        await areaAPI.update(areaKey, updatedArea);
+        loadData();
+      } catch (error) {
+        console.error('❌ Error deleting society:', error);
+        setError(`Failed to delete society: ${error.message}`);
+      }
+    }
+  };
+
+  // Existing handlers (area reordering, sub-area handling, etc. - keeping the same)
+  const handleAreaDragEnd = async (result) => {
+    const { active, over } = result;
+
+    if (over && active.id !== over.id) {
+      setSavingOrder(true);
+      
+      const activeAreaKey = active.id.replace('area-', '');
+      const overAreaKey = over.id.replace('area-', '');
+      
+      const currentAreaKeys = Object.keys(areas);
+      const oldIndex = currentAreaKeys.indexOf(activeAreaKey);
+      const newIndex = currentAreaKeys.indexOf(overAreaKey);
+      
+      if (oldIndex === -1 || newIndex === -1) {
+        console.error('❌ Invalid area keys for reordering');
+        setSavingOrder(false);
+        return;
+      }
+
+      const reorderedKeys = arrayMove(currentAreaKeys, oldIndex, newIndex);
+      
+      const reorderedAreas = {};
+      reorderedKeys.forEach(key => {
+        reorderedAreas[key] = areas[key];
+      });
+      setAreas(reorderedAreas);
+
+      try {
+        await areaAPI.reorder(reorderedKeys);
+        console.log('✅ Areas order saved to backend');
+        setError(null);
+      } catch (error) {
+        console.error('❌ Error saving areas order:', error);
+        setError('Failed to save areas order');
+        loadData();
+      } finally {
+        setSavingOrder(false);
+      }
+    }
+
+    setActiveId(null);
+  };
+
+  const handleSubAreaReorder = async (areaKey, result) => {
+    const { active, over } = result;
+
+    if (over && active.id !== over.id) {
+      setSavingOrder(true);
+      
+      const area = areas[areaKey];
+      
+      const activeSubAreaId = parseInt(active.id.replace(`subarea-${areaKey}-`, ''));
+      const overSubAreaId = parseInt(over.id.replace(`subarea-${areaKey}-`, ''));
+      
+      const oldIndex = area.subAreas.findIndex(sa => sa.id === activeSubAreaId);
+      const newIndex = area.subAreas.findIndex(sa => sa.id === overSubAreaId);
+
+      const reorderedSubAreas = arrayMove(area.subAreas, oldIndex, newIndex);
+
+      setAreas(prev => ({
+        ...prev,
+        [areaKey]: {
+          ...area,
+          subAreas: reorderedSubAreas
+        }
+      }));
+
+      try {
+        await areaAPI.reorderSubAreas(areaKey, reorderedSubAreas);
+        console.log('✅ Sub-area order saved to backend');
+        setError(null);
+      } catch (error) {
+        console.error('❌ Error updating sub-area order:', error);
+        setError('Failed to update sub-area order');
+        loadData();
+      } finally {
+        setSavingOrder(false);
+      }
+    }
+  };
+
+  // Existing dialog handlers (keeping the same but updated for society support)
+  const handleOpenAreaDialog = (area = null) => {
+    console.log('🔧 Opening area dialog:', area);
+    setDialogType('area');
+    setEditingArea(area);
+    setEditingSubArea(null);
+    setSEditingSociety(null);
+    setParentAreaKey(null);
+    setParentSubAreaId(null);
+    
+    if (area) {
+      const areaKey = Object.keys(areas).find(key => areas[key].name === area.name);
+      setFormData({
+        key: areaKey || '',
+        name: area.name || '',
+        description: area.description || '',
+        title: '',
+        mapImage: null,
+        amenities: '',
+        contactPhone: '',
+        contactEmail: '',
+      });
+    } else {
+      setFormData({
+        key: '',
+        name: '',
+        description: '',
+        title: '',
+        mapImage: null,
+        amenities: '',
+        contactPhone: '',
+        contactEmail: '',
       });
     }
     setOpenDialog(true);
@@ -653,7 +806,9 @@ const handleAreaDragEnd = async (result) => {
     setDialogType('subarea');
     setEditingArea(null);
     setEditingSubArea(subArea);
+    setSEditingSociety(null);
     setParentAreaKey(areaKey);
+    setParentSubAreaId(null);
     
     if (subArea) {
       setFormData({
@@ -662,6 +817,9 @@ const handleAreaDragEnd = async (result) => {
         description: subArea.description || '',
         title: subArea.title || '',
         mapImage: subArea.mapImage || null,
+        amenities: '',
+        contactPhone: '',
+        contactEmail: '',
       });
     } else {
       setFormData({
@@ -670,28 +828,34 @@ const handleAreaDragEnd = async (result) => {
         description: '',
         title: '',
         mapImage: null,
+        amenities: '',
+        contactPhone: '',
+        contactEmail: '',
       });
     }
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
-    console.log('❌ Closing dialog');
     setOpenDialog(false);
     setEditingArea(null);
     setEditingSubArea(null);
+    setSEditingSociety(null);
     setParentAreaKey(null);
+    setParentSubAreaId(null);
     setFormData({
       key: '',
       name: '',
       description: '',
       title: '',
       mapImage: null,
+      amenities: '',
+      contactPhone: '',
+      contactEmail: '',
     });
   };
 
   const handleInputChange = (field) => (event) => {
-    console.log('✏️ Input change:', field, event.target.value);
     setFormData(prev => ({
       ...prev,
       [field]: event.target.value
@@ -699,16 +863,15 @@ const handleAreaDragEnd = async (result) => {
   };
 
   const handleMapChange = (mapImageUrl) => {
-    console.log('🗺️ Map change:', mapImageUrl);
     setFormData(prev => ({
       ...prev,
       mapImage: mapImageUrl
     }));
   };
 
+  // Existing save handlers (keeping the same)
   const handleSaveArea = async () => {
     try {
-      console.log('💾 Saving area:', formData);
       const areaData = {
         key: formData.key.toLowerCase().replace(/\s+/g, '-'),
         name: formData.name,
@@ -716,17 +879,11 @@ const handleAreaDragEnd = async (result) => {
         subAreas: editingArea ? areas[Object.keys(areas).find(key => areas[key].name === editingArea.name)]?.subAreas || [] : [],
       };
 
-      console.log('💾 Area data to save:', areaData);
-
       if (editingArea) {
         const areaKey = Object.keys(areas).find(key => areas[key].name === editingArea.name);
-        console.log('💾 Updating area:', areaKey);
-        const response = await areaAPI.update(areaKey, areaData);
-        console.log('✅ Update response:', response);
+        await areaAPI.update(areaKey, areaData);
       } else {
-        console.log('💾 Creating new area');
-        const response = await areaAPI.create(areaData);
-        console.log('✅ Create response:', response);
+        await areaAPI.create(areaData);
       }
 
       handleCloseDialog();
@@ -739,16 +896,14 @@ const handleAreaDragEnd = async (result) => {
 
   const handleSaveSubArea = async () => {
     try {
-      console.log('💾 Saving sub-area:', formData, 'to area:', parentAreaKey);
       const area = areas[parentAreaKey];
       const subAreaData = {
         id: editingSubArea ? editingSubArea.id : Date.now(),
         title: formData.title,
         description: formData.description,
         mapImage: formData.mapImage,
+        societies: editingSubArea ? editingSubArea.societies || [] : [],
       };
-
-      console.log('💾 Sub-area data:', subAreaData);
 
       let updatedSubAreas;
       if (editingSubArea) {
@@ -766,10 +921,7 @@ const handleAreaDragEnd = async (result) => {
         subAreas: updatedSubAreas,
       };
 
-      console.log('💾 Updated area data:', updatedAreaData);
-
-      const response = await areaAPI.update(parentAreaKey, updatedAreaData);
-      console.log('✅ Sub-area save response:', response);
+      await areaAPI.update(parentAreaKey, updatedAreaData);
 
       handleCloseDialog();
       loadData();
@@ -779,6 +931,7 @@ const handleAreaDragEnd = async (result) => {
     }
   };
 
+  // Existing delete handlers (keeping the same)
   const handleDeleteArea = async (areaKey) => {
     const propertyCount = propertyCounts[areaKey] || 0;
     if (propertyCount > 0) {
@@ -788,7 +941,6 @@ const handleAreaDragEnd = async (result) => {
 
     if (window.confirm('Are you sure you want to delete this area?')) {
       try {
-        console.log('🗑️ Deleting area:', areaKey);
         await areaAPI.delete(areaKey);
         loadData();
       } catch (error) {
@@ -801,7 +953,6 @@ const handleAreaDragEnd = async (result) => {
   const handleDeleteSubArea = async (areaKey, subAreaId) => {
     if (window.confirm('Are you sure you want to delete this sub-area?')) {
       try {
-        console.log('🗑️ Deleting sub-area:', subAreaId, 'from area:', areaKey);
         const area = areas[areaKey];
         const updatedSubAreas = area.subAreas.filter(sa => sa.id !== subAreaId);
         const updatedAreaData = {
@@ -811,7 +962,6 @@ const handleAreaDragEnd = async (result) => {
           subAreas: updatedSubAreas,
         };
 
-        console.log('💾 Updated area after sub-area deletion:', updatedAreaData);
         await areaAPI.update(areaKey, updatedAreaData);
         loadData();
       } catch (error) {
@@ -844,7 +994,7 @@ const handleAreaDragEnd = async (result) => {
             Areas Management
           </Typography>
           <Typography variant="body1" color="textSecondary">
-            Manage your service areas and sub-areas • Drag to reorder
+            Manage your service areas, sub-areas, and societies • Drag to reorder
           </Typography>
         </Box>
         <Button
@@ -857,7 +1007,6 @@ const handleAreaDragEnd = async (result) => {
         </Button>
       </Box>
 
-      {/* 🆕 Saving Order Feedback */}
       {savingOrder && (
         <Alert severity="info" sx={{ mb: 2 }}>
           💾 Saving new order...
@@ -870,59 +1019,100 @@ const handleAreaDragEnd = async (result) => {
         </Alert>
       )}
 
-      {/* Areas List with Drag & Drop */}
-{Object.keys(areas).length > 0 ? (
-  <DndContext
-    sensors={sensors}
-    collisionDetection={closestCenter}
-    onDragStart={handleDragStart}
-    onDragEnd={handleAreaDragEnd}
-  >
-    <SortableContext
-      items={Object.keys(areas).map(key => `area-${key}`)} // 🆕 FIX: Use actual area keys
-      strategy={verticalListSortingStrategy}
-    >
-      <Box>
-        {Object.entries(areas).map(([areaKey, area]) => {
-          console.log('🎯 Rendering area:', areaKey, 'with ID:', `area-${areaKey}`); // Debug log
-          return (
-            <SortableAreaCard
-              key={areaKey} // Use areaKey as React key
-              areaKey={areaKey}
-              area={area}
-              propertyCounts={propertyCounts}
-              onEdit={handleOpenAreaDialog}
-              onDelete={handleDeleteArea}
-              onEditSubArea={handleOpenSubAreaDialog}
-              onDeleteSubArea={handleDeleteSubArea}
-              onAddSubArea={handleOpenSubAreaDialog}
-              onSubAreaReorder={handleSubAreaReorder}
-            />
-          );
-        })}
-      </Box>
-    </SortableContext>
-    <DragOverlay>
-      {activeId ? (
-        <Box
-          sx={{
-            backgroundColor: 'rgba(184, 134, 11, 0.1)',
-            border: '2px dashed #B8860B',
-            borderRadius: 2,
-            p: 2,
-            minHeight: 60,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Typography variant="h6" color="primary">
-            {activeId.includes('area-') ? 'Moving Area...' : 'Moving Sub-Area...'}
-          </Typography>
+      {/* Areas List with Sub-areas and Societies */}
+      {Object.keys(areas).length > 0 ? (
+        <Box>
+          {Object.entries(areas).map(([areaKey, area]) => (
+            <Accordion key={areaKey} sx={{ mb: 2 }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+                  <Box display="flex" alignItems="center">
+                    <MapIcon sx={{ mr: 2, color: 'primary.main' }} />
+                    <Box>
+                      <Typography variant="h6">{area.name}</Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {area.subAreas?.length || 0} sub-areas • {propertyCounts[areaKey] || 0} properties
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box onClick={(e) => e.stopPropagation()}>
+                    <Chip
+                      label={`${propertyCounts[areaKey] || 0} properties`}
+                      color={propertyCounts[areaKey] > 0 ? 'primary' : 'default'}
+                      size="small"
+                      sx={{ mr: 1 }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenAreaDialog(area);
+                      }}
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteArea(areaKey);
+                      }}
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box width="100%">
+                  <Typography variant="body1" paragraph>
+                    {area.description}
+                  </Typography>
+                  
+                  <Divider sx={{ my: 2 }} />
+                  
+                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Typography variant="h6">Sub-Areas</Typography>
+                    <Button
+                      size="small"
+                      startIcon={<AddIcon />}
+                      onClick={() => handleOpenSubAreaDialog(areaKey)}
+                    >
+                      Add Sub-Area
+                    </Button>
+                  </Box>
+
+                  {area.subAreas && area.subAreas.length > 0 ? (
+                    <Box>
+                      {area.subAreas.map((subArea) => (
+                        <SortableSubArea
+                          key={subArea.id}
+                          subArea={subArea}
+                          areaKey={areaKey}
+                          onEdit={handleOpenSubAreaDialog}
+                          onDelete={handleDeleteSubArea}
+                          onEditSociety={handleOpenSocietyDialog}
+                          onDeleteSociety={handleDeleteSociety}
+                          onAddSociety={handleOpenSocietyDialog}
+                          onSocietyReorder={handleSocietyReorder}
+                        />
+                      ))}
+                    </Box>
+                  ) : (
+                    <Paper sx={{ p: 3, textAlign: 'center', backgroundColor: '#f8f9fa' }}>
+                      <BusinessIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
+                      <Typography variant="body2" color="textSecondary">
+                        No sub-areas yet. Add some sub-areas to organize this area better.
+                      </Typography>
+                    </Paper>
+                  )}
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          ))}
         </Box>
-      ) : null}
-    </DragOverlay>
-  </DndContext>
       ) : (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <MapIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
@@ -942,21 +1132,21 @@ const handleAreaDragEnd = async (result) => {
         </Paper>
       )}
 
-      {/* Add/Edit Dialog */}
+      {/* 🆕 UPDATED: Multi-purpose Dialog for Areas, Sub-areas, and Societies */}
       <Dialog 
         open={openDialog} 
         onClose={handleCloseDialog}
         fullWidth
+        maxWidth={dialogType === 'society' ? 'md' : 'sm'}
       >
         <DialogTitle>
-          {dialogType === 'area' 
-            ? (editingArea ? 'Edit Area' : 'Add New Area')
-            : (editingSubArea ? 'Edit Sub-Area' : 'Add New Sub-Area')
-          }
+          {dialogType === 'area' && (editingArea ? 'Edit Area' : 'Add New Area')}
+          {dialogType === 'subarea' && (editingSubArea ? 'Edit Sub-Area' : 'Add New Sub-Area')}
+          {dialogType === 'society' && (editingSociety ? 'Edit Society' : 'Add New Society')}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            {dialogType === 'area' ? (
+            {dialogType === 'area' && (
               <>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -993,7 +1183,9 @@ const handleAreaDragEnd = async (result) => {
                   />
                 </Grid>
               </>
-            ) : (
+            )}
+            
+            {dialogType === 'subarea' && (
               <>
                 <Grid item xs={12}>
                   <TextField
@@ -1026,20 +1218,87 @@ const handleAreaDragEnd = async (result) => {
                 </Grid>
               </>
             )}
+            
+            {/* 🆕 NEW: Society form fields */}
+            {dialogType === 'society' && (
+              <>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Society Name"
+                    value={formData.name}
+                    onChange={handleInputChange('name')}
+                    placeholder="e.g., Green Valley Apartments"
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Description"
+                    multiline
+                    rows={3}
+                    value={formData.description}
+                    onChange={handleInputChange('description')}
+                    placeholder="Describe this society..."
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Amenities"
+                    value={formData.amenities}
+                    onChange={handleInputChange('amenities')}
+                    placeholder="e.g., Swimming Pool, Gym, Parking, Security (comma separated)"
+                    helperText="Enter amenities separated by commas"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Contact Phone"
+                    value={formData.contactPhone}
+                    onChange={handleInputChange('contactPhone')}
+                    placeholder="e.g., +91-9811186086"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Contact Email"
+                    value={formData.contactEmail}
+                    onChange={handleInputChange('contactEmail')}
+                    placeholder="e.g., contact@society.com"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <MapUpload
+                    mapImage={formData.mapImage}
+                    onMapChange={handleMapChange}
+                    label="Society Map (Optional)"
+                  />
+                </Grid>
+              </>
+            )}
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
           <Button 
-            onClick={dialogType === 'area' ? handleSaveArea : handleSaveSubArea}
+            onClick={() => {
+              if (dialogType === 'area') handleSaveArea();
+              else if (dialogType === 'subarea') handleSaveSubArea();
+              else if (dialogType === 'society') handleSaveSociety();
+            }}
             variant="contained"
             disabled={
-              dialogType === 'area' 
-                ? !formData.key || !formData.name || !formData.description
-                : !formData.title || !formData.description
+              (dialogType === 'area' && (!formData.key || !formData.name || !formData.description)) ||
+              (dialogType === 'subarea' && (!formData.title || !formData.description)) ||
+              (dialogType === 'society' && (!formData.name || !formData.description))
             }
           >
-            {(editingArea || editingSubArea) ? 'Update' : 'Add'}
+            {(editingArea || editingSubArea || editingSociety) ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
       </Dialog>

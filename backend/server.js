@@ -1,3 +1,4 @@
+// backend/server.js - Updated with societies route
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -114,6 +115,9 @@ app.post('/api/contacts', async (req, res) => {
   }
 });
 
+// 🆕 NEW: Societies route (PUBLIC READ access)
+app.use('/api/societies', require('./routes/societies'));
+
 // 🆕 MIXED ROUTES: READ operations public, WRITE operations protected
 
 // Properties routes - GET public, POST/PUT/DELETE protected
@@ -197,6 +201,7 @@ app.get('/', (req, res) => {
         'GET /api/properties', 
         'GET /api/properties/area/:areaKey',
         'GET /api/uploads/slider',
+        'GET /api/societies/:areaKey/:subAreaId', // 🆕 NEW
         'POST /api/contacts'
       ],
       protected: [
@@ -247,6 +252,7 @@ app.use('*', (req, res) => {
       'GET /api/areas (public)',
       'GET /api/properties (public)',
       'GET /api/uploads/slider (public)',
+      'GET /api/societies/:areaKey/:subAreaId (public)', // 🆕 NEW
       'POST /api/contacts (public)',
       'Other methods require authentication'
     ]
@@ -258,7 +264,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`🌐 Server URL: http://localhost:${PORT}`);
   console.log(`📋 API Health: http://localhost:${PORT}/api/health`);
-  console.log(`🔓 Public READ: GET /api/areas, /api/properties, /api/uploads`);
+  console.log(`🔓 Public READ: GET /api/areas, /api/properties, /api/uploads, /api/societies`);
   console.log(`🔐 Protected WRITE: POST/PUT/DELETE operations require admin auth`);
   console.log(`👤 Admin login: http://localhost:${PORT}/api/auth/login`);
 });

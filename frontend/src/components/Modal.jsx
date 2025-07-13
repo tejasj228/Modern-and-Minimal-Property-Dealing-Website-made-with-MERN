@@ -1,8 +1,11 @@
+// frontend/src/components/Modal.jsx - Updated with "View Areas" button
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Modal.css';
 
 const Modal = ({ isOpen, onClose, subArea, onViewProperties, cardPosition }) => {
   const wasModalOpen = useRef(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -89,8 +92,12 @@ const Modal = ({ isOpen, onClose, subArea, onViewProperties, cardPosition }) => 
     }
   };
 
-  const handleViewProperties = () => {
-    onViewProperties(subArea.areaKey);
+  // 🆕 NEW: Handle "View Areas" button click
+  const handleViewAreas = () => {
+    console.log('🏘️ Navigating to societies page for:', subArea);
+    onClose(); // Close modal first
+    // Navigate to societies page with areaKey and subAreaId
+    navigate(`/societies/${subArea.areaKey}/${subArea.id}`);
   };
 
   // Determine which map image to show
@@ -167,8 +174,9 @@ const Modal = ({ isOpen, onClose, subArea, onViewProperties, cardPosition }) => 
             >
               Open Map in New Tab
             </button>
-            <button className="btn btn-primary" onClick={handleViewProperties}>
-              View Listings
+            {/* 🆕 UPDATED: Changed from "View Listings" to "View Areas" */}
+            <button className="btn btn-primary" onClick={handleViewAreas}>
+              View Areas Under {subArea.title}
             </button>
           </div>
         </div>

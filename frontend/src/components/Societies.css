@@ -1,0 +1,464 @@
+/* frontend/src/components/Societies.css */
+.societies-page {
+    padding: 120px 0 80px;
+    background: var(--bg-light);
+    min-height: 100vh;
+    transition: all 0.5s ease;
+}
+
+/* Back Navigation */
+.back-navigation {
+    margin-bottom: 30px;
+}
+
+.back-btn {
+    background: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-btn:hover {
+    background: var(--accent-color);
+    color: #1a1a1a;
+    transform: translateY(-2px);
+}
+
+.back-btn i {
+    font-size: 0.9rem;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.breadcrumb i {
+    font-size: 0.8rem;
+    color: var(--accent-color);
+}
+
+/* Societies Grid */
+.societies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.society-card {
+    background: var(--bg-white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow-light);
+    transition: all 0.3s ease;
+    border: 2px solid var(--border-light);
+    cursor: pointer;
+    animation: fadeInUp 0.6s ease-in-out;
+    animation-fill-mode: both;
+}
+
+.society-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px var(--shadow-medium);
+    border-color: var(--accent-color);
+}
+
+/* Society Image */
+.society-image {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+}
+
+.society-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.society-card:hover .society-image img {
+    transform: scale(1.05);
+}
+
+/* Society Content */
+.society-content {
+    padding: 25px;
+}
+
+.society-content h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    transition: color 0.3s ease;
+}
+
+.society-card:hover .society-content h3 {
+    color: var(--accent-color);
+}
+
+.society-description {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+/* Amenities Preview */
+.amenities-preview {
+    margin-bottom: 20px;
+}
+
+.amenities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.amenity-tag {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.amenity-tag:hover {
+    background: var(--accent-color);
+    color: #1a1a1a;
+}
+
+.amenity-tag i {
+    font-size: 0.7rem;
+    color: var(--accent-color);
+    transition: color 0.3s ease;
+}
+
+.amenity-tag:hover i {
+    color: #1a1a1a;
+}
+
+.amenity-tag.more {
+    background: var(--accent-color);
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+/* Contact Preview */
+.contact-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.contact-item i {
+    color: var(--accent-color);
+    width: 16px;
+}
+
+/* No Societies */
+.no-societies {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    margin-top: 50px;
+}
+
+.no-societies-content {
+    text-align: center;
+    max-width: 500px;
+    padding: 60px 40px;
+    background: var(--bg-white);
+    border-radius: 12px;
+    border: 2px solid var(--border-light);
+    transition: all 0.3s ease;
+}
+
+.no-societies-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px var(--shadow-light);
+    border-color: var(--accent-color);
+}
+
+.no-societies-content i {
+    font-size: 4rem;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.no-societies-content h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.no-societies-content p {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef5350;
+}
+
+/* Modal Enhancements for Societies */
+.modal-amenities {
+    margin-bottom: 25px;
+}
+
+.modal-amenities h4 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-light);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.amenity-item:hover {
+    background: var(--accent-color);
+    color: #1a1a1a;
+}
+
+.amenity-item i {
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    transition: color 0.3s ease;
+}
+
+.amenity-item:hover i {
+    color: #1a1a1a;
+}
+
+.modal-contact {
+    margin-bottom: 25px;
+}
+
+.modal-contact h4 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Dark Mode Adjustments */
+.dark-mode .society-card {
+    background: var(--bg-card);
+    border-color: #2a2a2a;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .society-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .no-societies-content {
+    background: var(--bg-card);
+    border-color: #2a2a2a;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .no-societies-content:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .back-btn {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.dark-mode .back-btn:hover {
+    background: var(--accent-color);
+    color: #1a1a1a;
+}
+
+.dark-mode .alert-error {
+    background: #3a1e1e;
+    color: #f87171;
+    border-color: #5a2d2d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .societies-page {
+        padding: 140px 0 60px;
+    }
+
+    .societies-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .society-card {
+        margin: 0 10px;
+    }
+
+    .society-image {
+        height: 180px;
+    }
+
+    .society-content {
+        padding: 20px;
+    }
+
+    .society-content h3 {
+        font-size: 1.2rem;
+    }
+
+    .amenities-list {
+        gap: 6px;
+    }
+
+    .amenity-tag {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+
+    .amenities-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .modal-right {
+        padding: 20px;
+    }
+
+    .modal-amenities,
+    .modal-contact {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .societies-page {
+        padding: 120px 0 60px;
+    }
+
+    .society-card {
+        margin: 0 5px;
+    }
+
+    .society-image {
+        height: 160px;
+    }
+
+    .society-content {
+        padding: 15px;
+    }
+
+    .society-content h3 {
+        font-size: 1.1rem;
+    }
+
+    .society-description {
+        font-size: 0.9rem;
+    }
+
+    .amenity-tag {
+        padding: 3px 6px;
+        font-size: 0.7rem;
+    }
+
+    .no-societies-content {
+        margin: 0 20px;
+        padding: 40px 20px;
+    }
+
+    .no-societies-content i {
+        font-size: 3rem;
+    }
+
+    .no-societies-content h3 {
+        font-size: 1.3rem;
+    }
+}
+
+/* Animation delays for staggered appearance */
+.society-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.society-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.society-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.society-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.society-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.society-card:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
