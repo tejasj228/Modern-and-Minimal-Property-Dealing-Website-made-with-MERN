@@ -1,12 +1,60 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path');
-const fs = require('fs');
-const upload = require('../middleware/upload');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 const SliderImage = require('../models/SliderImage');
 
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Configure multer for memory storage (no local files)
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(file.originalname.toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed (jpeg, jpg, png, gif, webp)'));
+    }
+  }
+});
+
+// Helper function to upload to Cloudinary
+const uploadToCloudinary = (buffer, options = {}) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'pawan-buildhome', // Organize files in folder
+        ...options
+      },
+      (error, result) => {
+        if (error) {
+          console.error('❌ Cloudinary upload error:', error);
+          reject(error);
+        } else {
+          console.log('✅ Cloudinary upload success:', result.secure_url);
+          resolve(result);
+        }
+      }
+    );
+    uploadStream.end(buffer);
+  });
+};
+
 // POST /api/uploads/image - Upload single image
-router.post('/image', upload.single('image'), (req, res) => {
+router.post('/image', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -15,20 +63,31 @@ router.post('/image', upload.single('image'), (req, res) => {
       });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
-    
+    console.log('📤 Uploading to Cloudinary:', req.file.originalname);
+
+    // Upload to Cloudinary
+    const result = await uploadToCloudinary(req.file.buffer, {
+      public_id: `property-${Date.now()}`,
+      resource_type: 'image'
+    });
+
     res.json({
       success: true,
       message: 'Image uploaded successfully',
       data: {
-        filename: req.file.filename,
+        filename: result.public_id,
         originalName: req.file.originalname,
-        imageUrl: imageUrl,
-        size: req.file.size
+        imageUrl: result.secure_url, // This is the full Cloudinary URL
+        size: req.file.size,
+        cloudinaryData: {
+          public_id: result.public_id,
+          version: result.version,
+          format: result.format
+        }
       }
     });
   } catch (error) {
-    console.error('Error uploading image:', error);
+    console.error('❌ Error uploading image:', error);
     res.status(500).json({
       success: false,
       message: 'Error uploading image',
@@ -38,7 +97,7 @@ router.post('/image', upload.single('image'), (req, res) => {
 });
 
 // POST /api/uploads/multiple - Upload multiple images
-router.post('/multiple', upload.multiple('images'), (req, res) => {
+router.post('/multiple', upload.array('images', 10), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -47,20 +106,37 @@ router.post('/multiple', upload.multiple('images'), (req, res) => {
       });
     }
 
-    const uploadedFiles = req.files.map(file => ({
-      filename: file.filename,
-      originalName: file.originalname,
-      imageUrl: `/uploads/${file.filename}`,
-      size: file.size
+    console.log(`📤 Uploading ${req.files.length} files to Cloudinary`);
+
+    // Upload all files to Cloudinary
+    const uploadPromises = req.files.map((file, index) =>
+      uploadToCloudinary(file.buffer, {
+        public_id: `property-${Date.now()}-${index}`,
+        resource_type: 'image'
+      })
+    );
+
+    const results = await Promise.all(uploadPromises);
+
+    const uploadedFiles = results.map((result, index) => ({
+      filename: result.public_id,
+      originalName: req.files[index].originalname,
+      imageUrl: result.secure_url,
+      size: req.files[index].size,
+      cloudinaryData: {
+        public_id: result.public_id,
+        version: result.version,
+        format: result.format
+      }
     }));
-    
+
     res.json({
       success: true,
       message: `${req.files.length} images uploaded successfully`,
       data: uploadedFiles
     });
   } catch (error) {
-    console.error('Error uploading images:', error);
+    console.error('❌ Error uploading images:', error);
     res.status(500).json({
       success: false,
       message: 'Error uploading images',
@@ -69,7 +145,7 @@ router.post('/multiple', upload.multiple('images'), (req, res) => {
   }
 });
 
-// GET /api/uploads/slider - Get all slider images
+// GET /api/uploads/slider - Get all slider images (unchanged)
 router.get('/slider', async (req, res) => {
   try {
     const sliderImages = await SliderImage.find({ isActive: true })
@@ -101,11 +177,18 @@ router.post('/slider', upload.single('image'), async (req, res) => {
     }
 
     const { title, altText, order } = req.body;
-    const imageUrl = `/uploads/${req.file.filename}`;
+    
+    console.log('📤 Uploading slider image to Cloudinary:', req.file.originalname);
+
+    // Upload to Cloudinary
+    const result = await uploadToCloudinary(req.file.buffer, {
+      public_id: `slider-${Date.now()}`,
+      resource_type: 'image'
+    });
 
     const sliderImage = new SliderImage({
       title: title || req.file.originalname,
-      imageUrl,
+      imageUrl: result.secure_url, // Store full Cloudinary URL
       altText: altText || title || req.file.originalname,
       order: order || 0
     });
@@ -139,10 +222,20 @@ router.delete('/slider/:id', async (req, res) => {
       });
     }
 
-    // Delete physical file
-    const filePath = path.join(__dirname, '..', sliderImage.imageUrl);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Extract public_id from Cloudinary URL if it's a Cloudinary image
+    if (sliderImage.imageUrl.includes('cloudinary.com')) {
+      try {
+        const urlParts = sliderImage.imageUrl.split('/');
+        const publicIdWithExtension = urlParts[urlParts.length - 1];
+        const publicId = publicIdWithExtension.split('.')[0];
+        
+        // Delete from Cloudinary
+        await cloudinary.uploader.destroy(`pawan-buildhome/${publicId}`);
+        console.log('✅ Image deleted from Cloudinary:', publicId);
+      } catch (cloudinaryError) {
+        console.error('⚠️ Error deleting from Cloudinary:', cloudinaryError);
+        // Continue with database deletion even if Cloudinary deletion fails
+      }
     }
 
     await SliderImage.findByIdAndDelete(req.params.id);
@@ -161,70 +254,18 @@ router.delete('/slider/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/uploads/:filename - Delete uploaded file
-router.delete('/:filename', (req, res) => {
+// GET /api/uploads/files - Get list of uploaded files (for admin panel)
+router.get('/files', async (req, res) => {
   try {
-    const filename = req.params.filename;
-    const filePath = path.join(__dirname, '../uploads', filename);
-    
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({
-        success: false,
-        message: 'File not found'
-      });
-    }
-    
-    fs.unlinkSync(filePath);
+    // For Cloudinary, we can't easily list all files without pagination
+    // So we'll return an empty array or implement Cloudinary Admin API
+    // For now, return empty array since files are stored in properties/slider collections
     
     res.json({
       success: true,
-      message: 'File deleted successfully'
-    });
-  } catch (error) {
-    console.error('Error deleting file:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error deleting file',
-      error: error.message
-    });
-  }
-});
-
-// GET /api/uploads/files - Get list of uploaded files
-router.get('/files', (req, res) => {
-  try {
-    const uploadsDir = path.join(__dirname, '../uploads');
-    
-    if (!fs.existsSync(uploadsDir)) {
-      return res.json({
-        success: true,
-        count: 0,
-        data: []
-      });
-    }
-    
-    const files = fs.readdirSync(uploadsDir)
-      .filter(file => {
-        const filePath = path.join(uploadsDir, file);
-        return fs.statSync(filePath).isFile();
-      })
-      .map(file => {
-        const filePath = path.join(uploadsDir, file);
-        const stats = fs.statSync(filePath);
-        return {
-          filename: file,
-          imageUrl: `/uploads/${file}`,
-          size: stats.size,
-          createdAt: stats.birthtime,
-          modifiedAt: stats.mtime
-        };
-      })
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    
-    res.json({
-      success: true,
-      count: files.length,
-      data: files
+      count: 0,
+      data: [],
+      message: 'Files are now stored in Cloudinary. Check individual properties and slider images.'
     });
   } catch (error) {
     console.error('Error getting file list:', error);
@@ -234,6 +275,14 @@ router.get('/files', (req, res) => {
       error: error.message
     });
   }
+});
+
+// DELETE /api/uploads/:filename - Delete uploaded file (legacy endpoint)
+router.delete('/:filename', (req, res) => {
+  res.json({
+    success: false,
+    message: 'File deletion not supported with Cloudinary. Delete through properties or slider management.'
+  });
 });
 
 module.exports = router;
