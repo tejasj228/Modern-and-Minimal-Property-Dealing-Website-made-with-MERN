@@ -1,9 +1,151 @@
-// frontend/src/components/Societies.jsx - New societies page
+// frontend/src/components/Societies.jsx - Enhanced with image slider
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PageTransition from './PageTransition';
 import Modal from './Modal';
 import './Societies.css';
+
+// Enhanced Image Slider Component for Societies
+const SocietiesImageSlider = ({ societies = [] }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  // Create slides array from all society images
+  const slides = [];
+  societies.forEach(society => {
+    if (society.images && society.images.length > 0) {
+      society.images.forEach(image => {
+        slides.push({
+          image: `http://localhost:5000${image}`,
+          societyName: society.name,
+          societyId: society.id
+        });
+      });
+    } else if (society.mapImage) {
+      // Fallback to map image if no gallery images
+      slides.push({
+        image: `http://localhost:5000${society.mapImage}`,
+        societyName: society.name,
+        societyId: society.id
+      });
+    }
+  });
+
+  // Auto-slide functionality
+  useEffect(() => {
+    if (!isPlaying || slides.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 4000); // Change slide every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [isPlaying, slides.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  if (slides.length === 0) {
+    return (
+      <div className="societies-slider no-images">
+        <div className="no-images-content">
+          <i className="fas fa-images"></i>
+          <h3>No Society Images Available</h3>
+          <p>Images will appear here once societies are added with gallery photos.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="societies-slider">
+      <div className="slider-container">
+        {/* Main Image */}
+        <div className="slider-main">
+          <img
+            src={slides[currentSlide].image}
+            alt={slides[currentSlide].societyName}
+            className="slider-image"
+            onError={(e) => {
+              e.target.src = '/assets/map.webp';
+            }}
+          />
+          
+          {/* Overlay with Society Name */}
+          <div className="slider-overlay">
+            <div className="slider-content">
+              <h2 className="society-name">{slides[currentSlide].societyName}</h2>
+              <div className="slide-counter">
+                {currentSlide + 1} / {slides.length}
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Arrows */}
+          {slides.length > 1 && (
+            <>
+              <button 
+                className="slider-nav prev" 
+                onClick={prevSlide}
+                aria-label="Previous image"
+              >
+                <i className="fas fa-chevron-left"></i>
+              </button>
+              <button 
+                className="slider-nav next" 
+                onClick={nextSlide}
+                aria-label="Next image"
+              >
+                <i className="fas fa-chevron-right"></i>
+              </button>
+            </>
+          )}
+
+          {/* Play/Pause Button */}
+          {slides.length > 1 && (
+            <button 
+              className="slider-play-pause"
+              onClick={() => setIsPlaying(!isPlaying)}
+              aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
+            >
+              <i className={`fas fa-${isPlaying ? 'pause' : 'play'}`}></i>
+            </button>
+          )}
+        </div>
+
+        {/* Thumbnails/Dots */}
+        {slides.length > 1 && (
+          <div className="slider-thumbnails">
+            {slides.map((slide, index) => (
+              <button
+                key={index}
+                className={`thumbnail ${index === currentSlide ? 'active' : ''}`}
+                onClick={() => goToSlide(index)}
+                style={{
+                  backgroundImage: `url(${slide.image})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+                aria-label={`Go to ${slide.societyName} image`}
+              >
+                <span className="thumbnail-label">{slide.societyName}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const Societies = () => {
   const { areaKey, subAreaId } = useParams();
@@ -49,7 +191,7 @@ const Societies = () => {
     } catch (error) {
       console.error('❌ Error loading societies:', error);
       setError(error.message);
-      // Load fallback data
+      // Load fallback data with sample images
       loadFallbackData();
     } finally {
       setLoading(false);
@@ -57,13 +199,17 @@ const Societies = () => {
   };
 
   const loadFallbackData = () => {
-    // Fallback society data for demo
+    // Enhanced fallback society data with sample images
     const fallbackSocieties = [
       {
         id: 1,
         name: 'Green Valley Apartments',
         description: 'Premium residential complex with modern amenities and excellent connectivity.',
         mapImage: null,
+        images: [
+          'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800',
+          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800'
+        ],
         amenities: ['Swimming Pool', 'Gym', 'Parking', 'Security', '24/7 Power Backup'],
         contact: {
           phone: '+91-9811186086',
@@ -75,6 +221,10 @@ const Societies = () => {
         name: 'Royal Heights Society',
         description: 'Luxury housing society offering world-class facilities and premium lifestyle.',
         mapImage: null,
+        images: [
+          'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800',
+          'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800'
+        ],
         amenities: ['Club House', 'Tennis Court', 'Children Play Area', 'Garden', 'CCTV'],
         contact: {
           phone: '+91-9811186083',
@@ -89,7 +239,7 @@ const Societies = () => {
       subAreaName: 'Sample Sub-Area',
       subAreaDescription: 'This is sample data as the backend connection failed.'
     });
-    console.log('⚠️ Using fallback society data');
+    console.log('⚠️ Using fallback society data with sample images');
   };
 
   const handleSocietyClick = (society, event) => {
@@ -122,7 +272,10 @@ const Societies = () => {
   };
 
   const getSocietyImage = (society) => {
-    if (society.mapImage) {
+    // Priority: 1. First gallery image, 2. Map image, 3. Default
+    if (society.images && society.images.length > 0) {
+      return `http://localhost:5000${society.images[0]}`;
+    } else if (society.mapImage) {
       return `http://localhost:5000${society.mapImage}`;
     }
     return '/assets/map.webp';
@@ -175,6 +328,9 @@ const Societies = () => {
             </div>
           )}
 
+          {/* Enhanced Image Slider */}
+          <SocietiesImageSlider societies={societies} />
+
           {/* Societies Grid */}
           {societies.length > 0 ? (
             <div className="societies-grid">
@@ -190,11 +346,18 @@ const Societies = () => {
                   <div className="society-image">
                     <img 
                       src={getSocietyImage(society)}
-                      alt={`${society.name} Map`}
+                      alt={`${society.name} Image`}
                       onError={(e) => {
                         e.target.src = '/assets/map.webp';
                       }}
                     />
+                    {/* Image Counter Badge */}
+                    {society.images && society.images.length > 0 && (
+                      <div className="image-count-badge">
+                        <i className="fas fa-images"></i>
+                        {society.images.length}
+                      </div>
+                    )}
                   </div>
                   
                   <div className="society-content">
@@ -255,7 +418,7 @@ const Societies = () => {
           )}
         </div>
 
-        {/* Society Modal */}
+        {/* Enhanced Society Modal */}
         <SocietyModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
@@ -267,9 +430,10 @@ const Societies = () => {
   );
 };
 
-// 🆕 Society Modal Component (similar to existing Modal but for societies)
+// Enhanced Society Modal Component with Gallery Support
 const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
   const wasModalOpen = React.useRef(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   React.useEffect(() => {
     const handleEscape = (e) => {
@@ -280,6 +444,7 @@ const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
 
     if (isOpen) {
       wasModalOpen.current = true;
+      setCurrentImageIndex(0); // Reset to first image
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
       document.body.classList.add('modal-open');
@@ -315,25 +480,45 @@ const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
     }
   };
 
-  const getMapImage = () => {
-    if (society.mapImage) {
-      return `http://localhost:5000${society.mapImage}`;
+  // Get all available images (gallery + map)
+  const getAllImages = () => {
+    const images = [];
+    if (society.images && society.images.length > 0) {
+      society.images.forEach(img => {
+        images.push(`http://localhost:5000${img}`);
+      });
     }
-    return '/assets/map.webp';
+    if (society.mapImage) {
+      images.push(`http://localhost:5000${society.mapImage}`);
+    }
+    if (images.length === 0) {
+      images.push('/assets/map.webp');
+    }
+    return images;
+  };
+
+  const allImages = getAllImages();
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   };
 
   return (
     <div className="modal-overlay" onClick={handleBackdropClick}>
-      <div className="modal-content">
+      <div className="modal-content society-modal">
         <button className="modal-close" onClick={onClose}>
           <i className="fas fa-times"></i>
         </button>
         
         <div className="modal-left">
-          <div className="modal-map">
+          <div className="modal-gallery">
             <img 
-              src={getMapImage()}
-              alt={`${society.name} map`}
+              src={allImages[currentImageIndex]}
+              alt={`${society.name} - Image ${currentImageIndex + 1}`}
               style={{
                 width: '100%', 
                 height: '100%', 
@@ -343,12 +528,35 @@ const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
                 e.target.src = '/assets/map.webp';
               }}
             />
+            
+            {/* Gallery Navigation */}
+            {allImages.length > 1 && (
+              <>
+                <button className="gallery-nav gallery-prev" onClick={prevImage}>
+                  <i className="fas fa-chevron-left"></i>
+                </button>
+                <button className="gallery-nav gallery-next" onClick={nextImage}>
+                  <i className="fas fa-chevron-right"></i>
+                </button>
+                <div className="gallery-counter">
+                  {currentImageIndex + 1} / {allImages.length}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
         <div className="modal-right">
           <h2>{society.name}</h2>
           <p className="modal-description">{society.description}</p>
+          
+          {/* Gallery Info */}
+          {society.images && society.images.length > 0 && (
+            <div className="modal-gallery-info">
+              <h4>Photo Gallery</h4>
+              <p>{society.images.length} images available</p>
+            </div>
+          )}
           
           {/* Amenities */}
           {society.amenities && society.amenities.length > 0 && (
@@ -390,13 +598,11 @@ const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
             <button 
               className="btn btn-secondary modal-map-btn" 
               onClick={() => {
-                const mapUrl = society.mapImage 
-                  ? `http://localhost:5000${society.mapImage}`
-                  : '/assets/map.webp';
+                const mapUrl = allImages[currentImageIndex];
                 window.open(mapUrl, '_blank');
               }}
             >
-              Open Map in New Tab
+              Open Image in New Tab
             </button>
             <button 
               className="btn btn-primary" 

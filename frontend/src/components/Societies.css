@@ -1,4 +1,4 @@
-/* frontend/src/components/Societies.css */
+/* Enhanced Societies.css with Image Slider */
 .societies-page {
     padding: 120px 0 80px;
     background: var(--bg-light);
@@ -50,7 +50,223 @@
     color: var(--accent-color);
 }
 
-/* Societies Grid */
+/* ============================================
+   ENHANCED IMAGE SLIDER STYLES
+   ============================================ */
+
+.societies-slider {
+    width: 100%;
+    margin: 40px 0 60px 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px var(--shadow-medium);
+    background: var(--bg-white);
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+}
+
+.slider-main {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+.slider-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.slider-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    padding: 40px 30px 30px;
+}
+
+.slider-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.society-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    flex: 1;
+}
+
+.slide-counter {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+/* Slider Navigation */
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.slider-nav:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.slider-nav.prev {
+    left: 20px;
+}
+
+.slider-nav.next {
+    right: 20px;
+}
+
+/* Play/Pause Button */
+.slider-play-pause {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.slider-play-pause:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+}
+
+/* Thumbnails */
+.slider-thumbnails {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    background: var(--bg-white);
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.slider-thumbnails::-webkit-scrollbar {
+    height: 4px;
+}
+
+.slider-thumbnails::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+
+.slider-thumbnails::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 2px;
+}
+
+.thumbnail {
+    flex: 0 0 120px;
+    height: 80px;
+    border-radius: 8px;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+    border-color: var(--accent-color);
+}
+
+.thumbnail.active {
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.thumbnail-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    padding: 8px 6px 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* No Images State */
+.societies-slider.no-images {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-white);
+    border: 2px dashed var(--border-light);
+}
+
+.no-images-content {
+    text-align: center;
+    color: var(--text-light);
+}
+
+.no-images-content i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+    opacity: 0.7;
+}
+
+.no-images-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+/* ============================================
+   SOCIETIES GRID STYLES
+   ============================================ */
+
 .societies-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
@@ -92,6 +308,26 @@
 
 .society-card:hover .society-image img {
     transform: scale(1.05);
+}
+
+/* Image Count Badge */
+.image-count-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.image-count-badge i {
+    font-size: 0.7rem;
 }
 
 /* Society Content */
@@ -183,6 +419,145 @@
     width: 16px;
 }
 
+/* ============================================
+   ENHANCED MODAL STYLES
+   ============================================ */
+
+.society-modal .modal-left {
+    flex: 0 0 60%;
+}
+
+.modal-gallery {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.gallery-nav:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-prev {
+    left: 15px;
+}
+
+.gallery-next {
+    right: 15px;
+}
+
+.gallery-counter {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Modal Gallery Info */
+.modal-gallery-info {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: var(--bg-light);
+    border-radius: 8px;
+}
+
+.modal-gallery-info h4 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.modal-gallery-info p {
+    color: var(--text-light);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Enhanced Modal Amenities */
+.modal-amenities {
+    margin-bottom: 25px;
+}
+
+.modal-amenities h4 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-light);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.amenity-item:hover {
+    background: var(--accent-color);
+    color: #1a1a1a;
+}
+
+.amenity-item i {
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    transition: color 0.3s ease;
+}
+
+.amenity-item:hover i {
+    color: #1a1a1a;
+}
+
+.modal-contact {
+    margin-bottom: 25px;
+}
+
+.modal-contact h4 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 /* No Societies */
 .no-societies {
     display: flex;
@@ -244,67 +619,8 @@
     border: 1px solid #ef5350;
 }
 
-/* Modal Enhancements for Societies */
-.modal-amenities {
-    margin-bottom: 25px;
-}
-
-.modal-amenities h4 {
-    color: var(--primary-color);
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.amenities-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 10px;
-}
-
-.amenity-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: var(--bg-light);
-    border-radius: 6px;
-    transition: all 0.3s ease;
-}
-
-.amenity-item:hover {
-    background: var(--accent-color);
-    color: #1a1a1a;
-}
-
-.amenity-item i {
-    color: var(--accent-color);
-    font-size: 0.8rem;
-    transition: color 0.3s ease;
-}
-
-.amenity-item:hover i {
-    color: #1a1a1a;
-}
-
-.modal-contact {
-    margin-bottom: 25px;
-}
-
-.modal-contact h4 {
-    color: var(--primary-color);
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.contact-info {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
 /* Dark Mode Adjustments */
+.dark-mode .societies-slider,
 .dark-mode .society-card {
     background: var(--bg-card);
     border-color: #2a2a2a;
@@ -315,7 +631,12 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-.dark-mode .no-societies-content {
+.dark-mode .slider-thumbnails {
+    background: var(--bg-card);
+}
+
+.dark-mode .no-societies-content,
+.dark-mode .modal-gallery-info {
     background: var(--bg-card);
     border-color: #2a2a2a;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -341,7 +662,26 @@
     border-color: #5a2d2d;
 }
 
-/* Responsive Design */
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 1200px) {
+    .slider-main {
+        height: 400px;
+    }
+
+    .society-name {
+        font-size: 2rem;
+    }
+
+    .slider-nav {
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+    }
+}
+
 @media (max-width: 768px) {
     .societies-page {
         padding: 140px 0 60px;
@@ -378,6 +718,102 @@
         font-size: 0.75rem;
     }
 
+    /* Mobile Slider Adjustments */
+    .slider-main {
+        height: 300px;
+    }
+
+    .society-name {
+        font-size: 1.5rem;
+    }
+
+    .slider-overlay {
+        padding: 20px 15px 15px;
+    }
+
+    .slider-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .slide-counter {
+        align-self: flex-end;
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+
+    .slider-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .slider-nav.prev {
+        left: 10px;
+    }
+
+    .slider-nav.next {
+        right: 10px;
+    }
+
+    .slider-play-pause {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+        top: 10px;
+        right: 10px;
+    }
+
+    .slider-thumbnails {
+        padding: 15px;
+        gap: 8px;
+    }
+
+    .thumbnail {
+        flex: 0 0 80px;
+        height: 60px;
+    }
+
+    .thumbnail-label {
+        font-size: 0.6rem;
+        padding: 6px 4px 2px;
+    }
+
+    /* Mobile Modal Adjustments */
+    .society-modal .modal-content {
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - 20px);
+        max-height: calc(100vh - 20px);
+    }
+
+    .society-modal .modal-left {
+        flex: 0 0 40%;
+        min-height: 250px;
+    }
+
+    .gallery-nav {
+        width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+    }
+
+    .gallery-prev {
+        left: 10px;
+    }
+
+    .gallery-next {
+        right: 10px;
+    }
+
+    .gallery-counter {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        top: 10px;
+        right: 10px;
+    }
+
     .amenities-grid {
         grid-template-columns: 1fr;
         gap: 8px;
@@ -385,10 +821,12 @@
 
     .modal-right {
         padding: 20px;
+        overflow-y: auto;
     }
 
     .modal-amenities,
-    .modal-contact {
+    .modal-contact,
+    .modal-gallery-info {
         margin-bottom: 20px;
     }
 }
@@ -435,6 +873,57 @@
     .no-societies-content h3 {
         font-size: 1.3rem;
     }
+
+    /* Very Small Mobile Slider */
+    .slider-main {
+        height: 250px;
+    }
+
+    .society-name {
+        font-size: 1.2rem;
+    }
+
+    .slider-overlay {
+        padding: 15px 10px 10px;
+    }
+
+    .slider-nav {
+        width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+    }
+
+    .slider-play-pause {
+        width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+    }
+
+    .thumbnail {
+        flex: 0 0 60px;
+        height: 45px;
+    }
+
+    .thumbnail-label {
+        font-size: 0.5rem;
+        padding: 4px 2px 1px;
+    }
+
+    /* Very Small Modal */
+    .society-modal .modal-left {
+        flex: 0 0 35%;
+        min-height: 200px;
+    }
+
+    .modal-right {
+        padding: 15px;
+    }
+
+    .modal-gallery-info,
+    .modal-amenities,
+    .modal-contact {
+        margin-bottom: 15px;
+    }
 }
 
 /* Animation delays for staggered appearance */
@@ -462,3 +951,56 @@
     animation-delay: 0.6s;
 }
 
+/* Smooth image loading animation */
+@keyframes imageLoad {
+    from {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.slider-image,
+.society-image img {
+    animation: imageLoad 0.5s ease-out;
+}
+
+/* Hover effects for better UX */
+.slider-thumbnails:hover {
+    scrollbar-width: auto;
+}
+
+.slider-thumbnails:hover::-webkit-scrollbar {
+    height: 8px;
+}
+
+/* Focus styles for accessibility */
+.slider-nav:focus,
+.slider-play-pause:focus,
+.thumbnail:focus,
+.gallery-nav:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+    .slider-image,
+    .society-image img,
+    .society-card {
+        animation: none;
+        transition: none;
+    }
+
+    .slider-nav,
+    .slider-play-pause,
+    .thumbnail,
+    .gallery-nav {
+        transition: none;
+    }
+}

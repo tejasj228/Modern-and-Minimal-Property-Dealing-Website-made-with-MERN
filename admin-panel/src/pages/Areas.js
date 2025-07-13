@@ -1,4 +1,4 @@
-// admin-panel/src/pages/Areas.js - Updated with society management
+// admin-panel/src/pages/Areas.js - Complete with enhanced society images
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -41,6 +41,7 @@ import {
   CloudUpload as UploadIcon,
   Home as HomeIcon,
   ExpandLess as ExpandLessIcon,
+  Image as ImageIcon,
 } from '@mui/icons-material';
 
 // Modern drag & drop imports
@@ -66,7 +67,208 @@ import { CSS } from '@dnd-kit/utilities';
 
 import { areaAPI, propertyAPI, uploadAPI } from '../services/api';
 
-// Map Upload Component (same as before)
+// Enhanced Image Upload Component for Societies
+const SocietyImageUpload = ({ images = [], onImagesChange, mapImage, onMapChange, label = "Society Images & Map" }) => {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleFileSelect = async (event, type = 'images') => {
+    const files = type === 'map' ? [event.target.files[0]] : Array.from(event.target.files);
+    if (files.length === 0 || (type === 'map' && !files[0])) return;
+
+    if (type === 'images' && images.length + files.length > 10) {
+      setError('Maximum 10 images allowed for society gallery');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      setError(null);
+      
+      if (type === 'map') {
+        // Upload single map image
+        const response = await uploadAPI.uploadImage(files[0]);
+        onMapChange(response.data.imageUrl);
+      } else {
+        // Upload multiple gallery images
+        const uploadPromises = files.map(file => uploadAPI.uploadImage(file));
+        const responses = await Promise.all(uploadPromises);
+        const newImageUrls = responses.map(response => response.data.imageUrl);
+        const updatedImages = [...images, ...newImageUrls];
+        onImagesChange(updatedImages);
+      }
+    } catch (error) {
+      console.error('Error uploading:', error);
+      setError(`Failed to upload ${type}. Please try again.`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove, type = 'images') => {
+    if (type === 'map') {
+      onMapChange(null);
+    } else {
+      const updatedImages = images.filter((_, index) => index !== indexToRemove);
+      onImagesChange(updatedImages);
+    }
+  };
+
+  return (
+    <Box>
+      <Typography variant="h6" gutterBottom>
+        {label}
+      </Typography>
+      
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+
+      {/* Map Upload Section */}
+      <Box mb={3}>
+        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+          Society Map (Required)
+        </Typography>
+        
+        {mapImage ? (
+          <Card sx={{ mb: 2, maxWidth: 300 }}>
+            <CardMedia
+              component="img"
+              height="150"
+              image={`http://localhost:5000${mapImage}`}
+              alt="Society map"
+              sx={{ objectFit: 'cover' }}
+            />
+            <CardContent sx={{ py: 1 }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                color="error"
+                onClick={() => handleRemoveImage(0, 'map')}
+                startIcon={<DeleteIcon />}
+                size="small"
+              >
+                Remove Map
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <Box
+            sx={{
+              border: '2px dashed #ccc',
+              borderRadius: 2,
+              p: 3,
+              textAlign: 'center',
+              backgroundColor: '#fafafa',
+              mb: 2,
+            }}
+          >
+            <MapIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              Upload society location map
+            </Typography>
+            <Button
+              variant="outlined"
+              component="label"
+              startIcon={<UploadIcon />}
+              disabled={uploading}
+            >
+              {uploading ? 'Uploading...' : 'Upload Map'}
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={(e) => handleFileSelect(e, 'map')}
+              />
+            </Button>
+          </Box>
+        )}
+      </Box>
+
+      {/* Gallery Images Section */}
+      <Box>
+        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+          Society Gallery Images (Optional - Max 10)
+        </Typography>
+        
+        <Button
+          variant="outlined"
+          onClick={() => document.getElementById('gallery-upload').click()}
+          startIcon={<ImageIcon />}
+          disabled={uploading || images.length >= 10}
+          sx={{ mb: 2 }}
+        >
+          {uploading ? 'Uploading...' : `Add Gallery Images (${images.length}/10)`}
+        </Button>
+        
+        <input
+          id="gallery-upload"
+          type="file"
+          hidden
+          accept="image/*"
+          multiple
+          onChange={(e) => handleFileSelect(e, 'images')}
+        />
+
+        {images.length > 0 ? (
+          <Grid container spacing={2}>
+            {images.map((imageUrl, index) => (
+              <Grid item xs={6} sm={4} md={3} key={index}>
+                <Card sx={{ position: 'relative' }}>
+                  <CardMedia
+                    component="img"
+                    height="100"
+                    image={`http://localhost:5000${imageUrl}`}
+                    alt={`Gallery image ${index + 1}`}
+                    sx={{ objectFit: 'cover' }}
+                  />
+                  <IconButton
+                    size="small"
+                    onClick={() => handleRemoveImage(index, 'images')}
+                    sx={{
+                      position: 'absolute',
+                      top: 2,
+                      right: 2,
+                      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      },
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Box
+            sx={{
+              border: '1px dashed #ddd',
+              borderRadius: 2,
+              p: 2,
+              textAlign: 'center',
+              backgroundColor: '#f9f9f9',
+            }}
+          >
+            <ImageIcon sx={{ fontSize: 32, color: 'text.secondary', mb: 1 }} />
+            <Typography variant="body2" color="textSecondary">
+              No gallery images added yet
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
+      <Typography variant="caption" color="textSecondary" sx={{ mt: 1, display: 'block' }}>
+        Supported formats: JPG, PNG, GIF, WebP. Gallery images will appear in the society slider.
+      </Typography>
+    </Box>
+  );
+};
+
+// Map Upload Component (existing)
 const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
@@ -170,7 +372,7 @@ const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
   );
 };
 
-// 🆕 NEW: Sortable Society Component
+// Sortable Society Component
 const SortableSociety = ({ society, areaKey, subAreaId, onEdit, onDelete }) => {
   const {
     attributes,
@@ -228,11 +430,19 @@ const SortableSociety = ({ society, areaKey, subAreaId, onEdit, onDelete }) => {
                 variant="outlined"
               />
             )}
+            {society.images && society.images.length > 0 && (
+              <Chip 
+                label={`${society.images.length} images`}
+                size="small" 
+                color="secondary" 
+                variant="outlined"
+              />
+            )}
             {society.amenities && society.amenities.length > 0 && (
               <Chip 
                 label={`${society.amenities.length} amenities`}
                 size="small" 
-                color="secondary" 
+                color="info" 
                 variant="outlined"
               />
             )}
@@ -271,7 +481,7 @@ const SortableSociety = ({ society, areaKey, subAreaId, onEdit, onDelete }) => {
   );
 };
 
-// 🆕 UPDATED: Sortable Sub-Area Component with societies
+// Sortable Sub-Area Component
 const SortableSubArea = ({ 
   subArea, 
   areaKey, 
@@ -394,14 +604,14 @@ const SortableSubArea = ({
           <Box mt={2}>
             <Divider sx={{ mb: 2 }} />
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-              <Typography variant="h6">Societies in {subArea.title}</Typography>
+              <Typography variant="h6">Societies/Pockets in {subArea.title}</Typography>
               <Button
                 size="small"
                 startIcon={<AddIcon />}
                 onClick={() => onAddSociety(areaKey, subArea.id)}
                 variant="outlined"
               >
-                Add Society
+                Add Society/Pocket
               </Button>
             </Box>
 
@@ -433,7 +643,7 @@ const SortableSubArea = ({
               <Paper sx={{ p: 3, textAlign: 'center', backgroundColor: '#f8f9fa' }}>
                 <HomeIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
                 <Typography variant="body2" color="textSecondary">
-                  No societies yet. Add some societies to organize this sub-area better.
+                  No societies/pockets yet. Add some societies to organize this sub-area better.
                 </Typography>
               </Paper>
             )}
@@ -444,7 +654,7 @@ const SortableSubArea = ({
   );
 };
 
-// Main Areas component with updated dialogs and society management
+// Main Areas component
 function Areas() {
   const [areas, setAreas] = useState({});
   const [propertyCounts, setPropertyCounts] = useState({});
@@ -452,22 +662,22 @@ function Areas() {
   const [error, setError] = useState(null);
   const [savingOrder, setSavingOrder] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogType, setDialogType] = useState('area'); // 'area', 'subarea', or 'society'
+  const [dialogType, setDialogType] = useState('area');
   const [editingArea, setEditingArea] = useState(null);
   const [editingSubArea, setEditingSubArea] = useState(null);
-  const [editingSociety, setSEditingSociety] = useState(null); // 🆕 NEW
+  const [editingSociety, setEditingSociety] = useState(null);
   const [parentAreaKey, setParentAreaKey] = useState(null);
-  const [parentSubAreaId, setParentSubAreaId] = useState(null); // 🆕 NEW
+  const [parentSubAreaId, setParentSubAreaId] = useState(null);
   const [activeId, setActiveId] = useState(null);
   
-  // 🆕 UPDATED: Form data now includes society fields
+  // Enhanced form data for societies
   const [formData, setFormData] = useState({
     key: '',
     name: '',
     description: '',
     title: '',
     mapImage: null,
-    // 🆕 Society fields
+    images: [], // Gallery images for slider
     amenities: '',
     contactPhone: '',
     contactEmail: '',
@@ -522,7 +732,7 @@ function Areas() {
     }
   };
 
-  // 🆕 NEW: Handle society reordering
+  // Handle society reordering
   const handleSocietyReorder = async (areaKey, subAreaId, result) => {
     const { active, over } = result;
 
@@ -532,7 +742,6 @@ function Areas() {
       const area = areas[areaKey];
       const subArea = area.subAreas.find(sa => sa.id === parseInt(subAreaId));
       
-      // Extract the actual society IDs
       const activeSocietyId = parseInt(active.id.replace(`society-${areaKey}-${subAreaId}-`, ''));
       const overSocietyId = parseInt(over.id.replace(`society-${areaKey}-${subAreaId}-`, ''));
       
@@ -541,7 +750,6 @@ function Areas() {
 
       const reorderedSocieties = arrayMove(subArea.societies, oldIndex, newIndex);
 
-      // Update local state immediately
       const updatedSubArea = { ...subArea, societies: reorderedSocieties };
       const updatedArea = {
         ...area,
@@ -554,7 +762,6 @@ function Areas() {
       }));
 
       try {
-        // Persist to backend
         await areaAPI.update(areaKey, updatedArea);
         console.log('✅ Society order saved to backend');
         setError(null);
@@ -568,13 +775,13 @@ function Areas() {
     }
   };
 
-  // 🆕 NEW: Society dialog handlers
+  // Society dialog handlers
   const handleOpenSocietyDialog = (areaKey, subAreaId, society = null) => {
     console.log('🏘️ Opening society dialog:', areaKey, subAreaId, society);
     setDialogType('society');
     setEditingArea(null);
     setEditingSubArea(null);
-    setSEditingSociety(society);
+    setEditingSociety(society);
     setParentAreaKey(areaKey);
     setParentSubAreaId(subAreaId);
     
@@ -585,6 +792,7 @@ function Areas() {
         description: society.description || '',
         title: '',
         mapImage: society.mapImage || null,
+        images: society.images || [],
         amenities: society.amenities ? society.amenities.join(', ') : '',
         contactPhone: society.contact?.phone || '',
         contactEmail: society.contact?.email || '',
@@ -596,6 +804,7 @@ function Areas() {
         description: '',
         title: '',
         mapImage: null,
+        images: [],
         amenities: '',
         contactPhone: '',
         contactEmail: '',
@@ -604,7 +813,7 @@ function Areas() {
     setOpenDialog(true);
   };
 
-  // 🆕 NEW: Save society
+  // Save society
   const handleSaveSociety = async () => {
     try {
       console.log('💾 Saving society:', formData);
@@ -617,6 +826,7 @@ function Areas() {
         name: formData.name,
         description: formData.description,
         mapImage: formData.mapImage,
+        images: formData.images || [],
         amenities: formData.amenities 
           ? formData.amenities.split(',').map(a => a.trim()).filter(a => a)
           : [],
@@ -655,7 +865,7 @@ function Areas() {
     }
   };
 
-  // 🆕 NEW: Delete society
+  // Delete society
   const handleDeleteSociety = async (areaKey, subAreaId, societyId) => {
     if (window.confirm('Are you sure you want to delete this society?')) {
       try {
@@ -682,95 +892,13 @@ function Areas() {
     }
   };
 
-  // Existing handlers (area reordering, sub-area handling, etc. - keeping the same)
-  const handleAreaDragEnd = async (result) => {
-    const { active, over } = result;
-
-    if (over && active.id !== over.id) {
-      setSavingOrder(true);
-      
-      const activeAreaKey = active.id.replace('area-', '');
-      const overAreaKey = over.id.replace('area-', '');
-      
-      const currentAreaKeys = Object.keys(areas);
-      const oldIndex = currentAreaKeys.indexOf(activeAreaKey);
-      const newIndex = currentAreaKeys.indexOf(overAreaKey);
-      
-      if (oldIndex === -1 || newIndex === -1) {
-        console.error('❌ Invalid area keys for reordering');
-        setSavingOrder(false);
-        return;
-      }
-
-      const reorderedKeys = arrayMove(currentAreaKeys, oldIndex, newIndex);
-      
-      const reorderedAreas = {};
-      reorderedKeys.forEach(key => {
-        reorderedAreas[key] = areas[key];
-      });
-      setAreas(reorderedAreas);
-
-      try {
-        await areaAPI.reorder(reorderedKeys);
-        console.log('✅ Areas order saved to backend');
-        setError(null);
-      } catch (error) {
-        console.error('❌ Error saving areas order:', error);
-        setError('Failed to save areas order');
-        loadData();
-      } finally {
-        setSavingOrder(false);
-      }
-    }
-
-    setActiveId(null);
-  };
-
-  const handleSubAreaReorder = async (areaKey, result) => {
-    const { active, over } = result;
-
-    if (over && active.id !== over.id) {
-      setSavingOrder(true);
-      
-      const area = areas[areaKey];
-      
-      const activeSubAreaId = parseInt(active.id.replace(`subarea-${areaKey}-`, ''));
-      const overSubAreaId = parseInt(over.id.replace(`subarea-${areaKey}-`, ''));
-      
-      const oldIndex = area.subAreas.findIndex(sa => sa.id === activeSubAreaId);
-      const newIndex = area.subAreas.findIndex(sa => sa.id === overSubAreaId);
-
-      const reorderedSubAreas = arrayMove(area.subAreas, oldIndex, newIndex);
-
-      setAreas(prev => ({
-        ...prev,
-        [areaKey]: {
-          ...area,
-          subAreas: reorderedSubAreas
-        }
-      }));
-
-      try {
-        await areaAPI.reorderSubAreas(areaKey, reorderedSubAreas);
-        console.log('✅ Sub-area order saved to backend');
-        setError(null);
-      } catch (error) {
-        console.error('❌ Error updating sub-area order:', error);
-        setError('Failed to update sub-area order');
-        loadData();
-      } finally {
-        setSavingOrder(false);
-      }
-    }
-  };
-
-  // Existing dialog handlers (keeping the same but updated for society support)
+  // Area dialog handlers
   const handleOpenAreaDialog = (area = null) => {
     console.log('🔧 Opening area dialog:', area);
     setDialogType('area');
     setEditingArea(area);
     setEditingSubArea(null);
-    setSEditingSociety(null);
+    setEditingSociety(null);
     setParentAreaKey(null);
     setParentSubAreaId(null);
     
@@ -782,6 +910,7 @@ function Areas() {
         description: area.description || '',
         title: '',
         mapImage: null,
+        images: [],
         amenities: '',
         contactPhone: '',
         contactEmail: '',
@@ -793,6 +922,7 @@ function Areas() {
         description: '',
         title: '',
         mapImage: null,
+        images: [],
         amenities: '',
         contactPhone: '',
         contactEmail: '',
@@ -806,7 +936,7 @@ function Areas() {
     setDialogType('subarea');
     setEditingArea(null);
     setEditingSubArea(subArea);
-    setSEditingSociety(null);
+    setEditingSociety(null);
     setParentAreaKey(areaKey);
     setParentSubAreaId(null);
     
@@ -817,6 +947,7 @@ function Areas() {
         description: subArea.description || '',
         title: subArea.title || '',
         mapImage: subArea.mapImage || null,
+        images: [],
         amenities: '',
         contactPhone: '',
         contactEmail: '',
@@ -828,6 +959,7 @@ function Areas() {
         description: '',
         title: '',
         mapImage: null,
+        images: [],
         amenities: '',
         contactPhone: '',
         contactEmail: '',
@@ -840,7 +972,7 @@ function Areas() {
     setOpenDialog(false);
     setEditingArea(null);
     setEditingSubArea(null);
-    setSEditingSociety(null);
+    setEditingSociety(null);
     setParentAreaKey(null);
     setParentSubAreaId(null);
     setFormData({
@@ -849,6 +981,7 @@ function Areas() {
       description: '',
       title: '',
       mapImage: null,
+      images: [],
       amenities: '',
       contactPhone: '',
       contactEmail: '',
@@ -869,7 +1002,14 @@ function Areas() {
     }));
   };
 
-  // Existing save handlers (keeping the same)
+  const handleImagesChange = (newImages) => {
+    setFormData(prev => ({
+      ...prev,
+      images: newImages
+    }));
+  };
+
+  // Save area
   const handleSaveArea = async () => {
     try {
       const areaData = {
@@ -931,7 +1071,7 @@ function Areas() {
     }
   };
 
-  // Existing delete handlers (keeping the same)
+  // Delete handlers
   const handleDeleteArea = async (areaKey) => {
     const propertyCount = propertyCounts[areaKey] || 0;
     if (propertyCount > 0) {
@@ -994,7 +1134,7 @@ function Areas() {
             Areas Management
           </Typography>
           <Typography variant="body1" color="textSecondary">
-            Manage your service areas, sub-areas, and societies • Drag to reorder
+            Manage your service areas, sub-areas, and societies/pockets • Drag to reorder
           </Typography>
         </Box>
         <Button
@@ -1132,17 +1272,17 @@ function Areas() {
         </Paper>
       )}
 
-      {/* 🆕 UPDATED: Multi-purpose Dialog for Areas, Sub-areas, and Societies */}
+      {/* Enhanced Multi-purpose Dialog for Areas, Sub-areas, and Societies */}
       <Dialog 
         open={openDialog} 
         onClose={handleCloseDialog}
         fullWidth
-        maxWidth={dialogType === 'society' ? 'md' : 'sm'}
+        maxWidth={dialogType === 'society' ? 'lg' : 'sm'}
       >
         <DialogTitle>
           {dialogType === 'area' && (editingArea ? 'Edit Area' : 'Add New Area')}
           {dialogType === 'subarea' && (editingSubArea ? 'Edit Sub-Area' : 'Add New Sub-Area')}
-          {dialogType === 'society' && (editingSociety ? 'Edit Society' : 'Add New Society')}
+          {dialogType === 'society' && (editingSociety ? 'Edit Society/Pocket' : 'Add New Society/Pocket')}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -1219,16 +1359,16 @@ function Areas() {
               </>
             )}
             
-            {/* 🆕 NEW: Society form fields */}
+            {/* Enhanced Society form fields */}
             {dialogType === 'society' && (
               <>
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Society Name"
+                    label="Society/Pocket Name"
                     value={formData.name}
                     onChange={handleInputChange('name')}
-                    placeholder="e.g., Green Valley Apartments"
+                    placeholder="e.g., Green Valley Apartments, Pocket A"
                     required
                   />
                 </Grid>
@@ -1240,7 +1380,7 @@ function Areas() {
                     rows={3}
                     value={formData.description}
                     onChange={handleInputChange('description')}
-                    placeholder="Describe this society..."
+                    placeholder="Describe this society/pocket..."
                     required
                   />
                 </Grid>
@@ -1273,10 +1413,12 @@ function Areas() {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <MapUpload
+                  <SocietyImageUpload
+                    images={formData.images}
+                    onImagesChange={handleImagesChange}
                     mapImage={formData.mapImage}
                     onMapChange={handleMapChange}
-                    label="Society Map (Optional)"
+                    label="Society/Pocket Images & Map"
                   />
                 </Grid>
               </>
