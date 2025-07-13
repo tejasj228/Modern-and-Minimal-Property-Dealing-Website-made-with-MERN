@@ -1,0 +1,719 @@
+/* Properties Page */
+.properties-page {
+    padding: 120px 0 80px;
+    background: var(--bg-light);
+    /* Use variable for light mode */
+    min-height: 100vh;
+    transition: all 0.5s ease;
+}
+
+.dark-mode .properties-page {
+    background: #0d0d0d;
+    /* Match contact page */
+}
+
+/* Filter Section */
+.filter-section {
+    margin: 40px 0;
+    padding: 30px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    border: 2px solid var(--border-light);
+    transition: all 0.5s ease;
+}
+
+.filter-container h3 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.area-filters {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 12px 24px;
+    border: 2px solid var(--border-light);
+    border-radius: 25px;
+    background: var(--bg-white);
+    color: var(--text-dark);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.filter-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+.filter-btn.active {
+    background: var(--accent-color);
+    color: var(--text-white);
+    border-color: var(--accent-color);
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.filter-btn.active:hover {
+    background: #9b7209;
+    border-color: #9b7209;
+    color: var(--text-white);
+}
+
+/* Properties Grid */
+.properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.property-card {
+    background: var(--bg-white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow-light);
+    transition: all 0.3s ease;
+    border: 2px solid var(--border-light);
+}
+
+.property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px var(--shadow-medium);
+    border-color: var(--accent-color);
+}
+
+/* Property Image Carousel Styles */
+.property-image-carousel {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+
+.property-image {
+    height: 250px;
+    background: var(--accent-color);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-white);
+    font-weight: 600;
+    font-size: 1.2rem;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.property-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.property-card:hover .property-image::before {
+    transform: translateX(100%);
+}
+
+/* Carousel Navigation Buttons */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.property-card:hover .carousel-btn {
+    opacity: 1;
+}
+
+.carousel-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-btn-prev {
+    left: 10px;
+}
+
+.carousel-btn-next {
+    right: 10px;
+}
+
+/* Image Counter */
+.image-counter {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 10;
+}
+
+/* Carousel Dots */
+.carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+}
+
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+}
+
+.carousel-dot.active {
+    background: white;
+    transform: scale(1.3);
+}
+
+.property-details {
+    padding: 25px;
+}
+
+.property-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+    margin-bottom: 10px;
+}
+
+.property-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.property-card:hover .property-title {
+    color: var(--accent-color);
+}
+
+.property-location {
+    color: var(--text-light);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.property-location i {
+    margin-right: 8px;
+    color: var(--accent-color);
+    font-size: 0.9rem;
+}
+
+.property-area-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg-light);
+    color: var(--accent-color);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    border: 1px solid var(--accent-color);
+}
+
+.property-area-badge i {
+    margin-right: 5px;
+    font-size: 0.8rem;
+}
+
+.property-features {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    background: var(--bg-light);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.feature:hover {
+    background: var(--accent-color);
+    color: var(--text-white);
+    transform: translateY(-1px);
+}
+
+.feature i {
+    margin-right: 5px;
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    transition: color 0.3s ease;
+}
+
+.feature:hover i {
+    color: var(--text-white);
+}
+
+.property-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-small {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-align: center;
+    flex: 1;
+}
+
+.btn-outline {
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    background: transparent;
+}
+
+.btn-outline:hover {
+    background: var(--accent-color);
+    color: var(--text-white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* No Properties Section */
+.no-properties {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    margin-top: 50px;
+}
+
+.no-properties-content {
+    text-align: center;
+    max-width: 500px;
+    padding: 60px 40px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    border: 2px solid var(--border-light);
+    transition: all 0.3s ease;
+}
+
+.no-properties-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px var(--shadow-light);
+    border-color: var(--accent-color);
+}
+
+.no-properties-content i {
+    font-size: 4rem;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.no-properties-content h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.no-properties-content p {
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Dark mode adjustments */
+.dark-mode .property-card {
+    background: var(--bg-card);
+    border: 1px solid #2a2a2a;
+    /* Much darker border */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .property-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    border-color: var(--accent-color);
+}
+
+.dark-mode .filter-section {
+    background: var(--bg-card);
+    border: 1px solid #2a2a2a;
+    /* Much darker border */
+}
+
+.dark-mode .filter-btn {
+    border: 1px solid #2a2a2a;
+    /* Much darker border */
+    background: var(--bg-white);
+    color: var(--text-dark);
+}
+
+.dark-mode .filter-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.dark-mode .filter-btn.active {
+    background: var(--accent-color);
+    color: #1a1a1a;
+    border-color: var(--accent-color);
+}
+
+.dark-mode .filter-btn.active:hover {
+    background: #d4a915;
+    border-color: #d4a915;
+    color: #1a1a1a;
+}
+
+.dark-mode .no-properties-content {
+    background: var(--bg-card);
+    border: 1px solid #2a2a2a;
+    /* Much darker border */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .no-properties-content:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border-color: var(--accent-color);
+}
+
+/* Responsive Design - Fixed mobile header spacing */
+@media (max-width: 768px) {
+    .properties-page {
+        padding: 140px 0 60px;
+        /* Increased top padding from 120px to 140px */
+    }
+
+    .properties-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .filter-section {
+        padding: 20px;
+        margin: 20px 0;
+        /* Added margin for more spacing */
+    }
+
+    .area-filters {
+        justify-content: center;
+    }
+
+    .filter-btn {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+
+    .property-details {
+        padding: 20px;
+    }
+
+    .property-features {
+        gap: 10px;
+    }
+
+    .feature {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+
+    .property-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .btn-small {
+        padding: 10px 15px;
+    }
+
+    /* Mobile carousel adjustments */
+    .carousel-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 12px;
+    }
+
+    .carousel-btn-prev {
+        left: 8px;
+    }
+
+    .carousel-btn-next {
+        right: 8px;
+    }
+
+    .image-counter {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+
+    .carousel-dots {
+        bottom: 8px;
+        gap: 4px;
+    }
+
+    .carousel-dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    /* Additional spacing for section title */
+    .section-title {
+        margin-top: 20px;
+        /* Added extra margin at top */
+        margin-bottom: 40px;
+        /* Increased bottom margin */
+    }
+
+    .section-title h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        /* Increased margin */
+    }
+
+    .section-title p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+}
+
+@media (max-width: 480px) {
+    .properties-page {
+        padding: 120px 0 60px;
+        /* Increased top padding from 100px to 120px */
+    }
+
+    .filter-section {
+        margin: 25px 0;
+        /* Increased margin */
+        padding: 15px;
+    }
+
+    .area-filters {
+        gap: 10px;
+    }
+
+    .filter-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+
+    .property-card {
+        margin: 0 10px;
+    }
+
+    .property-image,
+    .property-image-carousel {
+        height: 200px;
+        font-size: 1rem;
+    }
+
+    .property-details {
+        padding: 15px;
+    }
+
+    .property-price {
+        font-size: 1.3rem;
+    }
+
+    .property-title {
+        font-size: 1.1rem;
+    }
+
+    .property-features {
+        justify-content: space-between;
+    }
+
+    .no-properties-content {
+        margin: 0 20px;
+        padding: 40px 20px;
+    }
+
+    .no-properties-content i {
+        font-size: 3rem;
+    }
+
+    .no-properties-content h3 {
+        font-size: 1.3rem;
+    }
+
+    /* Additional spacing for very small screens */
+    .section-title {
+        margin-top: 25px;
+        /* Even more spacing */
+        margin-bottom: 35px;
+    }
+
+    .section-title h2 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+}
+/* Add these styles to your existing Properties.css file */
+
+/* 🆕 Updated Property Buttons - Single Button */
+.property-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* 🆕 View Property Button Styling */
+.view-property-btn {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--accent-color) !important;
+    color: #1a1a1a !important;
+    border: 2px solid var(--accent-color) !important;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.view-property-btn:hover {
+    background: #d4a915 !important;
+    color: #1a1a1a !important;
+    border-color: #d4a915 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+}
+
+.view-property-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.view-property-btn i {
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.view-property-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Dark Mode View Property Button */
+.dark-mode .view-property-btn {
+    background: var(--accent-color) !important;
+    color: #1a1a1a !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.4);
+}
+
+.dark-mode .view-property-btn:hover {
+    background: #d4a915 !important;
+    color: #1a1a1a !important;
+    border-color: #d4a915 !important;
+    box-shadow: 0 6px 20px rgba(184, 134, 11, 0.5);
+}
+
+/* Remove old button styles if they exist */
+.btn-small,
+.btn-outline {
+    display: none;
+    /* Hide old styles if they exist */
+}
+
+/* Mobile optimizations for single button */
+@media (max-width: 768px) {
+    .view-property-btn {
+        padding: 14px 20px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .view-property-btn {
+        padding: 12px 18px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Property card hover effects for single button */
+.property-card:hover .view-property-btn {
+    background: #d4a915 !important;
+    color: #1a1a1a !important;
+    transform: translateY(-1px);
+}
+
+/* Pulse animation for new button */
+@keyframes pulse-gold {
+    0% {
+        box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 4px 15px rgba(184, 134, 11, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+    }
+}
+
+.view-property-btn:focus {
+    animation: pulse-gold 1s ease-in-out;
+    outline: none;
+}

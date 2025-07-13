@@ -1,0 +1,554 @@
+/* Font Face Declaration */
+@font-face {
+  font-family: 'Gilmer Light';
+  src: url('./fonts/gilmer-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* CSS Variables for theming */
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #34495e;
+  --accent-color: #B8860B;
+  --button-color: #1a1a1a;
+  --success-color: #27ae60;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --text-white: #ffffff;
+  --bg-light: #f5f5f5;
+  --bg-white: #ffffff;
+  --bg-card: #ebebeb;
+  --bg-subcard: #dddddd;
+  --border-light: #ccc;
+  --shadow-light: rgba(44, 62, 80, 0.1);
+  --shadow-medium: rgba(44, 62, 80, 0.15);
+  --shadow-dark: rgba(44, 62, 80, 0.25);
+
+  /* Font variables */
+  --primary-font: 'Gilmer Light', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --secondary-font: 'Gilmer Light', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  /* Transition variables */
+  --theme-transition: all 0.3s ease;
+  --hover-transition: all 0.3s ease;
+  --transform-transition: transform 0.3s ease;
+}
+
+/* Dark mode variables */
+/* Dark mode variables - All Greys Made Darker */
+/* Dark mode variables - All Greys Made Darker */
+.dark-mode {
+  --primary-color: #e8e8e8;
+  --secondary-color: #cccccc;
+  --accent-color: #B8860B;
+  --text-dark: #e8e8e8;
+  --text-light: #a0a0a0;
+  /* Made darker from #b0b0b0 */
+  --text-white: #ffffff;
+  --bg-light: #0f0f0f;
+  /* Made much darker from #1a1a1a */
+  --bg-white: #1a1a1a;
+  /* Made darker from #2a2a2a */
+  --bg-card: #1a1a1a;
+  /* Made darker from #2a2a2a */
+  --bg-subcard: #121212;
+  /* Made darker from #1f1f1f */
+  --border-light: #1f1f1f;
+  /* Made much darker from #404040 - subtle borders */
+  --shadow-light: rgba(0, 0, 0, 0.4);
+  /* Made darker from 0.3 */
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+  /* Made darker from 0.4 */
+  --shadow-dark: rgba(0, 0, 0, 0.7);
+  /* Made darker from 0.6 */
+}
+
+/* Global styles */
+body {
+  font-family: var(--primary-font);
+  line-height: 1.6;
+  color: var(--text-dark);
+  background: var(--bg-light);
+  overflow-x: hidden;
+  transition: var(--theme-transition);
+  font-weight: 300;
+}
+
+/* Apply font to all text elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--primary-font);
+  font-weight: 300;
+}
+
+p,
+span,
+div,
+a,
+button,
+input,
+textarea,
+select {
+  font-family: var(--primary-font);
+}
+
+/* Adjust font weights for better hierarchy */
+h1 {
+  font-weight: 600;
+}
+
+h2 {
+  font-weight: 500;
+}
+
+h3,
+h4 {
+  font-weight: 400;
+}
+
+/* Button font weight adjustment */
+.btn {
+  font-family: var(--primary-font);
+  font-weight: 400;
+}
+
+/* Navigation font weight */
+.nav-links a {
+  font-family: var(--primary-font);
+  font-weight: 400;
+}
+
+/* Smooth transitions for all elements */
+*,
+*::before,
+*::after {
+  transition: var(--theme-transition);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9b7209;
+}
+
+/* Dark mode scrollbar */
+.dark-mode ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #d4a915;
+}
+
+/* Page transition animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInCenter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Page transition styles */
+.page-transition {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+.page-transition.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Utility classes */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: var(--hover-transition);
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--primary-font);
+}
+
+.btn-primary {
+  background: var(--button-color);
+  color: var(--text-white);
+  box-shadow: 0 4px 15px rgba(26, 26, 26, 0.3);
+}
+
+.btn-primary:hover {
+  background: #333333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(26, 26, 26, 0.4);
+}
+
+/* Dark mode button adjustments */
+.dark-mode .btn-primary {
+  background: var(--accent-color);
+  color: #1a1a1a;
+  box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.dark-mode .btn-primary:hover {
+  background: #d4a915;
+  color: #1a1a1a;
+  box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-white);
+  border: 2px solid var(--text-white);
+}
+
+.btn-secondary:hover {
+  background: var(--text-white);
+  color: var(--accent-color);
+  border-color: var(--text-white);
+  transform: translateY(-2px);
+}
+
+/* Dark mode secondary button */
+.dark-mode .btn-secondary:hover {
+  background: var(--text-white);
+  color: var(--accent-color);
+}
+
+/* Scroll reveal animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease;
+}
+
+.scroll-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stagger-1 {
+  transition-delay: 0.1s;
+}
+
+.stagger-2 {
+  transition-delay: 0.2s;
+}
+
+.stagger-3 {
+  transition-delay: 0.3s;
+}
+
+/* Property card animations */
+.property-card {
+  animation: fadeInUp 0.6s ease-in-out;
+  animation-fill-mode: both;
+}
+
+/* Focus styles for accessibility */
+.btn:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Smooth hover effects */
+.hover-lift {
+  transition: var(--transform-transition);
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+}
+
+/* Theme transition effect */
+.theme-transitioning {
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+/* Ensure proper z-index hierarchy */
+.nav-container {
+  z-index: 100;
+}
+
+.modal-overlay {
+  z-index: 2000;
+}
+
+.loading-overlay {
+  z-index: 9999;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border-light: #000000;
+    --shadow-light: rgba(0, 0, 0, 0.3);
+  }
+
+  .dark-mode {
+    --border-light: #ffffff;
+    --shadow-light: rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .page-transition {
+    animation: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+  }
+}
+
+/* Font loading optimization */
+.font-loading body {
+  visibility: hidden;
+}
+
+.font-loaded body {
+  visibility: visible;
+}
+
+/* Fallback for font loading */
+@media (prefers-reduced-data: reduce) {
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+}
+/* System Theme Detection Support - Add this to the TOP of index.css, right after the :root variables */
+
+/* Automatic system theme detection using CSS media queries */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Auto-apply dark theme if system is dark and no manual preference is set */
+    --primary-color: #e8e8e8;
+    --secondary-color: #cccccc;
+    --text-dark: #e8e8e8;
+    --text-light: #a0a0a0;
+    --bg-light: #0f0f0f;
+    --bg-white: #1a1a1a;
+    --bg-card: #1a1a1a;
+    --bg-subcard: #121212;
+    --border-light: #1f1f1f;
+    --shadow-light: rgba(0, 0, 0, 0.4);
+    --shadow-medium: rgba(0, 0, 0, 0.5);
+    --shadow-dark: rgba(0, 0, 0, 0.7);
+  }
+
+  /* Auto-apply dark theme to body */
+  body:not(.theme-override) {
+    background: var(--bg-light);
+    color: var(--text-dark);
+  }
+}
+
+/* Light theme (default) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --text-dark: #2c3e50;
+    --text-light: #7f8c8d;
+    --bg-light: #f5f5f5;
+    --bg-white: #ffffff;
+    --bg-card: #ebebeb;
+    --bg-subcard: #dddddd;
+    --border-light: #ccc;
+    --shadow-light: rgba(44, 62, 80, 0.1);
+    --shadow-medium: rgba(44, 62, 80, 0.15);
+    --shadow-dark: rgba(44, 62, 80, 0.25);
+  }
+}
+
+/* Manual theme overrides (when user clicks the toggle) */
+body.theme-override.dark-mode {
+  /* This will override the system preference */
+  --primary-color: #e8e8e8;
+  --secondary-color: #cccccc;
+  --text-dark: #e8e8e8;
+  --text-light: #a0a0a0;
+  --bg-light: #0f0f0f;
+  --bg-white: #1a1a1a;
+  --bg-card: #1a1a1a;
+  --bg-subcard: #121212;
+  --border-light: #1f1f1f;
+  --shadow-light: rgba(0, 0, 0, 0.4);
+  --shadow-medium: rgba(0, 0, 0, 0.5);
+  --shadow-dark: rgba(0, 0, 0, 0.7);
+}
+
+body.theme-override:not(.dark-mode) {
+  /* Light mode override */
+  --primary-color: #2c3e50;
+  --secondary-color: #34495e;
+  --text-dark: #2c3e50;
+  --text-light: #7f8c8d;
+  --bg-light: #f5f5f5;
+  --bg-white: #ffffff;
+  --bg-card: #ebebeb;
+  --bg-subcard: #dddddd;
+  --border-light: #ccc;
+  --shadow-light: rgba(44, 62, 80, 0.1);
+  --shadow-medium: rgba(44, 62, 80, 0.15);
+  --shadow-dark: rgba(44, 62, 80, 0.25);
+}

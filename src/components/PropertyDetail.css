@@ -1,0 +1,682 @@
+/* PropertyDetail.css */
+.property-detail-page {
+  padding: 120px 0 80px;
+  background: var(--bg-light);
+  min-height: 100vh;
+  transition: all 0.5s ease;
+}
+
+/* Back Navigation */
+.back-navigation {
+  margin-bottom: 30px;
+}
+
+.back-btn {
+  background: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-btn:hover {
+  background: var(--accent-color);
+  color: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+.back-btn i {
+  font-size: 0.9rem;
+}
+
+/* Property Header */
+.property-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  padding: 30px;
+  background: var(--bg-white);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--shadow-light);
+  border: 2px solid var(--border-light);
+}
+
+.property-title-section h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.property-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.property-location i {
+  color: var(--accent-color);
+}
+
+.property-area-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-light);
+  color: var(--accent-color);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 500;
+  border: 1px solid var(--accent-color);
+}
+
+.property-price-section .property-price {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  text-align: right;
+}
+
+/* Property Gallery */
+.property-gallery {
+  margin-bottom: 50px;
+}
+
+.main-image-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 15px 35px var(--shadow-medium);
+}
+
+.main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.gallery-nav:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-prev {
+  left: 20px;
+}
+
+.gallery-next {
+  right: 20px;
+}
+
+.image-counter {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Thumbnail Gallery */
+.thumbnail-gallery {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.thumbnail {
+  width: 120px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+  flex-shrink: 0;
+}
+
+.thumbnail:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.thumbnail.active {
+  opacity: 1;
+  border-color: var(--accent-color);
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* No Images State */
+.no-images {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-white);
+  border-radius: 12px;
+  border: 2px dashed var(--border-light);
+  color: var(--text-light);
+}
+
+.no-images i {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: var(--accent-color);
+}
+
+/* Property Details Grid */
+.property-details-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  margin-bottom: 50px;
+}
+
+/* Main Details */
+.property-main-details {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.detail-section {
+  background: var(--bg-white);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--shadow-light);
+  border: 2px solid var(--border-light);
+}
+
+.detail-section h3 {
+  color: var(--primary-color);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 10px;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  background: var(--bg-light);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  background: var(--accent-color);
+  color: #1a1a1a;
+  transform: translateY(-2px);
+}
+
+.feature-item i {
+  font-size: 1.2rem;
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+.feature-item:hover i {
+  color: #1a1a1a;
+}
+
+.feature-item span {
+  font-weight: 500;
+}
+
+/* Property Description */
+.property-description {
+  line-height: 1.8;
+  color: var(--text-light);
+  font-size: 1.05rem;
+}
+
+/* Features List */
+.features-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.feature-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-light);
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.feature-tag:hover {
+  background: var(--accent-color);
+  color: #1a1a1a;
+}
+
+.feature-tag i {
+  font-size: 0.9rem;
+}
+
+/* Sidebar */
+.property-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Contact Card */
+.contact-card {
+  background: var(--bg-white);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--shadow-light);
+  border: 2px solid var(--border-light);
+  text-align: center;
+}
+
+.contact-card h3 {
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+}
+
+.contact-card p {
+  color: var(--text-light);
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.contact-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-btn {
+  padding: 15px 25px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: var(--accent-color) !important;
+  color: #1a1a1a !important;
+  border: 2px solid var(--accent-color) !important;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.contact-btn:hover {
+  background: #d4a915 !important;
+  border-color: #d4a915 !important;
+  transform: translateY(-2px);
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 🆕 FIXED CONTACT ITEM STYLES - Made text and icons visible */
+.contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-dark) !important;
+  /* Changed to dark text */
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.contact-item i {
+  color: var(--accent-color) !important;
+  /* Made icon visible */
+  width: 16px;
+  font-size: 1rem;
+}
+
+.contact-item span {
+  color: var(--text-dark) !important;
+  /* Made text visible */
+  font-weight: 500;
+}
+
+/* 🆕 FUNCTIONAL CONTACT BUTTON STYLES */
+.contact-item-button {
+  background: transparent !important;
+  border: 1px solid var(--border-light) !important;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem !important;
+  transition: all 0.3s ease;
+}
+
+.contact-item-button:hover {
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+  transform: translateY(-1px);
+}
+
+.contact-item-button:hover i {
+  color: #1a1a1a !important;
+}
+
+.contact-item-button:hover span {
+  color: #1a1a1a !important;
+}
+
+/* External Links Card */
+.external-links-card {
+  background: var(--bg-white);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--shadow-light);
+  border: 2px solid var(--border-light);
+}
+
+.external-links-card h3 {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.external-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.external-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  background: var(--bg-light);
+  border: 2px solid var(--border-light);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.external-link:hover {
+  background: var(--accent-color);
+  color: #1a1a1a;
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+}
+
+.external-link i {
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+.external-link:hover i {
+  color: #1a1a1a;
+}
+
+/* Property Info Card */
+.property-info-card {
+  background: var(--bg-white);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--shadow-light);
+  border: 2px solid var(--border-light);
+}
+
+.property-info-card h3 {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item .label {
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.info-item .value {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+/* Error Message */
+.error-message {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.error-message h2 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.error-message p {
+  color: var(--text-light);
+  margin-bottom: 25px;
+}
+
+/* Dark Mode Adjustments */
+.dark-mode .property-header,
+.dark-mode .detail-section,
+.dark-mode .contact-card,
+.dark-mode .external-links-card,
+.dark-mode .property-info-card {
+  background: var(--bg-card);
+  border-color: #2a2a2a;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .contact-btn {
+  background: var(--accent-color) !important;
+  color: #1a1a1a !important;
+}
+
+.dark-mode .contact-btn:hover {
+  background: #d4a915 !important;
+}
+
+/* 🆕 DARK MODE CONTACT ITEM FIXES */
+.dark-mode .contact-item {
+  color: var(--text-dark) !important;
+  /* Will be light in dark mode */
+}
+
+.dark-mode .contact-item i {
+  color: var(--accent-color) !important;
+}
+
+.dark-mode .contact-item span {
+  color: var(--text-dark) !important;
+  /* Will be light in dark mode */
+}
+
+.dark-mode .contact-item-button {
+  border-color: #404040 !important;
+}
+
+.dark-mode .contact-item-button:hover {
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+.dark-mode .contact-item-button:hover i,
+.dark-mode .contact-item-button:hover span {
+  color: #1a1a1a !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .property-details-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .property-detail-page {
+    padding: 140px 0 60px;
+  }
+
+  .property-header {
+    flex-direction: column;
+    gap: 20px;
+    padding: 25px;
+  }
+
+  .property-title-section h1 {
+    font-size: 2rem;
+  }
+
+  .property-price-section .property-price {
+    font-size: 1.8rem;
+    text-align: left;
+  }
+
+  .main-image-container {
+    height: 350px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .thumbnail-gallery {
+    gap: 10px;
+  }
+
+  .thumbnail {
+    width: 80px;
+    height: 60px;
+  }
+
+  .detail-section,
+  .contact-card,
+  .external-links-card,
+  .property-info-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .property-header {
+    padding: 20px;
+  }
+
+  .property-title-section h1 {
+    font-size: 1.6rem;
+  }
+
+  .property-price-section .property-price {
+    font-size: 1.5rem;
+  }
+
+  .main-image-container {
+    height: 250px;
+  }
+
+  .gallery-nav {
+    width: 40px;
+    height: 40px;
+  }
+
+  .gallery-prev {
+    left: 10px;
+  }
+
+  .gallery-next {
+    right: 10px;
+  }
+
+  .detail-section,
+  .contact-card,
+  .external-links-card,
+  .property-info-card {
+    padding: 15px;
+  }
+
+  .feature-item {
+    padding: 12px;
+  }
+}
