@@ -1,4 +1,4 @@
-// backend/server.js - Updated with societies route
+// backend/server.js - Fixed for Vercel deployment
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -12,11 +12,14 @@ const app = express();
 
 // Middleware
 app.use(morgan('combined'));
-aapp.use(cors({
+
+// 🆕 FIXED CORS for production
+app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? [
-        process.env.FRONTEND_URL,
-        process.env.ADMIN_URL,
+        // Add your frontend URLs here after deployment
+        'https://pawan-buildhome-frontend.vercel.app',
+        'https://pawan-buildhome.vercel.app',
         // Allow all Vercel preview domains for testing
         /https:\/\/.*\.vercel\.app$/
       ]
@@ -32,25 +35,36 @@ aapp.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Create uploads directory if it doesn't exist
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// 🆕 VERCEL FIX: Only create uploads directory in non-serverless environment
+if (process.env.NODE_ENV !== 'production') {
+  const uploadDir = path.join(__dirname, 'uploads');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  // Static files for uploaded images (only in development)
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 }
 
-// Static files for uploaded images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Database connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
+// Database connection with better error handling
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     console.log('✅ MongoDB Connected Successfully');
     console.log('📂 Database:', mongoose.connection.name);
-  })
-  .catch(err => {
+  } catch (err) {
     console.error('❌ MongoDB Connection Error:', err);
-    process.exit(1);
-  });
+    // Don't exit process in production/serverless
+    if (process.env.NODE_ENV !== 'production') {
+      process.exit(1);
+    }
+  }
+};
+
+// Connect to database
+connectDB();
 
 // 🔓 PUBLIC ROUTES (No authentication required)
 // Authentication routes
@@ -61,7 +75,8 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     message: 'Backend is running!', 
     timestamp: new Date(),
-    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
@@ -198,6 +213,7 @@ app.get('/', (req, res) => {
     message: 'Pawan Buildhome API Server',
     version: '1.0.0',
     security: 'Mixed Authentication (GET public, POST/PUT/DELETE protected)',
+    environment: process.env.NODE_ENV || 'development',
     endpoints: {
       public: [
         '/api/health',
@@ -206,7 +222,7 @@ app.get('/', (req, res) => {
         'GET /api/properties', 
         'GET /api/properties/area/:areaKey',
         'GET /api/uploads/slider',
-        'GET /api/societies/:areaKey/:subAreaId', // 🆕 NEW
+        'GET /api/societies/:areaKey/:subAreaId',
         'POST /api/contacts'
       ],
       protected: [
@@ -216,6 +232,26 @@ app.get('/', (req, res) => {
         'GET/PUT/DELETE /api/contacts'
       ]
     }
+  });
+});
+
+// 🆕 Catch-all route for API (must be before general 404)
+app.use('/api/*', (req, res) => {
+  console.log(`❌ API 404: ${req.method} ${req.originalUrl} not found`);
+  res.status(404).json({ 
+    message: 'API endpoint not found',
+    path: req.originalUrl,
+    method: req.method,
+    availableEndpoints: [
+      '/api/health',
+      '/api/auth/login',
+      'GET /api/areas (public)',
+      'GET /api/properties (public)',
+      'GET /api/uploads/slider (public)',
+      'GET /api/societies/:areaKey/:subAreaId (public)',
+      'POST /api/contacts (public)',
+      'Other methods require authentication'
+    ]
   });
 });
 
@@ -244,32 +280,18 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
-app.use('*', (req, res) => {
-  console.log(`❌ 404: ${req.method} ${req.originalUrl} not found`);
-  res.status(404).json({ 
-    message: 'Route not found',
-    path: req.originalUrl,
-    method: req.method,
-    availableEndpoints: [
-      '/api/health',
-      '/api/auth/login',
-      'GET /api/areas (public)',
-      'GET /api/properties (public)',
-      'GET /api/uploads/slider (public)',
-      'GET /api/societies/:areaKey/:subAreaId (public)', // 🆕 NEW
-      'POST /api/contacts (public)',
-      'Other methods require authentication'
-    ]
-  });
-});
+// 🆕 VERCEL EXPORT: Export the app for serverless functions
+module.exports = app;
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌐 Server URL: http://localhost:${PORT}`);
-  console.log(`📋 API Health: http://localhost:${PORT}/api/health`);
-  console.log(`🔓 Public READ: GET /api/areas, /api/properties, /api/uploads, /api/societies`);
-  console.log(`🔐 Protected WRITE: POST/PUT/DELETE operations require admin auth`);
-  console.log(`👤 Admin login: http://localhost:${PORT}/api/auth/login`);
-});
+// 🆕 VERCEL FIX: Only start server in development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🌐 Server URL: http://localhost:${PORT}`);
+    console.log(`📋 API Health: http://localhost:${PORT}/api/health`);
+    console.log(`🔓 Public READ: GET /api/areas, /api/properties, /api/uploads, /api/societies`);
+    console.log(`🔐 Protected WRITE: POST/PUT/DELETE operations require admin auth`);
+    console.log(`👤 Admin login: http://localhost:${PORT}/api/auth/login`);
+  });
+}

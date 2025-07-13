@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Contact.css';
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -48,8 +49,13 @@ const Contact = () => {
       
       console.log('📤 Submitting contact form:', formData);
       
+      // 🆕 UPDATED API URL for production
+      const API_URL = process.env.NODE_ENV === 'production' 
+        ? 'https://pawan-buildhome-backend-d8vm7thpr.vercel.app/api/contacts'
+        : 'http://localhost:5000/api/contacts';
+      
       // Submit to backend API
-      const response = await axios.post('http://localhost:5000/api/contacts', {
+      const response = await axios.post(API_URL, {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
@@ -278,4 +284,3 @@ const Contact = () => {
 };
 
 export default Contact;
-

@@ -1,8 +1,14 @@
+// frontend/src/services/api.js - Updated for production
 import axios from 'axios';
+
+// 🆕 PRODUCTION API URL - Updated to use your deployed backend
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://pawan-buildhome-backend-d8vm7thpr.vercel.app/api'
+  : 'http://localhost:5000/api';
 
 // Create axios instance
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -25,7 +31,6 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => {
     console.log(`✅ Frontend API Response: ${response.config.url} - ${response.status}`);
-    console.log('📊 Response data:', response.data);
     return response;
   },
   (error) => {
@@ -38,9 +43,9 @@ api.interceptors.response.use(
     
     // Provide more specific error messages
     if (error.code === 'ECONNREFUSED') {
-      console.error('🔌 Backend server is not running on localhost:5000');
+      console.error('🔌 Backend server is not running');
     } else if (error.code === 'ERR_NETWORK') {
-      console.error('🌐 Network error - check if backend is running');
+      console.error('🌐 Network error - check backend connection');
     } else if (error.response?.status === 404) {
       console.error('🔍 API endpoint not found');
     }
@@ -54,12 +59,11 @@ export const fetchAreas = async () => {
   try {
     console.log('🏢 Fetching areas from backend...');
     const response = await api.get('/areas');
-    console.log('🏢 Areas fetched successfully:', response.data.data);
+    console.log('🏢 Areas fetched successfully');
     return response.data.data || {}; // Returns the areas object
   } catch (error) {
     console.error('❌ Error fetching areas:', error);
     console.warn('⚠️ Falling back to empty areas object');
-    // Return fallback data if API fails
     return {};
   }
 };
@@ -70,7 +74,7 @@ export const fetchProperties = async (areaKey = '') => {
     const url = areaKey ? `/properties/area/${areaKey}` : '/properties';
     console.log(`🏠 Fetching properties from: ${url}`);
     const response = await api.get(url);
-    console.log('🏠 Properties fetched successfully:', response.data);
+    console.log('🏠 Properties fetched successfully');
     return response.data.data || []; // Returns the properties array
   } catch (error) {
     console.error('❌ Error fetching properties:', error);
@@ -84,7 +88,7 @@ export const fetchPropertiesByArea = async (areaKey) => {
   try {
     console.log(`🏠 Fetching properties for area: ${areaKey}`);
     const response = await api.get(`/properties/area/${areaKey}`);
-    console.log(`🏠 Properties for ${areaKey} fetched successfully:`, response.data);
+    console.log(`🏠 Properties for ${areaKey} fetched successfully`);
     return response.data.data || [];
   } catch (error) {
     console.error(`❌ Error fetching properties for area ${areaKey}:`, error);
@@ -98,7 +102,7 @@ export const fetchSliderImages = async () => {
   try {
     console.log('🖼️ Fetching slider images from backend...');
     const response = await api.get('/uploads/slider');
-    console.log('🖼️ Slider images fetched successfully:', response.data);
+    console.log('🖼️ Slider images fetched successfully');
     return response.data.data || [];
   } catch (error) {
     console.error('❌ Error fetching slider images:', error);
@@ -124,7 +128,7 @@ export const checkBackendHealth = async () => {
   try {
     console.log('🔍 Checking backend health...');
     const response = await api.get('/health');
-    console.log('✅ Backend health check passed:', response.data);
+    console.log('✅ Backend health check passed');
     return response.data;
   } catch (error) {
     console.error('❌ Backend health check failed:', error);
