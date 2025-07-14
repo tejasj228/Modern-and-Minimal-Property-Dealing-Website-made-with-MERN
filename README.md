@@ -27,7 +27,7 @@
 
 This comprehensive real estate platform provides users with an intuitive interface for exploring properties, viewing detailed society information, and contacting agents. The project consists of three main components working in perfect harmony:
 
-<table>
+<table align="center">
 <tr>
 <td align="center">
 <img src="https://cdn-icons-png.flaticon.com/512/1055/1055687.png" width="60" height="60"><br>
@@ -145,13 +145,6 @@ Powerful Management System
 
 ---
 
-## 🏗️ Architecture
-
-<div align="center">
-<img src="https://mermaid.ink/img/pako:eNptkU1rwzAMhv-K8LkJ_ANyKd20pYUyGDQw6KVedFCIsdbOHNuJlKYtIf997Q_aXuDgR6_0Po50ZpUrTJSZEFSNXrLEZNYRXYjEKrJWqIqGqnVqJF_0sJJlBY3hOgXQeJfqSWDFhPgqtZrCFbzPQHfTvR8EL2xPPvAAfHRW3wBHpKgfbgTBgfcUJEzn8zfXqOl0KpoQj_mxZL8nYnNn9kRFQQ8VgFmlpN4CKNrBhsHKL5kP6CJdlPK1_VJ4yFJlWl3TjMJpIYYkXJRNqZQkJrQe8Rg9qCXQoqmgXmzIZtRGzKZlR_jRTSxNKpEXKBKLNyVEJ2JjEEjPyQTUzEEtGpKE0QQPQZlAp0QKoqNJAhkYoJoRNcAHBCXJ6xqGgLwbWMgqEPQGJaVUQJ2i4lAIJEFJOBLEYNUgYrAiGYFSEYpFgIe4gYhZGQI0JUa2EGBCnIFOg4hCEjIiEhCKgJEGF5QqQcQvfAJBVYSCygFUgEFgYyIEIBFKEJLKEEIGhFZCEEgRhYjAz7CiUMCgJHhHiSIILEJQQJghJKRAJIgUBoJlAjLaAWKKBYkCBUPTHQ1VKCh9kJKB1WFKEGKSEGJkCBEYYYgICg6jQmQEJaUEq4hG5x-kBRrVInqJGNJWA?type=png" alt="Architecture Diagram">
-</div>
-
----
 
 ## 🗂️ Project Structure
 
@@ -163,29 +156,155 @@ Powerful Management System
 
 <br>
 
+
+🔷 Full Project Structure
 ```
-🏠 Property-Dealing/
-├── 🎨 PROP_DEALING_FRONTEND/     # React Frontend
-│   ├── 📦 src/
-│   │   ├── 🧩 components/        # React Components
-│   │   ├── 🎣 hooks/             # Custom Hooks
-│   │   ├── 🛠️ services/          # API Services
-│   │   └── 📊 data/              # Static Data
-│   └── 🔧 package.json
+Property-Dealing/
+├── ADMIN-PANEL/
+├── BACKEND/
+└── PROP_DEALING_FRONTEND/
+```
+
+✅ Frontend (PROP_DEALING_FRONTEND)
+```
+PROP_DEALING_FRONTEND/
+├── node_modules/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── Contact.jsx
+│   │   ├── Contact.css
+│   │   ├── Footer.jsx
+│   │   ├── Footer.css
+│   │   ├── Header.jsx
+│   │   ├── Header.css
+│   │   ├── Home.jsx
+│   │   ├── Home.css
+│   │   ├── ImageSlider.jsx
+│   │   ├── ImageSlider.css
+│   │   ├── Listings.jsx
+│   │   ├── Listings.css
+│   │   ├── Modal.jsx
+│   │   ├── Modal.css
+│   │   ├── PageTransition.jsx
+│   │   ├── Properties.jsx
+│   │   ├── Properties.css
+│   │   ├── PropertyDetail.jsx
+│   │   ├── PropertyDetail.css
+│   │   ├── ScrollToTop.jsx
+│   │   ├── ScrollToTop.css
+│   │   ├── Societies.jsx
+│   │   ├── Societies.css
 │
-├── ⚙️ BACKEND/                   # Node.js API
-│   ├── 🛡️ middleware/           # Auth & Upload
-│   ├── 📋 models/               # Database Models
-│   ├── 🛤️ routes/               # API Routes
-│   └── 🌱 seed.js               # Database Seeder
+│   ├── data/
+│   │   └── data.js
 │
-└── 👨‍💼 ADMIN-PANEL/              # Admin Dashboard
-    ├── 📱 src/
-    │   ├── 📄 pages/             # Admin Pages
-    │   ├── 🧩 components/        # Reusable Components
-    │   ├── 🔐 contexts/          # Auth Context
-    │   └── 🛠️ services/          # API Services
-    └── 📦 package.json
+│   ├── fonts/
+│   │   └── gilmer-light.otf
+│
+│   ├── hooks/
+│   │   └── useTheme.js
+│
+│   ├── services/
+│   │   └── api.js
+│
+│   ├── App.js
+│   ├── App.css
+│   ├── App.test.js
+│   ├── index.js
+│   ├── index.css
+│   ├── logo.svg
+│   ├── reportWebVitals.js
+│   ├── setupTests.js
+│
+├── .env.production
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── README.md
+└── vercel.json
+```
+✅ Backend (BACKEND)
+```
+BACKEND/
+├── middleware/
+│   ├── auth.js
+│   └── upload.js
+│
+├── models/
+│   ├── Area.js
+│   ├── Contact.js
+│   ├── Property.js
+│   └── SliderImage.js
+│
+├── routes/
+│   ├── areas.js
+│   ├── auth.js
+│   ├── contacts.js
+│   ├── properties.js
+│   ├── societies.js
+│   └── uploads.js
+│
+├── node_modules/
+├── .env
+├── .env.production
+├── .gitignore
+├── migrate-order.js
+├── package.json
+├── package-lock.json
+├── seed.js
+├── server.js
+└── vercel.json
+```
+✅ Admin Panel (ADMIN-PANEL)
+
+```
+ADMIN-PANEL/
+├── public/
+├── src/
+│   ├── components/
+│   │   └── ImageUpload/
+│   │       ├── ImageUpload.js
+│
+│   ├── Layout/
+│   │   └── Layout.js
+│
+│   ├── Login/
+│   │   └── Login.js
+│
+│   ├── ProtectedRoute/
+│   │   └── ProtectedRoute.js
+│
+│   ├── contexts/
+│   │   └── AuthContext.js
+│
+│   ├── pages/
+│   │   ├── Areas.js
+│   │   ├── Contacts.js
+│   │   ├── Dashboard.js
+│   │   ├── Images.js
+│   │   └── Properties.js
+│
+│   ├── services/
+│   │   └── api.js
+│
+│   ├── utils/
+│   │   └── imageUtils.jsx
+│
+│   ├── App.js
+│   ├── App.css
+│   ├── App.test.js
+│   ├── index.js
+│   ├── index.css
+│   ├── logo.svg
+│   ├── reportWebVitals.js
+│   └── setupTests.js
+│
+├── .env.production
+├── .gitignore
+├── package.json
+├── package-lock.json
+└── README.md
 ```
 
 ---
@@ -283,27 +402,22 @@ npm start
 <table>
 <tr>
 <td align="center" width="20%">
-<img src="https://cdn-icons-png.flaticon.com/512/1946/1946488.png" width="50" height="50"><br>
 <strong>🏠 Home</strong><br>
 Hero & Featured Properties
 </td>
 <td align="center" width="20%">
-<img src="https://cdn-icons-png.flaticon.com/512/1946/1946436.png" width="50" height="50"><br>
 <strong>🏘️ Properties</strong><br>
 Browse All Listings
 </td>
 <td align="center" width="20%">
-<img src="https://cdn-icons-png.flaticon.com/512/1946/1946461.png" width="50" height="50"><br>
 <strong>📍 Listings</strong><br>
 Filter by Area
 </td>
 <td align="center" width="20%">
-<img src="https://cdn-icons-png.flaticon.com/512/1946/1946429.png" width="50" height="50"><br>
 <strong>🏢 Societies</strong><br>
 Interactive Galleries
 </td>
 <td align="center" width="20%">
-<img src="https://cdn-icons-png.flaticon.com/512/1946/1946448.png" width="50" height="50"><br>
 <strong>📧 Contact</strong><br>
 Submit Inquiries
 </td>
@@ -421,19 +535,6 @@ Submit Inquiries
 | 🔴 DELETE | `/api/properties/:id` | 🗑️ Delete property |
 | 🟠 PUT | `/api/properties/reorder` | 🔀 Reorder properties |
 
----
-
-## 🎨 Screenshots & Demo
-
-<div align="center">
-<h3>🌟 Frontend Interface</h3>
-<img src="https://via.placeholder.com/800x400/61DAFB/FFFFFF?text=Property+Listing+Interface" alt="Frontend Demo">
-</div>
-
-<div align="center">
-<h3>👨‍💼 Admin Dashboard</h3>
-<img src="https://via.placeholder.com/800x400/007FFF/FFFFFF?text=Admin+Management+Panel" alt="Admin Demo">
-</div>
 
 ---
 
@@ -497,9 +598,7 @@ vercel --prod
 
 We welcome contributions! Here's how you can help:
 
-<div align="center">
-<img src="https://contrib.rocks/image?repo=username/repo-name">
-</div>
+
 
 ### 📝 **Contribution Steps**
 
@@ -526,9 +625,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
 <h3>Built with ❤️ by <strong>Tejas Jaiswal</strong></h3>
 
-<img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white">
-<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white">
-<img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white">
 
 <p><em>🚀 Turning ideas into reality, one line of code at a time</em></p>
 </div>
@@ -537,11 +633,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 <h3>⭐ Star this repository if you found it helpful!</h3>
-<img src="https://img.shields.io/github/stars/username/repo-name?style=social">
-<img src="https://img.shields.io/github/forks/username/repo-name?style=social">
-<img src="https://img.shields.io/github/watchers/username/repo-name?style=social">
-</div>
 
 <div align="center">
-<p><strong>🏠 Happy Property Dealing! 🏠</strong></p>
-</div>
