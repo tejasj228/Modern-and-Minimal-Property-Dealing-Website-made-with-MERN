@@ -49,14 +49,16 @@ const Contact = () => {
       
       console.log('📤 Submitting contact form:', formData);
       
-      // 🆕 FIXED API URL - Use the correct production backend URL
-      const API_URL = process.env.NODE_ENV === 'production' 
-        ? 'https://property-dealing-backend.onrender.com/api/contacts'
-        : 'http://localhost:5000/api/contacts';
+      // 🆕 FIXED API URL - Use environment variable correctly
+      const API_URL = process.env.REACT_APP_API_URL 
+        ? `${process.env.REACT_APP_API_URL}/contacts`
+        : 'https://property-dealing-backend.onrender.com/api/contacts';
       
-      console.log('🌐 Using API URL:', API_URL);
+      console.log('🔗 Using API URL:', API_URL);
+      console.log('🔗 Environment:', process.env.NODE_ENV);
+      console.log('🔗 Base API URL:', process.env.REACT_APP_API_URL);
       
-      // Submit to backend API with proper headers
+      // Submit to backend API with explicit headers
       const response = await axios.post(API_URL, {
         name: formData.name.trim(),
         email: formData.email.trim(),
@@ -64,13 +66,11 @@ const Contact = () => {
         interest: formData.interest.trim(),
         message: formData.message.trim()
       }, {
-        // 🆕 ADDED PROPER HEADERS
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        // 🆕 ADDED TIMEOUT
-        timeout: 15000
+        timeout: 15000, // Increased timeout
+        withCredentials: false // Disable credentials for CORS
       });
       
       console.log('✅ Contact form submitted successfully:', response.data);
@@ -94,21 +94,22 @@ const Contact = () => {
       
     } catch (error) {
       console.error('❌ Error submitting contact form:', error);
-      
-      // 🆕 BETTER ERROR HANDLING
-      let errorMessage = 'Failed to send message. Please try again or contact us directly.';
+      console.error('❌ Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        code: error.code
+      });
       
       if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.code === 'ECONNREFUSED') {
-        errorMessage = 'Unable to connect to server. Please try again later.';
+        setSubmitError(error.response.data.message);
       } else if (error.code === 'ERR_NETWORK') {
-        errorMessage = 'Network error. Please check your internet connection.';
-      } else if (error.message.includes('timeout')) {
-        errorMessage = 'Request timed out. Please try again.';
+        setSubmitError('Network error. Please check your connection and try again.');
+      } else if (error.code === 'ECONNREFUSED') {
+        setSubmitError('Unable to connect to server. Please try again later.');
+      } else {
+        setSubmitError('Failed to send message. Please try again or contact us directly.');
       }
-      
-      setSubmitError(errorMessage);
     } finally {
       setSubmitting(false);
     }
