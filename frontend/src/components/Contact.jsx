@@ -49,18 +49,41 @@ const Contact = () => {
       
       console.log('📤 Submitting contact form:', formData);
       
+<<<<<<< HEAD
       // 🆕 UPDATED API URL for production
       const API_URL = process.env.NODE_ENV === 'production' 
         ? 'https://pawan-buildhome-backend-d8vm7thpr.vercel.app/api/contacts'
         : 'http://localhost:5000/api/contacts';
       
       // Submit to backend API
+=======
+      // 🆕 FIXED API URL - Force use Render backend (working one)
+      const API_URL = 'https://property-dealing-backend.onrender.com/api/contacts';
+      
+      // Debug logs
+      console.log('🔗 Environment REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+      console.log('🔗 Forcing API URL to:', API_URL);
+      
+      console.log('🔗 Using API URL:', API_URL);
+      console.log('🔗 Environment:', process.env.NODE_ENV);
+      
+      // Submit to backend API with explicit headers
+>>>>>>> 52345b40bccaacc373a33ab3f10d65f254fd6ea5
       const response = await axios.post(API_URL, {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         interest: formData.interest.trim(),
         message: formData.message.trim()
+<<<<<<< HEAD
+=======
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 15000, // Increased timeout
+        withCredentials: false // Disable credentials for CORS
+>>>>>>> 52345b40bccaacc373a33ab3f10d65f254fd6ea5
       });
       
       console.log('✅ Contact form submitted successfully:', response.data);
@@ -84,9 +107,25 @@ const Contact = () => {
       
     } catch (error) {
       console.error('❌ Error submitting contact form:', error);
+<<<<<<< HEAD
       
       if (error.response?.data?.message) {
         setSubmitError(error.response.data.message);
+=======
+      console.error('❌ Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        code: error.code
+      });
+      
+      if (error.response?.data?.message) {
+        setSubmitError(error.response.data.message);
+      } else if (error.code === 'ERR_NETWORK') {
+        setSubmitError('Network error. Please check your connection and try again.');
+      } else if (error.code === 'ECONNREFUSED') {
+        setSubmitError('Unable to connect to server. Please try again later.');
+>>>>>>> 52345b40bccaacc373a33ab3f10d65f254fd6ea5
       } else {
         setSubmitError('Failed to send message. Please try again or contact us directly.');
       }
