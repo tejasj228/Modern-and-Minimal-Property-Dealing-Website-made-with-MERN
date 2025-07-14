@@ -20,12 +20,6 @@ import {
   Alert,
   CircularProgress,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   TablePagination,
   Tabs,
   Tab,
@@ -35,12 +29,13 @@ import {
   Avatar,
   Tooltip,
   Link,
+  Collapse,
+  CardActions,
 } from '@mui/material';
 import {
   Email as EmailIcon,
   Phone as PhoneIcon,
   LocationOn as LocationIcon,
-  Schedule as ScheduleIcon,
   Visibility as ViewIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
@@ -53,6 +48,7 @@ import {
   Schedule as TimeIcon,
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
+  Circle as CircleIcon,
 } from '@mui/icons-material';
 import { contactAPI } from '../services/api';
 
@@ -70,37 +66,221 @@ function TabPanel({ children, value, index, ...other }) {
   );
 }
 
-// 🆕 Message Display Component with Expand/Collapse
-const MessageDisplay = ({ message, maxLength = 100 }) => {
+// Enhanced Contact Card Component
+const ContactCard = ({ contact, onView, onEdit, onMarkAsRead, onDelete }) => {
   const [expanded, setExpanded] = useState(false);
-  
-  if (message.length <= maxLength) {
-    return (
-      <Typography variant="body2" sx={{ lineHeight: 1.4, wordBreak: 'break-word' }}>
-        {message}
-      </Typography>
-    );
-  }
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'new': return 'primary';
+      case 'contacted': return 'info';
+      case 'in-progress': return 'warning';
+      case 'closed': return 'success';
+      default: return 'default';
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'high': return 'error';
+      case 'medium': return 'warning';
+      case 'low': return 'default';
+      default: return 'default';
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   return (
-    <Box>
-      <Typography variant="body2" sx={{ lineHeight: 1.4, wordBreak: 'break-word' }}>
-        {expanded ? message : `${message.substring(0, maxLength)}...`}
-      </Typography>
-      <Button
-        size="small"
-        onClick={() => setExpanded(!expanded)}
-        startIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        sx={{ 
-          mt: 0.5, 
-          minWidth: 'auto',
-          fontSize: '0.75rem',
-          padding: '2px 8px'
-        }}
-      >
-        {expanded ? 'Show Less' : 'Read More'}
-      </Button>
-    </Box>
+    <Card 
+      sx={{ 
+        mb: 2, 
+        border: !contact.isRead ? '2px solid #1976d2' : '1px solid #e0e0e0',
+        backgroundColor: !contact.isRead ? '#f3f8ff' : 'white',
+        '&:hover': {
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          transform: 'translateY(-1px)',
+        },
+        transition: 'all 0.2s ease',
+      }}
+    >
+      <CardContent>
+        {/* Header */}
+        <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+          <Box display="flex" alignItems="center" gap={1}>
+            <Avatar sx={{ bgcolor: 'primary.main', width: 40, height: 40 }}>
+              <PersonIcon />
+            </Avatar>
+            <Box>
+              <Typography variant="h6" fontWeight="bold">
+                {!contact.isRead && <CircleIcon sx={{ fontSize: 8, color: 'primary.main', mr: 1 }} />}
+                {contact.name}
+                {!contact.isRead && (
+                  <Chip 
+                    label="New" 
+                    size="small" 
+                    color="primary" 
+                    sx={{ ml: 1, height: 20 }}
+                  />
+                )}
+              </Typography>
+              <Typography variant="caption" color="textSecondary">
+                {formatDate(contact.createdAt)}
+              </Typography>
+            </Box>
+          </Box>
+          
+          <Box display="flex" gap={1}>
+            <Chip 
+              label={contact.status || 'new'} 
+              color={getStatusColor(contact.status)}
+              size="small"
+              variant="outlined"
+            />
+            <Chip 
+              label={contact.priority || 'medium'} 
+              color={getPriorityColor(contact.priority)}
+              size="small"
+            />
+          </Box>
+        </Box>
+
+        {/* Contact Info */}
+        <Grid container spacing={2} mb={2}>
+          <Grid item xs={12} md={4}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <EmailIcon fontSize="small" color="action" />
+              <Typography variant="body2" sx={{ wordBreak: 'break-all' }}>
+                {contact.email}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <PhoneIcon fontSize="small" color="action" />
+              <Typography variant="body2">
+                {contact.phone}
+              </Typography>
+            </Box>
+          </Grid>
+          {contact.interest && (
+            <Grid item xs={12} md={4}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <LocationIcon fontSize="small" color="action" />
+                <Typography variant="body2">
+                  {contact.interest}
+                </Typography>
+              </Box>
+            </Grid>
+          )}
+        </Grid>
+
+        {/* Message Preview */}
+        <Box mb={2}>
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+            <MessageIcon fontSize="small" sx={{ mr: 1, verticalAlign: 'middle' }} />
+            Message:
+          </Typography>
+          <Paper sx={{ p: 2, backgroundColor: '#f8f9fa', borderRadius: 1 }}>
+            <Typography variant="body2" sx={{ lineHeight: 1.4 }}>
+              {expanded || contact.message.length <= 150 
+                ? contact.message 
+                : `${contact.message.substring(0, 150)}...`
+              }
+            </Typography>
+            {contact.message.length > 150 && (
+              <Button
+                size="small"
+                onClick={() => setExpanded(!expanded)}
+                startIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                sx={{ mt: 1, p: 0, minWidth: 'auto' }}
+              >
+                {expanded ? 'Show Less' : 'Read More'}
+              </Button>
+            )}
+          </Paper>
+        </Box>
+
+        {/* Notes (if any) */}
+        {contact.notes && (
+          <Box mb={2}>
+            <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+              Admin Notes:
+            </Typography>
+            <Paper sx={{ p: 2, backgroundColor: '#fff3e0', borderRadius: 1 }}>
+              <Typography variant="body2">
+                {contact.notes}
+              </Typography>
+            </Paper>
+          </Box>
+        )}
+      </CardContent>
+
+      {/* Actions */}
+      <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
+        <Box>
+          <Tooltip title="View Details">
+            <IconButton 
+              size="small" 
+              onClick={() => onView(contact)}
+              color="primary"
+            >
+              <ViewIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Edit Contact">
+            <IconButton 
+              size="small" 
+              onClick={() => onEdit(contact)}
+              color="info"
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          {!contact.isRead && (
+            <Tooltip title="Mark as Read">
+              <IconButton 
+                size="small" 
+                onClick={() => onMarkAsRead(contact._id)}
+                color="warning"
+              >
+                <MarkReadIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title="Delete">
+            <IconButton 
+              size="small" 
+              onClick={() => onDelete(contact._id)}
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+        
+        <Box display="flex" gap={1}>
+          <Link href={`mailto:${contact.email}`} underline="none">
+            <Button size="small" variant="outlined" startIcon={<EmailIcon />}>
+              Email
+            </Button>
+          </Link>
+          <Link href={`tel:${contact.phone}`} underline="none">
+            <Button size="small" variant="outlined" startIcon={<PhoneIcon />}>
+              Call
+            </Button>
+          </Link>
+        </Box>
+      </CardActions>
+    </Card>
   );
 };
 
@@ -212,7 +392,7 @@ function Contacts() {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
-    setPage(0); // Reset to first page when changing tabs
+    setPage(0);
   };
 
   const handleFilterChange = (field, value) => {
@@ -220,14 +400,13 @@ function Contacts() {
       ...prev,
       [field]: value
     }));
-    setPage(0); // Reset to first page when filtering
+    setPage(0);
   };
 
   const handleViewContact = (contact) => {
     setSelectedContact(contact);
     setOpenViewDialog(true);
     
-    // Mark as read if not already read
     if (!contact.isRead) {
       markAsRead(contact._id);
     }
@@ -483,136 +662,52 @@ function Contacts() {
         </Tabs>
       </Box>
 
-      {/* 🆕 IMPROVED Contacts Table with better layout */}
-      <Card>
-        <TableContainer>
-          <Table sx={{ minWidth: 1200 }}>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ width: '20%' }}>Contact Info</TableCell>
-                <TableCell sx={{ width: '35%' }}>Message</TableCell> {/* 🆕 Increased width */}
-                <TableCell sx={{ width: '10%' }}>Status</TableCell>
-                <TableCell sx={{ width: '10%' }}>Priority</TableCell>
-                <TableCell sx={{ width: '15%' }}>Date</TableCell>
-                <TableCell sx={{ width: '10%' }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {contacts.map((contact) => (
-                <TableRow 
-                  key={contact._id}
-                  sx={{ 
-                    backgroundColor: !contact.isRead ? 'rgba(25, 118, 210, 0.08)' : 'inherit',
-                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }
-                  }}
-                >
-                  <TableCell>
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight="bold">
-                        {!contact.isRead && <Badge color="primary" variant="dot" sx={{ mr: 1 }} />}
-                        {contact.name}
-                      </Typography>
-                      <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
-                        <EmailIcon fontSize="small" color="action" />
-                        <Typography variant="caption" sx={{ wordBreak: 'break-all' }}>
-                          {contact.email}
-                        </Typography>
-                      </Stack>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <PhoneIcon fontSize="small" color="action" />
-                        <Typography variant="caption">{contact.phone}</Typography>
-                      </Stack>
-                      {contact.interest && (
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <LocationIcon fontSize="small" color="action" />
-                          <Typography variant="caption">{contact.interest}</Typography>
-                        </Stack>
-                      )}
-                    </Box>
-                  </TableCell>
-                  <TableCell sx={{ maxWidth: '350px' }}> {/* 🆕 Added max width */}
-                    <MessageDisplay message={contact.message} maxLength={150} />
-                  </TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={contact.status} 
-                      color={getStatusColor(contact.status)}
-                      size="small"
-                      variant="outlined"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={contact.priority} 
-                      color={getPriorityColor(contact.priority)}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="caption">
-                      {formatDate(contact.createdAt)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
-                      <Tooltip title="View Details">
-                        <IconButton 
-                          size="small" 
-                          onClick={() => handleViewContact(contact)}
-                          color="primary"
-                        >
-                          <ViewIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Edit">
-                        <IconButton 
-                          size="small" 
-                          onClick={() => handleEditContact(contact)}
-                          color="info"
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                      {!contact.isRead && (
-                        <Tooltip title="Mark as Read">
-                          <IconButton 
-                            size="small" 
-                            onClick={() => markAsRead(contact._id)}
-                            color="warning"
-                          >
-                            <MarkReadIcon />
-                          </IconButton>
-                        </Tooltip>
-                      )}
-                      <Tooltip title="Delete">
-                        <IconButton 
-                          size="small" 
-                          onClick={() => handleDeleteContact(contact._id)}
-                          color="error"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          component="div"
-          count={totalContacts}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={(event, newPage) => setPage(newPage)}
-          onRowsPerPageChange={(event) => {
-            setRowsPerPage(parseInt(event.target.value, 10));
-            setPage(0);
-          }}
-        />
-      </Card>
+      {/* Contacts List */}
+      <Box>
+        {contacts.length > 0 ? (
+          <>
+            {contacts.map((contact) => (
+              <ContactCard
+                key={contact._id}
+                contact={contact}
+                onView={handleViewContact}
+                onEdit={handleEditContact}
+                onMarkAsRead={markAsRead}
+                onDelete={handleDeleteContact}
+              />
+            ))}
+            
+            {/* Pagination */}
+            <Card sx={{ mt: 3 }}>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                component="div"
+                count={totalContacts}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={(event, newPage) => setPage(newPage)}
+                onRowsPerPageChange={(event) => {
+                  setRowsPerPage(parseInt(event.target.value, 10));
+                  setPage(0);
+                }}
+              />
+            </Card>
+          </>
+        ) : (
+          <Paper sx={{ p: 4, textAlign: 'center' }}>
+            <MessageIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              No Contacts Found
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              {tabValue === 1 ? 'No unread contacts' : 
+               tabValue === 2 ? 'No new contacts' :
+               tabValue === 3 ? 'No contacts in progress' :
+               'No contacts match your current filters'}
+            </Typography>
+          </Paper>
+        )}
+      </Box>
 
       {/* View Contact Dialog */}
       <Dialog 

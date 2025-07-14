@@ -14,10 +14,10 @@ import {
   Map as MapIcon,
   Image as ImageIcon,
   TrendingUp as TrendingUpIcon,
-  Email as EmailIcon, // 🆕 Added EmailIcon
-  MarkEmailUnread as UnreadIcon, // 🆕 Added UnreadIcon
+  Email as EmailIcon,
+  MarkEmailUnread as UnreadIcon,
 } from '@mui/icons-material';
-import { propertyAPI, areaAPI, uploadAPI, contactAPI, healthCheck } from '../services/api'; // 🆕 Added contactAPI
+import { propertyAPI, areaAPI, uploadAPI, contactAPI, healthCheck } from '../services/api';
 
 const StatCard = ({ title, value, icon, color = 'primary' }) => (
   <Card sx={{ height: '100%' }}>
@@ -54,10 +54,10 @@ function Dashboard() {
     totalProperties: 0,
     totalAreas: 0,
     totalImages: 0,
-    totalContacts: 0, // 🆕 Added contact stats
-    unreadContacts: 0, // 🆕 Added unread contacts
+    totalContacts: 0,
+    unreadContacts: 0,
     recentProperties: [],
-    recentContacts: [], // 🆕 Added recent contacts
+    recentContacts: [],
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -80,19 +80,19 @@ function Dashboard() {
       const [propertiesData, areasData, imagesData, contactsData, contactStatsData] = await Promise.all([
         propertyAPI.getAll(),
         areaAPI.getAll(),
-        uploadAPI.getFiles().catch(() => ({ data: [] })), // Handle if uploads endpoint fails
-        contactAPI.getAll({ limit: 5 }).catch(() => ({ data: [] })), // 🆕 Get recent contacts
-        contactAPI.getStats().catch(() => ({ data: {} })), // 🆕 Get contact statistics
+        uploadAPI.getFiles().catch(() => ({ data: [] })),
+        contactAPI.getAll({ limit: 5 }).catch(() => ({ data: [] })),
+        contactAPI.getStats().catch(() => ({ data: {} })),
       ]);
 
       setStats({
         totalProperties: propertiesData.count || 0,
         totalAreas: Object.keys(areasData.data || {}).length,
         totalImages: imagesData.count || 0,
-        totalContacts: contactStatsData.data?.totalContacts || 0, // 🆕 Added
-        unreadContacts: contactStatsData.data?.unreadCount || 0, // 🆕 Added
+        totalContacts: contactStatsData.data?.totalContacts || 0,
+        unreadContacts: contactStatsData.data?.unreadCount || 0,
         recentProperties: propertiesData.data?.slice(0, 5) || [],
-        recentContacts: contactsData.data || [], // 🆕 Added
+        recentContacts: contactsData.data || [],
       });
     } catch (error) {
       console.error('Error loading dashboard data:', error);
@@ -170,7 +170,7 @@ function Dashboard() {
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            title="Total Contacts" // 🆕 Updated from "Active Listings"
+            title="Total Contacts"
             value={stats.totalContacts}
             icon={<EmailIcon />}
             color="info"
@@ -178,7 +178,7 @@ function Dashboard() {
         </Grid>
       </Grid>
 
-      {/* 🆕 Second row of statistics */}
+      {/* Second row of statistics */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
@@ -246,7 +246,7 @@ function Dashboard() {
           </Paper>
         </Grid>
 
-        {/* 🆕 Recent Contacts Section */}
+        {/* Recent Contacts Section */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3, height: 'fit-content' }}>
             <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
@@ -301,45 +301,6 @@ function Dashboard() {
                 </Typography>
               </Box>
             )}
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* Quick Actions - Updated */}
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3, height: 'fit-content' }}>
-            <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
-              ⚡ Quick Actions
-            </Typography>
-            <Box display="flex" flexDirection="column" gap={2}>
-              <Box sx={{ p: 2, backgroundColor: '#f8f9fa', borderRadius: 1 }}>
-                <Typography variant="body2" fontWeight="bold" color="primary">
-                  🏠 Add new properties
-                </Typography>
-              </Box>
-              <Box sx={{ p: 2, backgroundColor: '#f8f9fa', borderRadius: 1 }}>
-                <Typography variant="body2" fontWeight="bold" color="primary">
-                  🗺️ Manage areas and sub-areas
-                </Typography>
-              </Box>
-              <Box sx={{ p: 2, backgroundColor: '#f8f9fa', borderRadius: 1 }}>
-                <Typography variant="body2" fontWeight="bold" color="primary">
-                  📸 Upload property images
-                </Typography>
-              </Box>
-              <Box sx={{ p: 2, backgroundColor: '#f8f9fa', borderRadius: 1 }}>
-                <Typography variant="body2" fontWeight="bold" color="primary">
-                  🖼️ Update slider images
-                </Typography>
-              </Box>
-              {/* 🆕 Added contact management */}
-              <Box sx={{ p: 2, backgroundColor: '#f8f9fa', borderRadius: 1 }}>
-                <Typography variant="body2" fontWeight="bold" color="primary">
-                  📧 Manage customer inquiries
-                </Typography>
-              </Box>
-            </Box>
           </Paper>
         </Grid>
       </Grid>
