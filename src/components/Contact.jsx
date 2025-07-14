@@ -49,14 +49,15 @@ const Contact = () => {
       
       console.log('📤 Submitting contact form:', formData);
       
-      // 🆕 FIXED API URL - Use environment variable correctly
-      const API_URL = process.env.REACT_APP_API_URL 
-        ? `${process.env.REACT_APP_API_URL}/contacts`
-        : 'https://property-dealing-backend.onrender.com/api/contacts';
+      // 🆕 FIXED API URL - Force use Render backend (working one)
+      const API_URL = 'https://property-dealing-backend.onrender.com/api/contacts';
+      
+      // Debug logs
+      console.log('🔗 Environment REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+      console.log('🔗 Forcing API URL to:', API_URL);
       
       console.log('🔗 Using API URL:', API_URL);
       console.log('🔗 Environment:', process.env.NODE_ENV);
-      console.log('🔗 Base API URL:', process.env.REACT_APP_API_URL);
       
       // Submit to backend API with explicit headers
       const response = await axios.post(API_URL, {
