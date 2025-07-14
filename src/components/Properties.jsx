@@ -5,10 +5,12 @@ import PageTransition from './PageTransition';
 import './Properties.css';
 
 // Image Carousel Component for Frontend Property Cards
+// Clean PropertyImageCarousel without debug info
+
 const PropertyImageCarousel = ({ images, title }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // 🆕 FIXED: Helper function to get correct image URL
+  // Helper function to get correct image URL
   const getImageUrl = (imageUrl) => {
     // If it's already a full URL (Cloudinary), return as-is
     if (imageUrl && imageUrl.startsWith('http')) {
@@ -57,13 +59,13 @@ const PropertyImageCarousel = ({ images, title }) => {
 
   return (
     <div className="property-image-carousel">
-      {/* 🚨 CHANGED: Using IMG tag instead of background image for testing */}
       <div 
         className="property-image"
         style={{
           position: 'relative',
           height: '200px',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          borderRadius: '8px'
         }}
       >
         <img
@@ -75,11 +77,10 @@ const PropertyImageCarousel = ({ images, title }) => {
             objectFit: 'cover'
           }}
           onLoad={() => {
-            console.log('✅ Property image loaded successfully:', currentImageUrl);
+            console.log('✅ Property image loaded successfully');
           }}
           onError={(e) => {
             console.error('❌ Property image failed to load:', currentImageUrl);
-            console.error('❌ Error details:', e);
           }}
         />
 
@@ -105,7 +106,18 @@ const PropertyImageCarousel = ({ images, title }) => {
                 borderRadius: '50%',
                 width: '40px',
                 height: '40px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease',
+                zIndex: 2
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(0,0,0,0.7)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'rgba(0,0,0,0.5)';
               }}
             >
               <i className="fas fa-chevron-left"></i>
@@ -130,7 +142,18 @@ const PropertyImageCarousel = ({ images, title }) => {
                 borderRadius: '50%',
                 width: '40px',
                 height: '40px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.3s ease',
+                zIndex: 2
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = 'rgba(0,0,0,0.7)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = 'rgba(0,0,0,0.5)';
               }}
             >
               <i className="fas fa-chevron-right"></i>
@@ -146,8 +169,9 @@ const PropertyImageCarousel = ({ images, title }) => {
                 background: 'rgba(0,0,0,0.7)',
                 color: 'white',
                 padding: '4px 8px',
-                borderRadius: '4px',
-                fontSize: '12px'
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: '500'
               }}
             >
               {currentImageIndex + 1}/{images.length}
@@ -162,7 +186,7 @@ const PropertyImageCarousel = ({ images, title }) => {
                 left: '50%',
                 transform: 'translateX(-50%)',
                 display: 'flex',
-                gap: '5px'
+                gap: '6px'
               }}
             >
               {images.map((_, index) => (
@@ -181,7 +205,8 @@ const PropertyImageCarousel = ({ images, title }) => {
                     borderRadius: '50%',
                     border: 'none',
                     background: index === currentImageIndex ? 'white' : 'rgba(255,255,255,0.5)',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
                   }}
                 />
               ))}
@@ -189,20 +214,10 @@ const PropertyImageCarousel = ({ images, title }) => {
           </>
         )}
       </div>
-      
-      {/* Debug info */}
-      <div style={{ 
-        fontSize: '10px', 
-        padding: '2px', 
-        backgroundColor: 'rgba(0,0,0,0.7)', 
-        color: 'white',
-        wordBreak: 'break-all'
-      }}>
-        {currentImageUrl}
-      </div>
     </div>
   );
 };
+
 const Properties = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedArea, setSelectedArea] = useState(searchParams.get('area') || 'all');
