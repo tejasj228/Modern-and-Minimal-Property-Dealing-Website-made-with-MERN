@@ -20,24 +20,40 @@ const ImageSlider = () => {
     loadSliderImages();
   }, []);
 
+  // 🆕 FIXED: Helper function to get correct image URL
+  const getImageUrl = (item) => {
+    // If imageUrl is already a full URL (Cloudinary), return as-is
+    if (item.imageUrl && item.imageUrl.startsWith('http')) {
+      return item.imageUrl;
+    }
+    // If it's a relative path, add localhost (for old local uploads)
+    return `http://localhost:5000${item.imageUrl}`;
+  };
+
   const loadSliderImages = async () => {
     try {
       setLoading(true);
       setError(null);
       
+      console.log('🖼️ Loading slider images from API...');
+      
       // Try to fetch from API
       const response = await fetchSliderImages();
       
+      console.log('🖼️ API Response:', response);
+      
       if (response && response.length > 0) {
         // Convert API response to image URLs
-        const imageUrls = response.map(item => {
-          // Check if it's a local upload or external URL
-          if (item.imageUrl.startsWith('http')) {
-            return item.imageUrl; // External URL
-          } else {
-            return `http://localhost:5000${item.imageUrl}`; // Local upload
-          }
+        const imageUrls = response.map((item, index) => {
+          const url = getImageUrl(item);
+          console.log(`🖼️ Image ${index + 1}:`, {
+            title: item.title,
+            original: item.imageUrl,
+            computed: url
+          });
+          return url;
         });
+        
         setImages(imageUrls);
         console.log('✅ Loaded slider images from API:', imageUrls.length);
       } else {
@@ -89,8 +105,14 @@ const ImageSlider = () => {
               alt={`Property ${index % images.length + 1}`}
               onError={(e) => {
                 // If image fails to load, replace with a fallback
-                console.warn('Image failed to load:', image);
-                e.target.src = fallbackImages[index % fallbackImages.length];
+                console.warn('❌ Image failed to load:', image);
+                const fallbackIndex = index % fallbackImages.length;
+                if (e.target.src !== fallbackImages[fallbackIndex]) {
+                  e.target.src = fallbackImages[fallbackIndex];
+                }
+              }}
+              onLoad={() => {
+                console.log('✅ Image loaded successfully:', image);
               }}
             />
           </div>
