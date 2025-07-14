@@ -73,6 +73,7 @@ function Images() {
         uploadAPI.getFiles().catch(() => ({ data: [] }))
       ]);
       
+      console.log('🖼️ Slider images loaded:', sliderResponse.data);
       setSliderImages(sliderResponse.data || []);
       setAllFiles(filesResponse.data || []);
     } catch (error) {
@@ -178,6 +179,16 @@ function Images() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
+  // 🆕 FIXED: Helper function to get correct image URL
+  const getImageUrl = (imageUrl) => {
+    // If it's already a full URL (Cloudinary), return as-is
+    if (imageUrl && imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+    // If it's a relative path, add localhost (for old local uploads)
+    return `http://localhost:5000${imageUrl}`;
+  };
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -244,10 +255,31 @@ function Images() {
                   <CardMedia
                     component="img"
                     height="200"
-                    image={`http://localhost:5000${image.imageUrl}`}
+                    image={getImageUrl(image.imageUrl)} // 🆕 FIXED: Use helper function
                     alt={image.altText}
                     sx={{ objectFit: 'cover' }}
+                    onError={(e) => {
+                      console.error('❌ Image failed to load:', image.imageUrl);
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
                   />
+                  {/* 🆕 ADDED: Fallback for failed images */}
+                  <Box
+                    sx={{
+                      height: 200,
+                      display: 'none',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: '#f5f5f5',
+                      flexDirection: 'column'
+                    }}
+                  >
+                    <ImageIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
+                    <Typography variant="body2" color="textSecondary">
+                      Image not available
+                    </Typography>
+                  </Box>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
                       {image.title}
@@ -260,6 +292,10 @@ function Images() {
                       size="small" 
                       color="primary"
                     />
+                    {/* 🆕 ADDED: Debug info */}
+                    <Typography variant="caption" sx={{ display: 'block', mt: 1, wordBreak: 'break-all' }}>
+                      URL: {image.imageUrl}
+                    </Typography>
                   </CardContent>
                   <CardActions>
                     <IconButton
@@ -305,7 +341,7 @@ function Images() {
                   <CardMedia
                     component="img"
                     height="150"
-                    image={`http://localhost:5000${file.imageUrl}`}
+                    image={getImageUrl(file.imageUrl)} // 🆕 FIXED: Use helper function
                     alt={file.filename}
                     sx={{ objectFit: 'cover' }}
                   />
