@@ -1,4 +1,5 @@
 // admin-panel/src/pages/Areas.js - Complete with enhanced society images
+import { getImageUrl, handleImageError } from '../utils/imageUtils';
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -137,9 +138,10 @@ const SocietyImageUpload = ({ images = [], onImagesChange, mapImage, onMapChange
             <CardMedia
               component="img"
               height="150"
-              image={`http://localhost:5000${mapImage}`}
+              image={getImageUrl(mapImage)}
               alt="Society map"
               sx={{ objectFit: 'cover' }}
+              onError={(e) => handleImageError(e, mapImage)}
             />
             <CardContent sx={{ py: 1 }}>
               <Button
@@ -220,9 +222,10 @@ const SocietyImageUpload = ({ images = [], onImagesChange, mapImage, onMapChange
                   <CardMedia
                     component="img"
                     height="100"
-                    image={`http://localhost:5000${imageUrl}`}
+                    image={getImageUrl(imageUrl)}
                     alt={`Gallery image ${index + 1}`}
                     sx={{ objectFit: 'cover' }}
+                    onError={(e) => handleImageError(e, imageUrl)}
                   />
                   <IconButton
                     size="small"
@@ -268,7 +271,7 @@ const SocietyImageUpload = ({ images = [], onImagesChange, mapImage, onMapChange
   );
 };
 
-// Map Upload Component (existing)
+// Update the MapUpload component
 const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
@@ -313,12 +316,10 @@ const MapUpload = ({ mapImage, onMapChange, label = "Sub-Area Map" }) => {
             <CardMedia
               component="img"
               height="200"
-              image={`http://localhost:5000${mapImage}`}
+              image={getImageUrl(mapImage)}
               alt="Map preview"
               sx={{ objectFit: 'cover' }}
-              onError={(e) => {
-                e.target.src = '/assets/map.webp';
-              }}
+              onError={(e) => handleImageError(e, mapImage)}
             />
             <CardContent>
               <Button

@@ -17,6 +17,7 @@ import {
   Image as ImageIcon,
 } from '@mui/icons-material';
 import { uploadAPI } from '../../services/api';
+import { getImageUrl, handleImageError, getPlaceholderImage } from '../../utils/imageUtils';
 
 function ImageUpload({ 
   images = [], 
@@ -86,16 +87,6 @@ function ImageUpload({
     fileInputRef.current?.click();
   };
 
-  // 🆕 FIXED: Helper function to get correct image URL
-  const getImageUrl = (imageUrl) => {
-    // If it's already a full URL (Cloudinary), return as-is
-    if (imageUrl && imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-    // If it's a relative path, add localhost (for old local uploads)
-    return `http://localhost:5000${imageUrl}`;
-  };
-
   return (
     <Box>
       <Typography variant="h6" gutterBottom>
@@ -148,32 +139,11 @@ function ImageUpload({
                 <CardMedia
                   component="img"
                   height="120"
-                  image={getImageUrl(imageUrl)} // 🆕 FIXED: Use helper function
+                  image={getImageUrl(imageUrl)}
                   alt={`Property image ${index + 1}`}
                   sx={{ objectFit: 'cover' }}
-                  onError={(e) => {
-                    console.error('❌ Image failed to load:', imageUrl);
-                    console.error('❌ Computed URL:', getImageUrl(imageUrl));
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
+                  onError={(e) => handleImageError(e, imageUrl)}
                 />
-                {/* 🆕 ADDED: Fallback for failed images */}
-                <Box
-                  sx={{
-                    height: 120,
-                    display: 'none',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#f5f5f5',
-                    flexDirection: 'column'
-                  }}
-                >
-                  <ImageIcon sx={{ fontSize: 30, color: 'text.secondary', mb: 1 }} />
-                  <Typography variant="caption" color="textSecondary">
-                    Image not available
-                  </Typography>
-                </Box>
                 <IconButton
                   size="small"
                   onClick={() => handleRemoveImage(index)}
@@ -190,10 +160,10 @@ function ImageUpload({
                   <DeleteIcon fontSize="small" />
                 </IconButton>
               </Card>
-              {/* 🆕 ADDED: Debug info in development */}
+              {/* Debug info in development */}
               {process.env.NODE_ENV === 'development' && (
                 <Typography variant="caption" sx={{ display: 'block', mt: 1, wordBreak: 'break-all' }}>
-                  {imageUrl}
+                  Original: {imageUrl}
                 </Typography>
               )}
             </Grid>

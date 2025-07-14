@@ -1,3 +1,4 @@
+import { getImageUrl, handleImageError } from '../utils/imageUtils';
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -91,6 +92,7 @@ const PropertyImageCarousel = ({ images, title }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          border: '1px solid #ddd',
         }}
       >
         <ImageIcon sx={{ fontSize: 60, color: 'text.secondary' }} />
@@ -103,9 +105,10 @@ const PropertyImageCarousel = ({ images, title }) => {
       <CardMedia
         component="img"
         height="200"
-        image={`http://localhost:5000${images[currentImageIndex]}`}
+        image={getImageUrl(images[currentImageIndex])}
         alt={`${title} - Image ${currentImageIndex + 1}`}
         sx={{ objectFit: 'cover' }}
+        onError={(e) => handleImageError(e, images[currentImageIndex])}
       />
       
       {images.length > 1 && (

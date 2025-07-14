@@ -1,3 +1,5 @@
+// Update for Images.js - replace the existing component with this fixed version
+
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -31,6 +33,7 @@ import {
   CloudUpload as UploadIcon,
 } from '@mui/icons-material';
 import { uploadAPI } from '../services/api';
+import { getImageUrl, handleImageError } from '../utils/imageUtils';
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -179,16 +182,6 @@ function Images() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  // 🆕 FIXED: Helper function to get correct image URL
-  const getImageUrl = (imageUrl) => {
-    // If it's already a full URL (Cloudinary), return as-is
-    if (imageUrl && imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-    // If it's a relative path, add localhost (for old local uploads)
-    return `http://localhost:5000${imageUrl}`;
-  };
-
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -255,31 +248,11 @@ function Images() {
                   <CardMedia
                     component="img"
                     height="200"
-                    image={getImageUrl(image.imageUrl)} // 🆕 FIXED: Use helper function
+                    image={getImageUrl(image.imageUrl)}
                     alt={image.altText}
                     sx={{ objectFit: 'cover' }}
-                    onError={(e) => {
-                      console.error('❌ Image failed to load:', image.imageUrl);
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
+                    onError={(e) => handleImageError(e, image.imageUrl)}
                   />
-                  {/* 🆕 ADDED: Fallback for failed images */}
-                  <Box
-                    sx={{
-                      height: 200,
-                      display: 'none',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: '#f5f5f5',
-                      flexDirection: 'column'
-                    }}
-                  >
-                    <ImageIcon sx={{ fontSize: 40, color: 'text.secondary', mb: 1 }} />
-                    <Typography variant="body2" color="textSecondary">
-                      Image not available
-                    </Typography>
-                  </Box>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
                       {image.title}
@@ -292,10 +265,12 @@ function Images() {
                       size="small" 
                       color="primary"
                     />
-                    {/* 🆕 ADDED: Debug info */}
-                    <Typography variant="caption" sx={{ display: 'block', mt: 1, wordBreak: 'break-all' }}>
-                      URL: {image.imageUrl}
-                    </Typography>
+                    {/* Debug info */}
+                    {process.env.NODE_ENV === 'development' && (
+                      <Typography variant="caption" sx={{ display: 'block', mt: 1, wordBreak: 'break-all' }}>
+                        URL: {image.imageUrl}
+                      </Typography>
+                    )}
                   </CardContent>
                   <CardActions>
                     <IconButton
@@ -341,9 +316,10 @@ function Images() {
                   <CardMedia
                     component="img"
                     height="150"
-                    image={getImageUrl(file.imageUrl)} // 🆕 FIXED: Use helper function
+                    image={getImageUrl(file.imageUrl)}
                     alt={file.filename}
                     sx={{ objectFit: 'cover' }}
+                    onError={(e) => handleImageError(e, file.imageUrl)}
                   />
                   <CardContent sx={{ pb: 1 }}>
                     <Typography variant="body2" gutterBottom noWrap>
