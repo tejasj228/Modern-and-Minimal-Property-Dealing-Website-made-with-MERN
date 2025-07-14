@@ -1,8 +1,29 @@
-// frontend/src/components/Societies.jsx - Fixed modal navbar hiding and mobile visibility
+// frontend/src/components/Societies.jsx - Complete Fixed Version (680+ lines)
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import PageTransition from './PageTransition';
 import './Societies.css';
+
+// Helper function to get image URL
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return '/assets/map.webp';
+  
+  if (imagePath.startsWith('http') || imagePath.startsWith('//')) {
+    return imagePath;
+  }
+  
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://property-dealing-backend.onrender.com'
+    : 'http://localhost:5000';
+  
+  return `${baseUrl}${imagePath}`;
+};
+
+// Helper function to get API URL
+const getApiUrl = (endpoint) => {
+  const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  return `${baseUrl}${endpoint}`;
+};
 
 // Enhanced Society Modal Component with Navbar Hiding and Mobile Fixes
 const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
@@ -120,11 +141,11 @@ const SocietyModal = ({ isOpen, onClose, society, cardPosition }) => {
     const images = [];
     if (society.images && society.images.length > 0) {
       society.images.forEach(img => {
-        images.push(`http://localhost:5000${img}`);
+        images.push(getImageUrl(img));
       });
     }
     if (society.mapImage) {
-      images.push(`http://localhost:5000${society.mapImage}`);
+      images.push(getImageUrl(society.mapImage));
     }
     if (images.length === 0) {
       images.push('/assets/map.webp');
@@ -265,7 +286,7 @@ const SocietiesImageSlider = ({ societies = [] }) => {
     if (society.images && society.images.length > 0) {
       society.images.forEach(image => {
         slides.push({
-          image: `http://localhost:5000${image}`,
+          image: getImageUrl(image),
           societyName: society.name,
           societyId: society.id
         });
@@ -273,7 +294,7 @@ const SocietiesImageSlider = ({ societies = [] }) => {
     } else if (society.mapImage) {
       // Fallback to map image if no gallery images
       slides.push({
-        image: `http://localhost:5000${society.mapImage}`,
+        image: getImageUrl(society.mapImage),
         societyName: society.name,
         societyId: society.id
       });
@@ -418,7 +439,11 @@ const Societies = () => {
       
       console.log(`🏘️ Loading societies for area: ${areaKey}, sub-area: ${subAreaId}`);
       
-      const response = await fetch(`http://localhost:5000/api/societies/${areaKey}/${subAreaId}`);
+      // Use helper function for API URL
+      const apiUrl = getApiUrl(`/societies/${areaKey}/${subAreaId}`);
+      console.log(`🔗 Fetching from: ${apiUrl}`);
+      
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -523,9 +548,9 @@ const Societies = () => {
   const getSocietyImage = (society) => {
     // Priority: 1. First gallery image, 2. Map image, 3. Default
     if (society.images && society.images.length > 0) {
-      return `http://localhost:5000${society.images[0]}`;
+      return getImageUrl(society.images[0]);
     } else if (society.mapImage) {
-      return `http://localhost:5000${society.mapImage}`;
+      return getImageUrl(society.mapImage);
     }
     return '/assets/map.webp';
   };

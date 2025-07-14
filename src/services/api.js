@@ -1,11 +1,39 @@
-// frontend/src/services/api.js - Fixed API URLs
+// frontend/src/services/api.js - Improved with Image URL Helper
 import axios from 'axios';
 
 // 🆕 FIXED API URL - Use the correct backend URL from env file
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+// 🆕 ADDED: Base URL for images (without /api)
+const BACKEND_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://property-dealing-backend.onrender.com'
+  : 'http://localhost:5000';
+
 console.log('🌐 Frontend API Base URL:', API_BASE_URL);
+console.log('🌐 Backend Base URL:', BACKEND_BASE_URL);
 console.log('🌐 Environment:', process.env.NODE_ENV);
+
+// 🆕 ADDED: Helper function to get image URLs
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return '/assets/map.webp'; // Default fallback
+  
+  // If it's already a full URL (external or absolute), return as-is
+  if (imagePath.startsWith('http') || imagePath.startsWith('//')) {
+    return imagePath;
+  }
+  
+  // If it's a relative path, add the backend base URL
+  const fullUrl = `${BACKEND_BASE_URL}${imagePath}`;
+  console.log(`🔗 Image URL: ${imagePath} -> ${fullUrl}`);
+  return fullUrl;
+};
+
+// 🆕 ADDED: Helper function to get API URLs
+export const getApiUrl = (endpoint) => {
+  const fullUrl = `${API_BASE_URL}${endpoint}`;
+  console.log(`🔗 API URL: ${endpoint} -> ${fullUrl}`);
+  return fullUrl;
+};
 
 // Create axios instance
 const api = axios.create({
@@ -23,13 +51,6 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     console.log(`🚀 Frontend API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
-    console.log('📊 Request config:', {
-      method: config.method,
-      url: config.url,
-      baseURL: config.baseURL,
-      headers: config.headers,
-      timeout: config.timeout
-    });
     return config;
   },
   (error) => {
@@ -159,6 +180,19 @@ export const fetchSliderImages = async () => {
         altText: 'Luxury Villa'
       }
     ];
+  }
+};
+
+// 🆕 ADDED: Fetch societies for a specific area/sub-area
+export const fetchSocieties = async (areaKey, subAreaId) => {
+  try {
+    console.log(`🏘️ Fetching societies for area: ${areaKey}, sub-area: ${subAreaId}`);
+    const response = await api.get(`/societies/${areaKey}/${subAreaId}`);
+    console.log('🏘️ Societies fetched successfully');
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error fetching societies:', error);
+    throw error;
   }
 };
 
