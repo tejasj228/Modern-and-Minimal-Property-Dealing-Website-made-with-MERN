@@ -57,18 +57,32 @@ const PropertyImageCarousel = ({ images, title }) => {
 
   return (
     <div className="property-image-carousel">
+      {/* 🚨 CHANGED: Using IMG tag instead of background image for testing */}
       <div 
         className="property-image"
         style={{
-          backgroundImage: `url(${currentImageUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          position: 'relative'
-        }}
-        onError={(e) => {
-          console.error('❌ Property image failed to load:', currentImageUrl);
+          position: 'relative',
+          height: '200px',
+          overflow: 'hidden'
         }}
       >
+        <img
+          src={currentImageUrl}
+          alt={`${title} - Image ${currentImageIndex + 1}`}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover'
+          }}
+          onLoad={() => {
+            console.log('✅ Property image loaded successfully:', currentImageUrl);
+          }}
+          onError={(e) => {
+            console.error('❌ Property image failed to load:', currentImageUrl);
+            console.error('❌ Error details:', e);
+          }}
+        />
+
         {images.length > 1 && (
           <>
             {/* Navigation Arrows */}
@@ -80,6 +94,19 @@ const PropertyImageCarousel = ({ images, title }) => {
                 prevImage();
               }}
               aria-label="Previous image"
+              style={{
+                position: 'absolute',
+                left: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(0,0,0,0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                cursor: 'pointer'
+              }}
             >
               <i className="fas fa-chevron-left"></i>
             </button>
@@ -92,17 +119,52 @@ const PropertyImageCarousel = ({ images, title }) => {
                 nextImage();
               }}
               aria-label="Next image"
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(0,0,0,0.5)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                cursor: 'pointer'
+              }}
             >
               <i className="fas fa-chevron-right"></i>
             </button>
 
             {/* Image Counter */}
-            <div className="image-counter">
+            <div 
+              className="image-counter"
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                background: 'rgba(0,0,0,0.7)',
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
               {currentImageIndex + 1}/{images.length}
             </div>
 
             {/* Dot Indicators */}
-            <div className="carousel-dots">
+            <div 
+              className="carousel-dots"
+              style={{
+                position: 'absolute',
+                bottom: '10px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: '5px'
+              }}
+            >
               {images.map((_, index) => (
                 <button
                   key={index}
@@ -113,22 +175,34 @@ const PropertyImageCarousel = ({ images, title }) => {
                     setCurrentImageIndex(index);
                   }}
                   aria-label={`Go to image ${index + 1}`}
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: index === currentImageIndex ? 'white' : 'rgba(255,255,255,0.5)',
+                    cursor: 'pointer'
+                  }}
                 />
               ))}
             </div>
           </>
         )}
       </div>
-      {/* 🆕 ADDED: Debug info in development */}
-      {process.env.NODE_ENV === 'development' && (
-        <div style={{ fontSize: '10px', padding: '2px', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white' }}>
-          {currentImageUrl}
-        </div>
-      )}
+      
+      {/* Debug info */}
+      <div style={{ 
+        fontSize: '10px', 
+        padding: '2px', 
+        backgroundColor: 'rgba(0,0,0,0.7)', 
+        color: 'white',
+        wordBreak: 'break-all'
+      }}>
+        {currentImageUrl}
+      </div>
     </div>
   );
 };
-
 const Properties = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedArea, setSelectedArea] = useState(searchParams.get('area') || 'all');
