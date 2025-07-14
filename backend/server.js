@@ -85,13 +85,18 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 🔓 PUBLIC: Contact form submission (from frontend)
-const Contact = require('./models/Contact');
+// 🔓 PUBLIC: Contact form submission (from frontend) - CRITICAL FIX
 app.post('/api/contacts', async (req, res) => {
   try {
     const { name, email, phone, interest, message } = req.body;
     
-    console.log('📧 PUBLIC: Contact form submission received:', { name, email, phone });
+    console.log('📧 PUBLIC: Contact form submission received:', { 
+      name, 
+      email, 
+      phone,
+      interest: interest || 'Not specified',
+      origin: req.headers.origin 
+    });
     
     // Validate required fields
     if (!name || !email || !phone || !message) {
@@ -101,6 +106,9 @@ app.post('/api/contacts', async (req, res) => {
         message: 'Name, email, phone, and message are required'
       });
     }
+    
+    // Import Contact model
+    const Contact = require('./models/Contact');
     
     // Create new contact
     const contact = new Contact({
@@ -117,7 +125,8 @@ app.post('/api/contacts', async (req, res) => {
     console.log('✅ Contact inquiry saved successfully:', {
       id: contact._id,
       name: contact.name,
-      email: contact.email
+      email: contact.email,
+      timestamp: contact.createdAt
     });
     
     res.status(201).json({
@@ -190,16 +199,16 @@ app.use('/api/uploads', (req, res, next) => {
 // 🔒 PROTECTED: Contact management routes (admin only)
 const contactRoutes = require('./routes/contacts');
 
-// Apply auth middleware to contact management routes (excluding POST)
+// Apply auth middleware to contact management routes (excluding the public POST above)
 app.use('/api/contacts', (req, res, next) => {
   // Skip authentication for POST requests (already handled above)
   if (req.method === 'POST') {
-    return next('route'); // Skip to next route handler
+    return next('route'); // Skip to next route handler - this should NEVER be reached now
   }
   
   console.log(`🔐 ADMIN: Contact ${req.method} ${req.path} - Checking authentication`);
   
-  // Apply authentication for all other methods
+  // Apply authentication for all other methods (GET, PUT, DELETE for admin panel)
   authenticateToken(req, res, (err) => {
     if (err) return next(err);
     
