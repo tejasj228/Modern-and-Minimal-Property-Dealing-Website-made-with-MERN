@@ -8,6 +8,16 @@ import './Properties.css';
 const PropertyImageCarousel = ({ images, title }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // 🆕 FIXED: Helper function to get correct image URL
+  const getImageUrl = (imageUrl) => {
+    // If it's already a full URL (Cloudinary), return as-is
+    if (imageUrl && imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+    // If it's a relative path, add localhost (for old local uploads)
+    return `http://localhost:5000${imageUrl}`;
+  };
+
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
@@ -27,20 +37,36 @@ const PropertyImageCarousel = ({ images, title }) => {
   if (!images || images.length === 0) {
     return (
       <div className="property-image">
-        <span>Property Image</span>
+        <div style={{
+          height: '200px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f5f5f5',
+          color: '#666',
+          flexDirection: 'column'
+        }}>
+          <i className="fas fa-image" style={{ fontSize: '40px', marginBottom: '10px' }}></i>
+          <span>No Image Available</span>
+        </div>
       </div>
     );
   }
+
+  const currentImageUrl = getImageUrl(images[currentImageIndex]);
 
   return (
     <div className="property-image-carousel">
       <div 
         className="property-image"
         style={{
-          backgroundImage: `url(http://localhost:5000${images[currentImageIndex]})`,
+          backgroundImage: `url(${currentImageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           position: 'relative'
+        }}
+        onError={(e) => {
+          console.error('❌ Property image failed to load:', currentImageUrl);
         }}
       >
         {images.length > 1 && (
@@ -93,6 +119,12 @@ const PropertyImageCarousel = ({ images, title }) => {
           </>
         )}
       </div>
+      {/* 🆕 ADDED: Debug info in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div style={{ fontSize: '10px', padding: '2px', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white' }}>
+          {currentImageUrl}
+        </div>
+      )}
     </div>
   );
 };
@@ -128,14 +160,19 @@ const Properties = () => {
       setLoading(true);
       setError(null);
       
+      console.log('🏢 Loading areas from API...');
+      
       // Load areas first
       const areasData = await fetchAreas();
       setAreas(areasData);
+      
+      console.log('🏢 Areas loaded:', Object.keys(areasData));
       
       // If no areas loaded from API, load fallback
       if (Object.keys(areasData).length === 0) {
         const { areas: fallbackAreas } = await import('../data/data');
         setAreas(fallbackAreas);
+        console.log('⚠️ Using fallback areas');
       }
     } catch (error) {
       console.error('Error loading initial data:', error);
@@ -145,6 +182,7 @@ const Properties = () => {
       try {
         const { areas: fallbackAreas, properties: fallbackProperties } = await import('../data/data');
         setAreas(fallbackAreas);
+        console.log('⚠️ Using fallback data due to error');
       } catch (fallbackError) {
         console.error('Error loading fallback data:', fallbackError);
       }
@@ -158,6 +196,8 @@ const Properties = () => {
       setLoading(true);
       let properties = [];
 
+      console.log(`🏠 Loading properties for area: ${selectedArea}`);
+
       if (selectedArea === 'all') {
         // Get all properties
         properties = await fetchProperties();
@@ -165,6 +205,9 @@ const Properties = () => {
         // Get properties for specific area
         properties = await fetchPropertiesByArea(selectedArea);
       }
+
+      console.log(`🏠 Properties loaded: ${properties.length}`);
+      console.log(`🏠 First property images:`, properties[0]?.images);
 
       // Add area information to each property
       const propertiesWithAreaInfo = properties.map(property => ({
@@ -208,6 +251,7 @@ const Properties = () => {
             setFilteredProperties([]);
           }
         }
+        console.log('⚠️ Using fallback properties due to API error');
       } catch (fallbackError) {
         console.error('Error loading fallback properties:', fallbackError);
         setFilteredProperties([]);

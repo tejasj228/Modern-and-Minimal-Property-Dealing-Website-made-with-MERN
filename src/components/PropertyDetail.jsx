@@ -12,12 +12,25 @@ const PropertyDetail = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // 🆕 FIXED: Helper function to get correct image URL
+  const getImageUrl = (imageUrl) => {
+    // If it's already a full URL (Cloudinary), return as-is
+    if (imageUrl && imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+    // If it's a relative path, add localhost (for old local uploads)
+    return `http://localhost:5000${imageUrl}`;
+  };
+
   useEffect(() => {
     // Get property data from navigation state or fetch from API
     if (location.state?.property) {
       setProperty(location.state.property);
       setAreaName(location.state.areaName || '');
       setLoading(false);
+      
+      console.log('🏠 Property loaded from state:', location.state.property.title);
+      console.log('🏠 Property images:', location.state.property.images);
     } else {
       // If no state data, you can fetch property by ID from API
       // For now, redirect back to properties
@@ -96,6 +109,11 @@ const PropertyDetail = () => {
     );
   }
 
+  // 🆕 FIXED: Get current image URL using helper function
+  const currentImageUrl = property.images && property.images.length > 0 
+    ? getImageUrl(property.images[currentImageIndex]) 
+    : null;
+
   return (
     <PageTransition>
       <div className="property-detail-page">
@@ -136,11 +154,15 @@ const PropertyDetail = () => {
                 {/* Main Image */}
                 <div className="main-image-container">
                   <img
-                    src={`http://localhost:5000${property.images[currentImageIndex]}`}
+                    src={currentImageUrl}
                     alt={`${property.title} - Image ${currentImageIndex + 1}`}
                     className="main-image"
                     onError={(e) => {
+                      console.error('❌ Property detail image failed to load:', currentImageUrl);
                       e.target.src = '/assets/placeholder-property.jpg';
+                    }}
+                    onLoad={() => {
+                      console.log('✅ Property detail image loaded:', currentImageUrl);
                     }}
                   />
                   
@@ -165,21 +187,41 @@ const PropertyDetail = () => {
                 {/* Thumbnail Gallery */}
                 {property.images.length > 1 && (
                   <div className="thumbnail-gallery">
-                    {property.images.map((image, index) => (
-                      <div
-                        key={index}
-                        className={`thumbnail ${index === currentImageIndex ? 'active' : ''}`}
-                        onClick={() => goToImage(index)}
-                      >
-                        <img
-                          src={`http://localhost:5000${image}`}
-                          alt={`${property.title} - Thumbnail ${index + 1}`}
-                          onError={(e) => {
-                            e.target.src = '/assets/placeholder-property.jpg';
-                          }}
-                        />
-                      </div>
-                    ))}
+                    {property.images.map((image, index) => {
+                      const thumbnailUrl = getImageUrl(image);
+                      return (
+                        <div
+                          key={index}
+                          className={`thumbnail ${index === currentImageIndex ? 'active' : ''}`}
+                          onClick={() => goToImage(index)}
+                        >
+                          <img
+                            src={thumbnailUrl}
+                            alt={`${property.title} - Thumbnail ${index + 1}`}
+                            onError={(e) => {
+                              console.error('❌ Thumbnail failed to load:', thumbnailUrl);
+                              e.target.src = '/assets/placeholder-property.jpg';
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 🆕 ADDED: Debug info in development */}
+                {process.env.NODE_ENV === 'development' && (
+                  <div style={{ 
+                    fontSize: '12px', 
+                    padding: '10px', 
+                    backgroundColor: 'rgba(0,0,0,0.8)', 
+                    color: 'white',
+                    marginTop: '10px',
+                    borderRadius: '4px'
+                  }}>
+                    <strong>Debug Info:</strong><br />
+                    Current Image: {currentImageIndex + 1}/{property.images.length}<br />
+                    URL: {currentImageUrl}
                   </div>
                 )}
               </>
