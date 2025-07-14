@@ -14,22 +14,27 @@ const app = express();
 app.use(morgan('combined'));
 
 // 🆕 FIXED CORS for production
+// 🆕 FIXED CORS for production - Add this to your backend/server.js
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? [
-        // Add your frontend URLs here after deployment
+        // Add your actual frontend URLs from the screenshots
+        'https://prop-dealing-frontend-e2fw.vercel.app',
         'https://pawan-buildhome-frontend.vercel.app',
         'https://pawan-buildhome.vercel.app',
         // Allow all Vercel preview domains for testing
-        /https:\/\/.*\.vercel\.app$/
+        /https:\/\/.*\.vercel\.app$/,
+        // Allow Render domains
+        /https:\/\/.*\.onrender\.com$/
       ]
     : [
         'http://localhost:3000',
         'http://localhost:3001'
       ],
-  credentials: true,
+  credentials: false, // Set to false to avoid CORS issues
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  optionsSuccessStatus: 200 // For legacy browser support
 }));
 
 app.use(express.json({ limit: '10mb' }));
