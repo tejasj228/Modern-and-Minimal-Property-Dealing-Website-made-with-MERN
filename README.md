@@ -1,5 +1,5 @@
 # 🏠 Property Dealing Website
-#🌐 **Deployed Link: [pawanbuildhome.vercel.app](https://pawanbuildhome.vercel.app/)** 🌐
+#🌐 **Deployed Link: [pawanbuildhome.vercel.app](https://pawanbuildhome.app/)** 🌐
 ---
 <div align="center">
   <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
